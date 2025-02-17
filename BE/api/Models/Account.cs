@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Microsoft.AspNetCore.Identity;
 
 namespace api.Models;
 
@@ -11,9 +12,13 @@ public partial class Account
 
     public string Password { get; set; } = null!;
 
-    public int Role { get; set; }
+    public UserRole Role { get; set; }
 
     public bool IsActive { get; set; }
+
+    public string IdentityUserId { get; set; } = null!;
+
+    public virtual ApplicationUser IdentityUser { get; set; } = null!;
 
     public virtual ICollection<Customer> Customers { get; set; } = new List<Customer>();
 }
