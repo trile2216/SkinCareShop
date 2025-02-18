@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using api.Models;
 using Microsoft.EntityFrameworkCore;
-
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 namespace api.Data;
 
-public partial class ApplicationDbContext : DbContext
+public partial class ApplicationDbContext : IdentityDbContext<ApplicationUser>
 {
     public ApplicationDbContext()
     {
@@ -55,6 +55,7 @@ public partial class ApplicationDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        base.OnModelCreating(modelBuilder);
         modelBuilder.Entity<Account>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PK__Account__3213E83F806BD309");
@@ -77,6 +78,11 @@ public partial class ApplicationDbContext : DbContext
             entity.Property(e => e.UserName)
                 .HasMaxLength(50)
                 .HasColumnName("userName");
+
+            entity.HasOne(d => d.IdentityUser)
+                .WithOne(p => p.Account)
+                .HasForeignKey<Account>(d => d.IdentityUserId)
+                .OnDelete(DeleteBehavior.Cascade);
         });
 
         modelBuilder.Entity<Answer>(entity =>
