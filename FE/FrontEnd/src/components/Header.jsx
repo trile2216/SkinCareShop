@@ -22,15 +22,11 @@ const Header = () => {
       <div className="container mx-auto px-3">
         <div className="flex items-center justify-between py-4">
           <div className="flex items-center">
-            <img
-              src="../images/logo.png"
-              alt="Brand Logo"
-              className="h-30 w-auto"
-            />
+            <img src="./src/assets/logo.png" className="h-25 w-auto" />
           </div>
 
-          <div className="hidden md:flex flex-1 mx-8">
-            <div className="relative w-full">
+          <div className="hidden md:flex flex-1 justify-center mx-8">
+            <div className="relative w-1/3">
               <input
                 type="text"
                 placeholder="Search"
@@ -50,10 +46,16 @@ const Header = () => {
               </button>
               {isProfileOpen && (
                 <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 z-50">
-                  <a href="#" className="block px-4 py-2 hover:bg-rose-300">
+                  <a
+                    href="/login"
+                    className="block px-4 py-2 hover:bg-rose-300"
+                  >
                     Sign In
                   </a>
-                  <a href="#" className="block px-4 py-2 hover:bg-rose-300">
+                  <a
+                    href="/register"
+                    className="block px-4 py-2 hover:bg-rose-300"
+                  >
                     Register
                   </a>
                 </div>

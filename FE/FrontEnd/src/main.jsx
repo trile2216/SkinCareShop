@@ -5,6 +5,7 @@ import { RouterProvider } from "react-router";
 import LoginPage from "./pages/login/index.jsx";
 import RegisterPage from "./pages/register/index.jsx";
 import { ToastContainer } from "react-toastify";
+import HomePage from "./pages/homepage/HomePage.jsx";
 
 // document.getElementById('root')
 // 1. Tìm tới root
@@ -18,6 +19,10 @@ const router = createBrowserRouter([
   {
     path: "/register",
     element: <RegisterPage />,
+  },
+  {
+    path: "/homepage",
+    element: <HomePage />,
   },
 ]);
 
