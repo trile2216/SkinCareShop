@@ -1,4 +1,4 @@
-import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+//import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { useState, useEffect } from "react";
 import {
   FaEye,
@@ -7,8 +7,8 @@ import {
   FaTimesCircle,
   FaGoogle,
 } from "react-icons/fa";
-import { auth } from "../../config/firebase";
-import api from "../../config/axios";
+//import { auth } from "../../config/firebase";
+//import api from "../../config/axios";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 
@@ -20,7 +20,7 @@ const RegisterPage = () => {
     password: "",
     terms: false,
   });
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const [errors, setErrors] = useState({});
   const [showPassword, setShowPassword] = useState(false);
@@ -114,19 +114,18 @@ const RegisterPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    console.log(formData)
+    console.log(formData);
 
     try {
       // promise
-      const response = await api.post('register', formData)
-      toast.success("Successfully create new account!")
-      navigate('/login')
+      const response = await api.post("register", formData);
+      toast.success("Successfully create new account!");
+      navigate("/login");
     } catch (err) {
       // bị lỗi => showw message lỗi
-      toast.error(err.response.data)
-      console.log(err.response.data)
+      toast.error(err.response.data);
+      console.log(err.response.data);
     }
-
   };
 
   const getStrengthColor = () => {
@@ -177,14 +176,15 @@ const RegisterPage = () => {
 
       {/* Khung đăng ký - tách biệt với nền mờ */}
       <div className="relative z-10 max-w-md w-full space-y-8 bg-opacity-30 p-8 rounded-xl shadow-2xl backdrop-blur-lg">
-
         {isSuccess ? (
           <div className="text-center">
             <FaCheckCircle className="mx-auto h-12 w-12 text-rose-400" />
             <h2 className="mt-4 text-2xl font-semibold text-rose-400">
               Registration Successful!
             </h2>
-            <p className="mt-2 text-gray-600">Thank you for registering with us.</p>
+            <p className="mt-2 text-gray-600">
+              Thank you for registering with us.
+            </p>
             <button
               onClick={() => setIsSuccess(false)}
               className="mt-4 w-full py-2 px-4 text-sm font-medium text-white bg-rose-500 rounded-md shadow hover:bg-rose-600 focus:outline-none focus:ring-2 focus:ring-rose-400"
@@ -194,7 +194,6 @@ const RegisterPage = () => {
           </div>
         ) : (
           <>
-
             <div className="text-center">
               <h2 className="text-3xl font-extrabold text-rose-400">
                 Create your account
@@ -220,8 +219,9 @@ const RegisterPage = () => {
                       type="text"
                       value={formData.fullName}
                       onChange={handleChange}
-                      className={`appearance-none block w-full px-3 py-2 border ${errors.fullName ? "border-red-300" : "border-gray-300"
-                        } rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm`}
+                      className={`appearance-none block w-full px-3 py-2 border ${
+                        errors.fullName ? "border-red-300" : "border-gray-300"
+                      } rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm`}
                       placeholder="John Doe"
                     />
                     {errors.fullName && (
@@ -251,8 +251,9 @@ const RegisterPage = () => {
                       type="email"
                       value={formData.email}
                       onChange={handleChange}
-                      className={`appearance-none block w-full px-3 py-2 border ${errors.email ? "border-red-300" : "border-gray-300"
-                        } rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm`}
+                      className={`appearance-none block w-full px-3 py-2 border ${
+                        errors.email ? "border-red-300" : "border-gray-300"
+                      } rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm`}
                       placeholder="you@example.com"
                     />
                     {errors.email && (
@@ -280,8 +281,9 @@ const RegisterPage = () => {
                       type="text"
                       value={formData.username}
                       onChange={handleChange}
-                      className={`appearance-none block w-full px-3 py-2 border ${errors.username ? "border-red-300" : "border-gray-300"
-                        } rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm`}
+                      className={`appearance-none block w-full px-3 py-2 border ${
+                        errors.username ? "border-red-300" : "border-gray-300"
+                      } rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm`}
                       placeholder="username123"
                     />
                     {errors.username && (
@@ -311,8 +313,9 @@ const RegisterPage = () => {
                       type={showPassword ? "text" : "password"}
                       value={formData.password}
                       onChange={handleChange}
-                      className={`appearance-none block w-full px-3 py-2 border ${errors.password ? "border-gray-300" : "border-gray-300"
-                        } rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm pr-10`}
+                      className={`appearance-none block w-full px-3 py-2 border ${
+                        errors.password ? "border-gray-300" : "border-gray-300"
+                      } rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm pr-10`}
                       placeholder="••••••••"
                     />
                     <button
@@ -359,10 +362,7 @@ const RegisterPage = () => {
                     className="ml-2 block text-sm text-gray-900"
                   >
                     I agree to the{" "}
-                    <a
-                      href="#"
-                      className="text-rose-500 hover:text-indigo-500"
-                    >
+                    <a href="#" className="text-rose-500 hover:text-indigo-500">
                       Terms and Conditions
                     </a>
                   </label>
@@ -376,10 +376,11 @@ const RegisterPage = () => {
                 <button
                   type="submit"
                   disabled={isLoading || Object.keys(errors).length > 0}
-                  className={`w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-rose-400 ${isLoading || Object.keys(errors).length > 0
-                    ? "bg-white cursor-not-allowed"
-                    : "bg-white hover:bg-rose-200"
-                    } focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500`}
+                  className={`w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-rose-400 ${
+                    isLoading || Object.keys(errors).length > 0
+                      ? "bg-white cursor-not-allowed"
+                      : "bg-white hover:bg-rose-200"
+                  } focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500`}
                 >
                   {isLoading ? (
                     <svg
