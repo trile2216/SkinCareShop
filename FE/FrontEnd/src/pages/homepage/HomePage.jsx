@@ -1,11 +1,13 @@
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/navigation";
-import { Navigation } from "swiper/modules";
+import { Navigation, Autoplay } from "swiper/modules";
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
 
 const HomePage = () => {
+
+  // Trending product
   const trendingProducts = [
     {
       id: 1,
@@ -53,6 +55,7 @@ const HomePage = () => {
     },
   ];
 
+  // New product
   const newProducts = [
     {
       id: 1,
@@ -98,29 +101,52 @@ const HomePage = () => {
     },
   ];
 
+  // Banner img
+  const bannerImages = [
+    "https://media.post.rvohealth.io/wp-content/uploads/2020/08/11762-BEAUTY_-_No_BS_Guide_to_Discovering_Your_Skin_Type-1200x628-facebook-1200x628.jpg",
+    "https://liphamymakeup.com/wp-content/uploads/2023/06/skincare-la-gi-648195ccc130b.jpg",
+    "https://tiki.vn/blog/wp-content/uploads/2023/01/tay-trang.png",
+    "https://www.allthingshair.com/_next/image/?url=https%3A%2F%2Fcdn.sanity.io%2Fimages%2Fzqgvoczt%2Fproduction%2F51afbb18c75cc5207202feee6a4aba3dd0529b1a-1200x800.jpg%3Fq%3D85%26fit%3Dclip%26auto%3Dformat&w=3840&q=75"
+  ];
+
   return (
     <>
+      {/* Header */}
       <Header />
 
+      {/* Body Contain */}
       <div className="container mx-auto px-4 py-8">
         {/* Banner */}
-        <div
-          className="relative w-full h-145 flex items-center justify-center text-center text-white bg-cover bg-center"
-          style={{
-            backgroundImage:
-              "url('https://media.post.rvohealth.io/wp-content/uploads/2020/08/11762-BEAUTY_-_No_BS_Guide_to_Discovering_Your_Skin_Type-1200x628-facebook-1200x628.jpg')",
-          }}
+        <div className="relative w-full h-150 text-center text-white">
+        <Swiper
+          modules={[Navigation, Autoplay]} 
+          spaceBetween={0}
+          slidesPerView={1}
+          navigation={false}
+          autoplay={{ delay: 1500, disableOnInteraction: false }} 
+          loop={true}
+          className="w-full h-full"
         >
-          <div className="bg-transparent bg-opacity-50 p-6 rounded-lg">
-            <h2 className="text-3xl font-bold">New Year, Fresh Skin</h2>
-            <p className="text-lg mt-2">
-              Explore suitable products based on the skin type test.
-            </p>
-            <button className="mt-4 bg-rose-700 text-white px-6 py-2 rounded-full">
-              Take Quiz Now
-            </button>
-          </div>
-        </div>
+          {bannerImages.map((image, index) => (
+            <SwiperSlide key={index}>
+              <div
+                className="w-full h-160 flex items-center justify-center bg-cover bg-center"
+                style={{ backgroundImage: `url(${image})` }}
+              >
+                <div className="bg-transparent bg-opacity-50 p-6 rounded-lg text-white">
+                  <h2 className="text-3xl font-bold">New Year, Fresh Skin</h2>
+                  <p className="text-lg mt-2">
+                    Explore suitable products based on the skin type test.
+                  </p>
+                  <button className="mt-4 bg-rose-700 text-white px-6 py-2 rounded-full">
+                    Take Quiz Now
+                  </button>
+                </div>
+              </div>
+            </SwiperSlide>
+          ))}
+        </Swiper>
+      </div>
 
         {/* Top Trending */}
         <section className="mt-12">
@@ -195,6 +221,7 @@ const HomePage = () => {
         </section>
       </div>
 
+      {/* Footer */}
       <Footer />
     </>
   );
