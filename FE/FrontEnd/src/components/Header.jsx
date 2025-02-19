@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { FiSearch, FiShoppingCart, FiUser } from "react-icons/fi";
 
 const Header = () => {
@@ -6,11 +7,11 @@ const Header = () => {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
 
   const categories = [
-    "Home",
-    "Brands",
-    "Skincare Library",
-    "Sale",
-    "Take The Quiz ",
+    { name: "Home", path: "/homepage" },
+    { name: "Brands", path: "/"},
+    { name: "Skincare Library", path: "/"},
+    { name: "Sale", path: "/sale" },
+    { name: "Take The Quiz", path: "/quiz"},
   ];
   const cartItems = [
     { id: 1, name: "Anti-Aging Cream", price: 49.99, quantity: 1 },
@@ -21,9 +22,12 @@ const Header = () => {
     <div className="bg-white shadow-md">
       <div className="container mx-auto px-3">
         <div className="flex items-center justify-between py-4">
-          <div className="flex items-center">
-            <img src="./src/assets/logo.png" className="h-25 w-auto" />
-          </div>
+          <Link to="/homepage">
+            <img
+              src="./src/assets/logo.png"
+              className="h-25 w-auto cursor-pointer"
+            />
+          </Link>
 
           <div className="hidden md:flex flex-1 justify-center mx-8">
             <div className="relative w-1/3">
@@ -46,18 +50,18 @@ const Header = () => {
               </button>
               {isProfileOpen && (
                 <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 z-50">
-                  <a
-                    href="/login"
+                  <Link
+                    to="/login"
                     className="block px-4 py-2 hover:bg-rose-300"
                   >
                     Sign In
-                  </a>
-                  <a
-                    href="/register"
+                  </Link>
+                  <Link
+                    to="/register"
                     className="block px-4 py-2 hover:bg-rose-300"
                   >
                     Register
-                  </a>
+                  </Link>
                 </div>
               )}
             </div>
@@ -95,13 +99,13 @@ const Header = () => {
         <nav className="hidden md:block py-4">
           <ul className="flex justify-center space-x-8">
             {categories.map((category) => (
-              <li key={category}>
-                <a
-                  href="#"
+              <li key={category.name}>
+                <Link
+                  to={category.path}
                   className="text-gray-600 hover:text-rose-700 font-medium"
                 >
-                  {category}
-                </a>
+                  {category.name}
+                </Link>
               </li>
             ))}
           </ul>
@@ -110,4 +114,5 @@ const Header = () => {
     </div>
   );
 };
+
 export default Header;
