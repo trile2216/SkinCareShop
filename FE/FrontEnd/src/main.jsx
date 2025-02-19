@@ -6,6 +6,7 @@ import LoginPage from "./pages/login/index.jsx";
 import RegisterPage from "./pages/register/index.jsx";
 import { ToastContainer } from "react-toastify";
 import HomePage from "./pages/homepage/HomePage.jsx";
+import SkinQuiz from "./pages/quiz/Quiz.jsx";
 
 // document.getElementById('root')
 // 1. Tìm tới root
@@ -23,6 +24,10 @@ const router = createBrowserRouter([
   {
     path: "/homepage",
     element: <HomePage />,
+  },
+  {
+    path: "/quiz",
+    element: <SkinQuiz/>,
   },
 ]);
 
