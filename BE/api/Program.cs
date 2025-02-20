@@ -1,7 +1,8 @@
 using api.Data;
 using api.Interface;
 using api.Models;
-using api.services;
+using api.Repository;
+using api.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -9,6 +10,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
+var corsName = "AllowAll";
 
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -95,7 +97,7 @@ builder.Services.AddControllers().AddNewtonsoftJson(options =>
 });
 
 
-builder.Services.AddCors(p => p.AddPolicy("AllowAll", policy =>
+builder.Services.AddCors(p => p.AddPolicy(name: corsName, policy =>
 {
     policy.AllowAnyOrigin()
         .AllowAnyMethod()
@@ -104,6 +106,11 @@ builder.Services.AddCors(p => p.AddPolicy("AllowAll", policy =>
 
 builder.Services.AddControllers();
 builder.Services.AddScoped<ITokenService, TokenService>();
+builder.Services.AddScoped<IProductRepository, ProductRepository>();
+builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+builder.Services.AddScoped<IBrandRepository, BrandRepository>();
+builder.Services.AddScoped<ICommentRepository, CommentRepository>();
+
 
 var app = builder.Build();
 
@@ -114,15 +121,14 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+app.UseHttpsRedirection();
 
-app.UseCors("AllowAll");
-
-app.MapControllers();
+app.UseCors(corsName);
 
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.UseHttpsRedirection();
+app.MapControllers();
 
 app.Run();
 
