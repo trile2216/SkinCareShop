@@ -6,7 +6,7 @@ using api.Models;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
 
-namespace api.services
+namespace api.Services
 {
     public class TokenService : ITokenService
     {
