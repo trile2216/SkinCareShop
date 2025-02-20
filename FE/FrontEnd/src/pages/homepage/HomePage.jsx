@@ -1,4 +1,5 @@
 import { Swiper, SwiperSlide } from "swiper/react";
+import { useNavigate } from "react-router-dom";
 import "swiper/css";
 import "swiper/css/navigation";
 import { Navigation, Autoplay } from "swiper/modules";
@@ -103,11 +104,37 @@ const HomePage = () => {
 
   // Banner img
   const bannerImages = [
-    "https://media.post.rvohealth.io/wp-content/uploads/2020/08/11762-BEAUTY_-_No_BS_Guide_to_Discovering_Your_Skin_Type-1200x628-facebook-1200x628.jpg",
-    "https://liphamymakeup.com/wp-content/uploads/2023/06/skincare-la-gi-648195ccc130b.jpg",
-    "https://tiki.vn/blog/wp-content/uploads/2023/01/tay-trang.png",
-    "https://www.allthingshair.com/_next/image/?url=https%3A%2F%2Fcdn.sanity.io%2Fimages%2Fzqgvoczt%2Fproduction%2F51afbb18c75cc5207202feee6a4aba3dd0529b1a-1200x800.jpg%3Fq%3D85%26fit%3Dclip%26auto%3Dformat&w=3840&q=75"
+    { id: 1,
+      image: "https://publicidadymercados.com/wp-content/uploads/2023/02/reverse-skincare-la-tendencia-de-cuidado-de-la-piel-en-redes-sociales-como-funciona.jpg",
+      button: "Take a quiz",
+      text: "Explore suitable products based on the skin type test",
+      slogan: "Healthy skin, powered by science",
+      link: "/quiz"
+    },
+    { id: 2,
+      image: "https://liphamymakeup.com/wp-content/uploads/2023/06/skincare-la-gi-648195ccc130b.jpg",
+      button: "Shopping now",
+      text: "Advanced formulas, visible results",
+      slogan: "Understanding your skin starts here",
+      link: ""
+    },
+    { id: 3,
+      image: "https://tiki.vn/blog/wp-content/uploads/2023/01/tay-trang.png",
+      button: "Explore your skin type",
+      text: "Your skin's companion on the journey to perfection",
+      slogan: "The science behind your glowing skin",
+      link: "/quiz"
+    },
+    { id: 4,
+      image: "https://www.allthingshair.com/_next/image/?url=https%3A%2F%2Fcdn.sanity.io%2Fimages%2Fzqgvoczt%2Fproduction%2F51afbb18c75cc5207202feee6a4aba3dd0529b1a-1200x800.jpg%3Fq%3D85%26fit%3Dclip%26auto%3Dformat&w=3840&q=75",
+      button: "Shopping now",
+      text: "Scientific skincare, glowing results",
+      slogan: "Know your skin, unlock its true potential",
+      link: ""
+    }
   ];
+
+  const navigate = useNavigate();
 
   return (
     <>
@@ -127,19 +154,22 @@ const HomePage = () => {
           loop={true}
           className="w-full h-full"
         >
-          {bannerImages.map((image, index) => (
-            <SwiperSlide key={index}>
+          {bannerImages.map((image) => (
+            <SwiperSlide key={image.id}>
               <div
-                className="w-full h-160 flex items-center justify-center bg-cover bg-center"
-                style={{ backgroundImage: `url(${image})` }}
+                className="w-full h-full flex items-end justify-center bg-cover bg-center"
+                style={{ backgroundImage: `url(${image.image})` }}
               >
                 <div className="bg-transparent bg-opacity-50 p-6 rounded-lg text-white">
-                  <h2 className="text-3xl font-bold">New Year, Fresh Skin</h2>
+                  <h2 className="text-3xl font-bold">{image.slogan}</h2>
                   <p className="text-lg mt-2">
-                    Explore suitable products based on the skin type test.
+                    {image.text}
                   </p>
-                  <button className="mt-4 bg-rose-700 text-white px-6 py-2 rounded-full">
-                    Take Quiz Now
+                  <button 
+                    className="mt-4 bg-rose-700 text-white px-6 py-2 rounded-full" 
+                    onClick={() => navigate(image.link)} 
+                    >
+                    {image.button}
                   </button>
                 </div>
               </div>
