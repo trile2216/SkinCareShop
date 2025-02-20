@@ -115,9 +115,14 @@ public partial class ApplicationDbContext : IdentityDbContext<ApplicationUser>
             entity.HasIndex(e => e.Id, "UQ__Brand__3213E83ED24F6355").IsUnique();
 
             entity.Property(e => e.Id).HasColumnName("id");
+
             entity.Property(e => e.Name)
                 .HasMaxLength(100)
                 .HasColumnName("name");
+
+            entity.Property(e => e.Status)
+                .HasDefaultValue(true)
+                .HasColumnName("status");
         });
 
         modelBuilder.Entity<Category>(entity =>
@@ -135,6 +140,9 @@ public partial class ApplicationDbContext : IdentityDbContext<ApplicationUser>
             entity.Property(e => e.Name)
                 .HasMaxLength(100)
                 .HasColumnName("name");
+            entity.Property(e => e.Status)
+                .HasDefaultValue(true)
+                .HasColumnName("status");
         });
 
         modelBuilder.Entity<Comment>(entity =>
@@ -311,7 +319,9 @@ public partial class ApplicationDbContext : IdentityDbContext<ApplicationUser>
             entity.Property(e => e.BrandId).HasColumnName("brandId");
             entity.Property(e => e.CategoryId).HasColumnName("categoryId");
             entity.Property(e => e.Description).HasColumnName("description");
-            entity.Property(e => e.Gender).HasColumnName("gender");
+            entity.Property(e => e.Gender)
+                .HasConversion<int>()
+                .HasColumnName("gender");
             entity.Property(e => e.Image)
                 .HasMaxLength(500)
                 .IsUnicode(false)
