@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using api.Data;
 using api.DTOs;
 using api.DTOs.Auth;
+using api.Enum;
 using api.Interface;
 using api.Models;
 using Microsoft.AspNetCore.Identity;
