@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using api.Enum;
 
 namespace api.Models;
 
@@ -13,7 +14,7 @@ public partial class Product
 
     public string? Image { get; set; }
 
-    public int? Gender { get; set; }
+    public Gender Gender { get; set; }
 
     public int Stock { get; set; }
 
