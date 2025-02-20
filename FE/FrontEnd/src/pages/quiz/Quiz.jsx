@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { FaArrowRight, FaShare, FaSave } from "react-icons/fa";
+import Footer from "../../components/Footer";
+import Header from "../../components/Header";
 
 const SkinQuiz = () => {
   const [step, setStep] = useState(0);
@@ -598,11 +600,15 @@ const SkinQuiz = () => {
   );
 
   return (
-    <div className="min-h-screen bg-purple-50 py-12">
-      {step === 0 && renderWelcome()}
-      {step > 0 && step <= questions.length && renderQuestion()}
-      {step > questions.length && renderResult()}
-    </div>
+    <>
+      <Header />
+      <div className="min-h-screen bg-purple-50 py-12">
+        {step === 0 && renderWelcome()}
+        {step > 0 && step <= questions.length && renderQuestion()}
+        {step > questions.length && renderResult()}
+      </div>
+      <Footer />
+    </>
   );
 };
 

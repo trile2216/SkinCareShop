@@ -8,10 +8,10 @@ const Header = () => {
 
   const categories = [
     { name: "Home", path: "/homepage" },
-    { name: "Brands", path: "/"},
-    { name: "Skincare Library", path: "/"},
+    { name: "Brands", path: "/" },
+    { name: "Skincare Library", path: "/" },
     { name: "Sale", path: "/sale" },
-    { name: "Take The Quiz", path: "/quiz"},
+    { name: "Take The Quiz", path: "/skinquiz" },
   ];
   const cartItems = [
     { id: 1, name: "Anti-Aging Cream", price: 49.99, quantity: 1 },
