@@ -8,6 +8,8 @@ import { ToastContainer } from "react-toastify";
 import HomePage from "./pages/homepage/HomePage.jsx";
 import SkinQuiz from "./pages/quiz/Quiz.jsx";
 import ProductList from "./pages/productlist/productList.jsx";
+import { CartProvider } from "./context/CartContext";
+import Checkout from "./pages/checkout/CheckOut.jsx";
 
 // document.getElementById('root')
 // 1. Tìm tới root
@@ -34,12 +36,18 @@ const router = createBrowserRouter([
     path: "/productlist",
     element: <ProductList />,
   },
+  {
+    path: "/checkout",
+    element: <Checkout />,
+  },
 ]);
 
 createRoot(document.getElementById("root")).render(
   <>
+  <CartProvider> 
     <RouterProvider router={router} />
     <ToastContainer />
+  </CartProvider>
   </>
 );
 
