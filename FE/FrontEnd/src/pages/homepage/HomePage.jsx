@@ -1,5 +1,5 @@
 import { Swiper, SwiperSlide } from "swiper/react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 import "swiper/css";
 import "swiper/css/navigation";
 import { Navigation, Autoplay } from "swiper/modules";
@@ -109,7 +109,7 @@ const HomePage = () => {
       button: "Take a quiz",
       text: "Explore suitable products based on the skin type test",
       slogan: "Healthy skin, powered by science",
-      link: "/quiz"
+      link: "/skinquiz"
     },
     { id: 2,
       image: "https://liphamymakeup.com/wp-content/uploads/2023/06/skincare-la-gi-648195ccc130b.jpg",
@@ -123,7 +123,7 @@ const HomePage = () => {
       button: "Explore your skin type",
       text: "Your skin's companion on the journey to perfection",
       slogan: "The science behind your glowing skin",
-      link: "/quiz"
+      link: "/skinquiz"
     },
     { id: 4,
       image: "https://www.allthingshair.com/_next/image/?url=https%3A%2F%2Fcdn.sanity.io%2Fimages%2Fzqgvoczt%2Fproduction%2F51afbb18c75cc5207202feee6a4aba3dd0529b1a-1200x800.jpg%3Fq%3D85%26fit%3Dclip%26auto%3Dformat&w=3840&q=75",
