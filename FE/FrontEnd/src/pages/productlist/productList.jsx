@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { FaHeart, FaStar, FaStarHalf, FaShoppingCart } from "react-icons/fa";
 import { RiCloseLine } from "react-icons/ri";
+import api from "../../config/axios";
 
 const categories = ["Skincare", "Makeup", "Hair Care", "Body Care"];
 const brands = ["Luminous", "Glamour", "Vitality"];
@@ -24,7 +25,7 @@ const ProductList = () => {
     const fetchProducts = async () => {
       try {
         setLoading(true);
-        const response = await api.get("/products");
+        const response = await api.get("/product");
         setProducts(response.data);
         setError(null);
       } catch (err) {

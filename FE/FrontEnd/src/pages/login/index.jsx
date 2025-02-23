@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { FaEye, FaEyeSlash, FaLock, FaUser } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
-//import api from "../../config/axios";
+import api from "../../config/axios";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 
@@ -42,15 +42,15 @@ const LoginPage = () => {
       setIsLoading(true);
 
       try {
-        const response = await api.post("login", formData);
+        const response = await api.post("auth/login", formData);
         const { token, role } = response.data.data;
         localStorage.setItem("token", token);
         toast.success("Successfully login!");
 
         if (role === "ADMIN") {
           navigate("/dashboard");
-        } else if (role === "CUSTOMER") {
-          navigate("/");
+        } else if (role === "Customer") {
+          navigate("/homepage");
         }
       } catch (err) {
         toast.error(err.response.data);

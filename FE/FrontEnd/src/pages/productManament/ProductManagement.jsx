@@ -9,11 +9,12 @@ import {
   Upload,
 } from "antd";
 import { useForm } from "antd/es/form/Form";
-import axios from "axios";
+
 import { useEffect, useState } from "react";
 import { toast, ToastContainer } from "react-toastify";
 import { PlusOutlined } from "@ant-design/icons";
-import uploadFile from "./utils/upload";
+import api from "../../config/axios";
+import uploadFile from "../../utils/upload";
 
 const ProductManagement = () => {
   const [studentList, setStudentList] = useState([]);
@@ -137,10 +138,8 @@ const ProductManagement = () => {
   ];
 
   const handleDeleteOrder = async (id) => {
-    await axios.delete(
-      `https://678511df1ec630ca33a711bb.mockapi.io/product/${id}`
-    );
-    toast.success("Delete order successfully!");
+    await api.delete(`/product/${id}`);
+    toast.success("Delete Successfully!");
     fetchOrders();
   };
 
@@ -153,9 +152,7 @@ const ProductManagement = () => {
     });
 
   const fetchOrders = async () => {
-    const response = await axios.get(
-      "https://678511df1ec630ca33a711bb.mockapi.io/product"
-    );
+    const response = await api.get("/product");
     setStudentList(response.data);
   };
 
@@ -169,7 +166,7 @@ const ProductManagement = () => {
   const handleSubmitForm = async (value) => {
     console.log(value);
 
-    //upload ảnh lên firebase storage
+    // //upload ảnh lên firebase storage
     if (value.image.file?.originFileObj) {
       const url = await uploadFile(value.image.file.originFileObj);
       value.image = url;
@@ -177,18 +174,12 @@ const ProductManagement = () => {
 
     if (value.id) {
       //update
-      await axios.put(
-        `https://678511df1ec630ca33a711bb.mockapi.io/product/${value.id}`,
-        value
-      );
+      await api.put(`/product/${value.id}`, value);
     } else {
       //create
-      await axios.post(
-        "https://678511df1ec630ca33a711bb.mockapi.io/product",
-        value
-      );
+      await api.post("/product", value);
     }
-    toast.success("Create order successfully!");
+    toast.success("Successfully!");
     handleCloseModal();
     fetchOrders();
     form.resetFields();
