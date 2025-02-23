@@ -20,16 +20,16 @@ namespace api.Repository
 
 
 
-        public async Task<Category> AddCategory(Category category)
+        public async Task<Category> AddCategoryAsync(Category category)
         {
             await _context.Categories.AddAsync(category);
             await _context.SaveChangesAsync();
             return category;
         }
 
-        public async Task<Category?> DeleteCategory(int id)
+        public async Task<Category?> DeleteCategoryAsync(int id)
         {
-            var existingCategory = await GetCategoryById(id);
+            var existingCategory = await GetCategoryByIdAsync(id);
             if (existingCategory == null)
             {
                 return null;
@@ -42,19 +42,19 @@ namespace api.Repository
             return existingCategory;
         }
 
-        public async Task<List<Category>> GetCategories()
+        public async Task<List<Category>> GetCategoriesAsync()
         {
             return await _context.Categories.ToListAsync();
         }
 
-        public async Task<Category?> GetCategoryById(int id)
+        public async Task<Category?> GetCategoryByIdAsync(int id)
         {
             return await _context.Categories.FirstOrDefaultAsync(c => c.Id == id);
         }
 
-        public async Task<Category?> UpdateCategory(int id, Category newCategory)
+        public async Task<Category?> UpdateCategoryAsync(int id, Category newCategory)
         {
-            var existingCategory = await GetCategoryById(id);
+            var existingCategory = await GetCategoryByIdAsync(id);
             if (existingCategory == null)
             {
                 return null;

@@ -106,7 +106,6 @@ namespace api.Controller
 
                 var userDTO = new UserDTO
                 {
-                    UserName = user.UserName,
                     Role = user.Account.Role.ToString(),
                     Token = _tokenService.CreateToken(user)
                 };

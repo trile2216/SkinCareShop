@@ -42,7 +42,7 @@ namespace api.Repository
 
         public async Task<Brand?> GetBrandByIdAsync(int id)
         {
-            var brand = await _context.Brands.FirstOrDefaultAsync(b => b.Status == true && b.Id == id);
+            var brand = await _context.Brands.FirstOrDefaultAsync(b => b.Id == id);
 
             if (brand == null)
             {
@@ -53,9 +53,7 @@ namespace api.Repository
 
         public async Task<List<Brand>> GetBrandsAsync()
         {
-            return await _context.Brands
-                .Where(b => b.Status == true)
-                .ToListAsync();
+            return await _context.Brands.ToListAsync();
         }
 
         public async Task<Brand?> UpdateBrandAsync(int id, Brand newBrand)

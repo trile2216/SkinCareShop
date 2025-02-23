@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using api.DTOs.Comments;
+using api.DTOs.ProductSkinType;
 using api.Enum;
 using api.Models;
 
@@ -36,8 +38,8 @@ namespace api.DTOs.Products
 
         public string CategoryName { get; set; } = null!;
 
-        public virtual ICollection<Comment> Comments { get; set; } = new List<Comment>();
+        public virtual List<CommentDTO> Comments { get; set; } = new List<CommentDTO>();
 
-        public virtual ICollection<ProductSkinType> ProductSkinTypes { get; set; } = new List<ProductSkinType>();
+        public virtual List<ProductSkinTypeDTO> ProductSkinTypes { get; set; } = new List<ProductSkinTypeDTO>();
     }
 }

@@ -19,7 +19,7 @@ namespace api.Repository
             _context = context;
         }
 
-        public async Task<List<Product>> GetAllAsync()
+        public async Task<List<Product>> GetAllProductAsync()
         {
             return await _context.Products
                 .Include(p => p.Brand)
@@ -31,7 +31,7 @@ namespace api.Repository
         }
 
 
-        public Task<Product?> GetByIdAsync(int id)
+        public Task<Product?> GetProductByIdAsync(int id)
         {
             return _context.Products
                 .Include(p => p.Brand)
@@ -41,7 +41,7 @@ namespace api.Repository
                 .FirstOrDefaultAsync(p => p.Id == id);
         }
 
-        public async Task<Product> CreateAsync(Product product)
+        public async Task<Product> CreateProductAsync(Product product)
         {
             await _context.Products.AddAsync(product);
             await _context.SaveChangesAsync();
@@ -49,9 +49,9 @@ namespace api.Repository
         }
 
 
-        public async Task<Product?> UpdateAsync(int id, Product newProduct)
+        public async Task<Product?> UpdateProductAsync(int id, Product newProduct)
         {
-            var existingProduct = await GetByIdAsync(id);
+            var existingProduct = await GetProductByIdAsync(id);
             if (existingProduct == null)
             {
                 return null;
@@ -73,9 +73,9 @@ namespace api.Repository
             return existingProduct;
         }
 
-        public async Task<Product?> DeleteAsync(int id)
+        public async Task<Product?> DeleteProductAsync(int id)
         {
-            var existingProduct = await GetByIdAsync(id);
+            var existingProduct = await GetProductByIdAsync(id);
             if (existingProduct == null)
             {
                 return null;
@@ -86,13 +86,13 @@ namespace api.Repository
             return existingProduct;
         }
 
-        public async Task<List<Product>> GetByCategoryIdAsync(int id)
+        public async Task<List<Product>> GetProductByCategoryIdAsync(int id)
         {
             var products = await _context.Products.Where(p => p.CategoryId == id).ToListAsync();
             return products;
         }
 
-        public async Task<List<Product>> GetByBrandIdAsync(int id)
+        public async Task<List<Product>> GetProductByBrandIdAsync(int id)
         {
             var products = await _context.Products.Where(p => p.BrandId == id).ToListAsync();
             return products;

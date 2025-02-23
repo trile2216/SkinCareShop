@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using api.DTOs.Cart;
 using api.DTOs.Products;
 using api.Models;
 
@@ -24,6 +25,8 @@ namespace api.Mappers
                 CategoryName = product.Category?.Name ?? string.Empty,
                 Sale = product.Sale,
                 Price = product.Price,
+                ProductSkinTypes = product.ProductSkinTypes.Select(x => x.ToProductSkinTypeDTO()).ToList(),
+                Comments = product.Comments.Select(x => x.ToCommentDTO()).ToList(),
                 Status = product.Status,
             };
         }
@@ -63,5 +66,18 @@ namespace api.Mappers
                 Status = updateProductDTO.Status,
             };
         }
+
+        public static CartItemDTO ToCartItemDTO(this Product product)
+        {
+            return new CartItemDTO
+            {
+                ProductId = product.Id,
+                ProductImage = product.Image,
+                ProductName = product.Name,
+                ProductPrice = product.Price,
+                ProductSale = product.Sale,
+            };
+        }
+
     }
 }

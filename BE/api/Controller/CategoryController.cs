@@ -24,7 +24,7 @@ namespace api.Controller
         [HttpGet]
         public async Task<IActionResult> GetCategories()
         {
-            var categories = await _categoryRepo.GetCategories();
+            var categories = await _categoryRepo.GetCategoriesAsync();
             if (categories.Count == 0)
             {
                 return NotFound("No categories found");
@@ -42,7 +42,7 @@ namespace api.Controller
                 return BadRequest(ModelState);
             }
 
-            var category = await _categoryRepo.GetCategoryById(id);
+            var category = await _categoryRepo.GetCategoryByIdAsync(id);
 
             if (category == null)
             {
@@ -59,7 +59,7 @@ namespace api.Controller
                 return BadRequest(ModelState);
             }
             var category = categoryDTO.ToCategoryFromCreateDTO();
-            var newCategory = await _categoryRepo.AddCategory(category);
+            var newCategory = await _categoryRepo.AddCategoryAsync(category);
 
             return Ok(newCategory);
         }
@@ -72,7 +72,7 @@ namespace api.Controller
                 return BadRequest(ModelState);
             }
             var category = updateCategory.ToCategoryFromUpdateDTO();
-            var updatedCategory = await _categoryRepo.UpdateCategory(id, category);
+            var updatedCategory = await _categoryRepo.UpdateCategoryAsync(id, category);
 
             if (updatedCategory == null)
             {
@@ -85,7 +85,7 @@ namespace api.Controller
         [Route("{id}")]
         public async Task<IActionResult> DeleteCategory(int id)
         {
-            var result = await _categoryRepo.DeleteCategory(id);
+            var result = await _categoryRepo.DeleteCategoryAsync(id);
             if (result == null)
             {
                 return NotFound("Product not found");

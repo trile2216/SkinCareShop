@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
+using api.DTOs.ProductSkinType;
 using api.Enum;
 
 namespace api.DTOs.Products
@@ -23,26 +24,29 @@ namespace api.DTOs.Products
         public Gender Gender { get; set; }
 
         [Required]
-        [Range(1, int.MaxValue)]
+        [Range(1, 10000)]
         public int Stock { get; set; }
 
         [Required]
         public string? Description { get; set; }
 
         [Required]
-        [Range(1, int.MaxValue)]
+        [Range(1, 100)]
         public int CategoryId { get; set; }
 
         [Required]
-        [Range(1, int.MaxValue)]
+        [Range(1, 100)]
         public int BrandId { get; set; }
 
         [Required]
         public decimal? Sale { get; set; }
 
         [Required]
-        [Range(1, int.MaxValue)]
+        [Range(1, 1000000000)]
         public decimal Price { get; set; }
+
+        [Required]
+        public List<ProductSkinTypeDTO> ProductSkinTypes { get; set; } = new List<ProductSkinTypeDTO>();
 
         [Required]
         public bool Status { get; set; }

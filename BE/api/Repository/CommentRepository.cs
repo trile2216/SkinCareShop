@@ -25,7 +25,7 @@ namespace api.Repository
             return comment;
         }
 
-        public async Task<Comment?> DeleteComment(int id)
+        public async Task<Comment?> DeleteCommentAsync(int id)
         {
             var comment = await GetCommentByIdAsync(id);
             if (comment == null)

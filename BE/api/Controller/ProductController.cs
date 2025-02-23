@@ -16,16 +16,19 @@ namespace api.Controller
     {
         private readonly IProductRepository _productRepo;
 
-        public ProductController(ApplicationDbContext context, IProductRepository productRepo)
+        private readonly IProductSkinTypeRepository _productSkinTypeRepo;
+
+        public ProductController(IProductSkinTypeRepository productSkinTypeRepo, IProductRepository productRepo)
         {
             _productRepo = productRepo;
+            _productSkinTypeRepo = productSkinTypeRepo;
         }
 
 
         [HttpGet]
         public async Task<IActionResult> GetAllProducts()
         {
-            var products = await _productRepo.GetAllAsync();
+            var products = await _productRepo.GetAllProductAsync();
 
             if (products.Count == 0)
             {
@@ -46,7 +49,7 @@ namespace api.Controller
                 return BadRequest(ModelState);
             }
 
-            var product = await _productRepo.GetByIdAsync(id);
+            var product = await _productRepo.GetProductByIdAsync(id);
 
             if (product == null)
             {
@@ -66,7 +69,12 @@ namespace api.Controller
 
             var product = productDTO.ToProductFromCreateDTO();
 
-            await _productRepo.CreateAsync(product);
+            await _productRepo.CreateProductAsync(product);
+
+            foreach (var productSkinType in productDTO.ProductSkinTypes)
+            {
+                await _productSkinTypeRepo.AddProductSkinTypeAsync(productSkinType.ToProductSkinTypeFromRequestDTO(product.Id));
+            }
 
             return CreatedAtAction(nameof(GetProductById), new { id = product.Id }, product.ToProductDTO());
         }
@@ -80,12 +88,14 @@ namespace api.Controller
                 return BadRequest(ModelState);
             }
 
-            var product = await _productRepo.UpdateAsync(id, productDTO.ToProductFromUpdateDTO());
+            var product = await _productRepo.UpdateProductAsync(id, productDTO.ToProductFromUpdateDTO());
 
             if (product == null)
             {
                 return NotFound("Product not found");
             }
+            var productSkinTypes = productDTO.ProductSkinTypes.Select(p => p.ToProductSkinTypeFromDTO(p.ProductId)).ToList();
+            await _productSkinTypeRepo.UpdateProductSkinTypesAsync(product.Id, productSkinTypes);
 
             return Ok(product.ToProductDTO());
         }
@@ -99,7 +109,7 @@ namespace api.Controller
                 return BadRequest(ModelState);
             }
 
-            var product = await _productRepo.DeleteAsync(id);
+            var product = await _productRepo.DeleteProductAsync(id);
 
             if (product == null)
             {
@@ -118,7 +128,7 @@ namespace api.Controller
                 return BadRequest(ModelState);
             }
 
-            var products = await _productRepo.GetByCategoryIdAsync(categoryId);
+            var products = await _productRepo.GetProductByCategoryIdAsync(categoryId);
             if (products.Count == 0)
             {
                 return NotFound("No products found");
@@ -135,7 +145,7 @@ namespace api.Controller
                 return BadRequest(ModelState);
             }
 
-            var products = await _productRepo.GetByBrandIdAsync(brandId);
+            var products = await _productRepo.GetProductByBrandIdAsync(brandId);
 
             if (products.Count == 0)
             {

@@ -9,19 +9,21 @@ namespace api.Interface
     public interface IProductRepository
     {
 
-        Task<List<Product>> GetAllAsync();
+        Task<List<Product>> GetAllProductAsync();
 
-        Task<Product?> GetByIdAsync(int id);
+        Task<Product?> GetProductByIdAsync(int id);
 
-        Task<Product> CreateAsync(Product product);
+        Task<Product> CreateProductAsync(Product product);
 
-        Task<Product?> UpdateAsync(int id, Product newProduct);
+        Task<Product?> UpdateProductAsync(int id, Product newProduct);
 
-        Task<Product?> DeleteAsync(int id);
+        Task<Product?> DeleteProductAsync(int id);
 
-        Task<List<Product>> GetByCategoryIdAsync(int id);
+        Task<List<Product>> GetProductByCategoryIdAsync(int id);
 
-        Task<List<Product>> GetByBrandIdAsync(int id);
+        Task<List<Product>> GetProductByBrandIdAsync(int id);
+
+
 
     }
 }

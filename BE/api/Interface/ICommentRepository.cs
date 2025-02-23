@@ -16,7 +16,7 @@ namespace api.Interface
 
         Task<Comment?> UpdateCommentAsync(int id, Comment comment);
 
-        Task<Comment?> DeleteComment(int id);
+        Task<Comment?> DeleteCommentAsync(int id);
 
         Task<List<Comment>> GetCommentsByProductIdAsync(int productId);
 

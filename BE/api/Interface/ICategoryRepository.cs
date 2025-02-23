@@ -8,13 +8,13 @@ namespace api.Interface
 {
     public interface ICategoryRepository
     {
-        Task<List<Category>> GetCategories();
-        Task<Category?> GetCategoryById(int id);
+        Task<List<Category>> GetCategoriesAsync();
+        Task<Category?> GetCategoryByIdAsync(int id);
 
-        Task<Category> AddCategory(Category category);
+        Task<Category> AddCategoryAsync(Category category);
 
-        Task<Category?> UpdateCategory(int id, Category newCategory);
+        Task<Category?> UpdateCategoryAsync(int id, Category newCategory);
 
-        Task<Category?> DeleteCategory(int id);
+        Task<Category?> DeleteCategoryAsync(int id);
     }
 }

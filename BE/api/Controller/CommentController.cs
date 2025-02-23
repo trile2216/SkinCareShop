@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Internal;
 namespace api.Controller
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/comment")]
     public class CommentController : ControllerBase
     {
         private readonly ICommentRepository _commentRepo;
@@ -38,7 +38,7 @@ namespace api.Controller
 
         [HttpGet]
         [Route("{id:int}")]
-        public async Task<IActionResult> GetComment(int id)
+        public async Task<IActionResult> GetCommentById(int id)
         {
             if (!ModelState.IsValid)
             {
@@ -149,7 +149,7 @@ namespace api.Controller
                 return BadRequest();
             }
 
-            var result = await _commentRepo.DeleteComment(id);
+            var result = await _commentRepo.DeleteCommentAsync(id);
 
             if (result == null)
             {
