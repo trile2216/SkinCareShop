@@ -96,6 +96,14 @@ builder.Services.AddControllers().AddNewtonsoftJson(options =>
     options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
 });
 
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(60); // Thời gian session tồn tại
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+});
+
 
 builder.Services.AddCors(p => p.AddPolicy(name: corsName, policy =>
 {
@@ -110,7 +118,9 @@ builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<IBrandRepository, BrandRepository>();
 builder.Services.AddScoped<ICommentRepository, CommentRepository>();
-
+builder.Services.AddScoped<IProductSkinTypeRepository, ProductSkinTypeRepository>();
+builder.Services.AddScoped<IAccountRepository, AccountRepository>();
+builder.Services.AddScoped<ICartServices, CartService>();
 
 var app = builder.Build();
 
@@ -126,6 +136,7 @@ app.UseHttpsRedirection();
 app.UseCors(corsName);
 
 app.UseAuthentication();
+app.UseSession();
 app.UseAuthorization();
 
 app.MapControllers();
