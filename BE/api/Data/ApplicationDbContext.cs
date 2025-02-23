@@ -202,8 +202,9 @@ public partial class ApplicationDbContext : IdentityDbContext<ApplicationUser>
                 .IsUnicode(false)
                 .HasColumnName("phone");
 
-            entity.HasOne(d => d.Account).WithMany(p => p.Customers)
-                .HasForeignKey(d => d.AccountId)
+            entity.HasOne(d => d.Account)
+                .WithOne(p => p.Customer)
+                .HasForeignKey<Customer>(d => d.AccountId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK__Customer__accoun__123EB7A3");
         });

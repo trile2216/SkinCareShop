@@ -21,5 +21,5 @@ public partial class Account
 
     public virtual ApplicationUser IdentityUser { get; set; } = null!;
 
-    public virtual ICollection<Customer> Customers { get; set; } = new List<Customer>();
+    public virtual Customer? Customer { get; set; }
 }
