@@ -9,9 +9,11 @@ namespace api.DTOs.Account
 {
     public class AccountDTO
     {
+        public int Id { get; set; }
+
         public string UserName { get; set; } = null!;
 
-        public UserRole Role { get; set; }
+        public string Role { get; set; } = String.Empty;
 
         public bool IsActive { get; set; }
 

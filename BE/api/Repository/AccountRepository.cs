@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using api.Data;
 using api.Interface;
 using api.Models;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace api.Repository
@@ -17,7 +18,6 @@ namespace api.Repository
         {
             _context = context;
         }
-
 
         public async Task<List<Account>> GetAllAccountAsync()
         {
@@ -52,9 +52,19 @@ namespace api.Repository
 
         }
 
-        public Task<Account?> DeleteAccountAsync(int id)
+        public async Task<Account?> DeleteAccountAsync(int id)
         {
-            throw new NotImplementedException();
+            var account = await GetAccountByIdAsync(id);
+
+            if (account == null)
+            {
+                return null;
+            }
+
+            account.IsActive = false;
+            await _context.SaveChangesAsync();
+
+            return account;
         }
     }
 }

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using api.DTOs.Cart;
 using api.Interface;
 using api.Models;
 using Newtonsoft.Json;
@@ -86,6 +87,11 @@ namespace api.Services
 
             }
             SetCart(cart);
+        }
+
+        public Task<Order> CheckOut(CheckOutDTO checkOutDTO)
+        {
+            throw new NotImplementedException();
         }
     }
 }

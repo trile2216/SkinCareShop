@@ -14,10 +14,23 @@ namespace api.Mappers
         {
             return new AccountDTO
             {
+                Id = account.Id,
                 UserName = account.UserName,
-                Role = account.Role,
+                Role = account.Role.ToString(),
                 IsActive = account.IsActive,
                 Customer = account.Customer
+            };
+        }
+
+        public static Account ToAccountFromCreateDTO(this CreateAccountDTO createAccountDTO, string userId)
+        {
+            return new Account
+            {
+                UserName = createAccountDTO.UserName,
+                Role = createAccountDTO.Role,
+                IsActive = true,
+                Password = createAccountDTO.Password,
+                IdentityUserId = userId
             };
         }
     }

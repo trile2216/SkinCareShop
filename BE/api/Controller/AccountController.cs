@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using api.Data;
+using api.DTOs.Account;
 using api.Interface;
 using api.Mappers;
 using api.Models;
@@ -59,7 +60,31 @@ namespace api.Controller
         }
 
 
+        [HttpPost]
+        public async Task<IActionResult> CreateAccount([FromBody] CreateAccountDTO createAccountDTO)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
 
+            var user = new ApplicationUser
+            {
+                UserName = createAccountDTO.UserName
+            };
+
+            var result = await _userManager.CreateAsync(user, createAccountDTO.Password);
+
+            if (!result.Succeeded)
+            {
+                return BadRequest(result.Errors);
+            }
+
+            var account = createAccountDTO.ToAccountFromCreateDTO(user.Id);
+
+            await _accountRepo.CreateAccountAsync(account);
+            return CreatedAtAction(nameof(GetAccountById), new { id = account.Id }, account.ToAccountDTO());
+        }
     }
 }
 

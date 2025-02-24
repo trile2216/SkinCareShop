@@ -66,7 +66,16 @@ namespace api.Controller
                     IdentityUserId = user.Id
                 };
 
+                var customer = new Customer
+                {
+                    FirstName = registerDTO.FirstName,
+                    LastName = registerDTO.LastName,
+                    Email = registerDTO.Email,
+                    AccountId = account.Id
+                };
+
                 _context.Accounts.Add(account);
+                _context.Customers.Add(customer);
                 await _context.SaveChangesAsync();
 
                 return Ok(registerDTO);
@@ -109,6 +118,7 @@ namespace api.Controller
                     Role = user.Account.Role.ToString(),
                     Token = _tokenService.CreateToken(user)
                 };
+
 
                 return Ok(new { message = "Login successful", data = userDTO });
 
