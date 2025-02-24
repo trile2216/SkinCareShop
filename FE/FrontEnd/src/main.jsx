@@ -10,6 +10,7 @@ import SkinQuiz from "./pages/quiz/Quiz.jsx";
 import ProductList from "./pages/productlist/productList.jsx";
 import { CartProvider } from "./context/CartContext";
 import Checkout from "./pages/checkout/CheckOut.jsx";
+import ProductManagement from "./pages/productManament/ProductManagement.jsx";
 
 // document.getElementById('root')
 // 1. Tìm tới root
@@ -40,14 +41,18 @@ const router = createBrowserRouter([
     path: "/checkout",
     element: <Checkout />,
   },
+  {
+    path: "/productmanagement",
+    element: <ProductManagement />,
+  },
 ]);
 
 createRoot(document.getElementById("root")).render(
   <>
-  <CartProvider> 
-    <RouterProvider router={router} />
-    <ToastContainer />
-  </CartProvider>
+    <CartProvider>
+      <RouterProvider router={router} />
+      <ToastContainer />
+    </CartProvider>
   </>
 );
 
