@@ -268,7 +268,9 @@ public partial class ApplicationDbContext : IdentityDbContext<ApplicationUser>
                 .HasPrecision(0)
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnName("orderDate");
-            entity.Property(e => e.Status).HasColumnName("status");
+            entity.Property(e => e.Status)
+                .HasConversion<int>()
+                .HasColumnName("status");
             entity.Property(e => e.TotalPrice)
                 .HasColumnType("decimal(10, 2)")
                 .HasColumnName("totalPrice");
