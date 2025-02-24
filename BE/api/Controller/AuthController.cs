@@ -66,6 +66,8 @@ namespace api.Controller
                     IdentityUserId = user.Id
                 };
 
+                _context.Accounts.Add(account);
+                await _context.SaveChangesAsync();
                 var customer = new Customer
                 {
                     FirstName = registerDTO.FirstName,
@@ -74,7 +76,7 @@ namespace api.Controller
                     AccountId = account.Id
                 };
 
-                _context.Accounts.Add(account);
+
                 _context.Customers.Add(customer);
                 await _context.SaveChangesAsync();
 

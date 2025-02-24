@@ -27,10 +27,10 @@ namespace api.DTOs
         [Required]
         public string LastName { get; set; } = string.Empty;
 
-        [Required]
-        [DataType(DataType.Password)]
-        [Compare("Password", ErrorMessage = "Password and Confirm Password do not match.")]
-        public string ComfirmPassword { get; set; } = string.Empty;
+        // [Required]
+        // [DataType(DataType.Password)]
+        // [Compare("Password", ErrorMessage = "Password and Confirm Password do not match.")]
+        // public string ComfirmPassword { get; set; } = string.Empty;
 
     }
 }
