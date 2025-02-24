@@ -1,4 +1,4 @@
-import { Link } from "react-router"; 
+import { Link } from "react-router";
 import { FiTrash, FiPlus, FiMinus, FiX } from "react-icons/fi";
 import { useCart } from "../context/CartContext";
 
@@ -38,20 +38,26 @@ const Cart = ({ isCartOpen, onClose }) => {
                   <div className="flex-1 px-4">
                     <p className="font-medium text-sm">{item.name}</p>
                     <p className="text-gray-600 text-xs">
-                      {(item.price * item.quantity).toLocaleString("vi-VN")} VND
+                      {(item.price * item.quantity).toLocaleString("vi-VN")} $
                     </p>
 
                     {/* Increase/Decrease Quantity */}
                     <div className="flex items-center space-x-2 mt-1">
-                    <button
-                            onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                            className="p-1 rounded-full bg-rose-200 hover:bg-rose-300"
-                            >
-                            <FiMinus size={14} />
-                        </button>
-                      <span className="px-2 text-sm font-semibold">{item.quantity}</span>
                       <button
-                        onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                        onClick={() =>
+                          updateQuantity(item.id, item.quantity - 1)
+                        }
+                        className="p-1 rounded-full bg-rose-200 hover:bg-rose-300"
+                      >
+                        <FiMinus size={14} />
+                      </button>
+                      <span className="px-2 text-sm font-semibold">
+                        {item.quantity}
+                      </span>
+                      <button
+                        onClick={() =>
+                          updateQuantity(item.id, item.quantity + 1)
+                        }
                         className="p-1 rounded-full bg-rose-200 hover:bg-rose-300"
                       >
                         <FiPlus size={14} />
@@ -72,7 +78,7 @@ const Cart = ({ isCartOpen, onClose }) => {
 
             {/* Total */}
             <div className="px-4 py-2 font-semibold text-right border-t border-gray-200">
-              Total: {getTotalPrice().toLocaleString("vi-VN")} VND
+              Total: {getTotalPrice().toLocaleString("vi-VN")} $
             </div>
 
             {/* => Check out */}

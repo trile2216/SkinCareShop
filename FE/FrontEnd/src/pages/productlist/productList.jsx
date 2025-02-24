@@ -1,338 +1,165 @@
-import { useState, useEffect, useMemo } from "react";
-import { FaHeart, FaStar, FaStarHalf, FaShoppingCart } from "react-icons/fa";
-import { RiCloseLine } from "react-icons/ri";
+import React, { useState, useEffect, useMemo } from "react";
+import { useCart } from "../../context/CartContext";
 import api from "../../config/axios";
-
-const categories = ["Skincare", "Makeup", "Hair Care", "Body Care"];
-const brands = ["Luminous", "Glamour", "Vitality"];
+import ProductCard from "./ProductCard";
+import Header from "../../components/Header";
+import Footer from "../../components/Footer";
+import { Slider } from "antd";
 
 const ProductList = () => {
   const [products, setProducts] = useState([]);
   const [filters, setFilters] = useState({
-    priceRange: [0, 200],
+    priceRange: [0, 1000000],
     category: "",
     brand: "",
     onSaleOnly: false,
-    minRating: 0,
   });
-
-  const [selectedProduct, setSelectedProduct] = useState(null);
-  const [wishlist, setWishlist] = useState([]);
+  const [sortBy, setSortBy] = useState("default");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [categories, setCategories] = useState([]);
+  const [brands, setBrands] = useState([]);
 
   useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        setLoading(true);
-        const response = await api.get("/product");
-        setProducts(response.data);
-        setError(null);
-      } catch (err) {
-        setError("Failed to fetch products. Please try again later.");
-        console.error("Error fetching products:", err);
-      } finally {
-        setLoading(false);
-      }
+    const fetchData = async () => {
+      setLoading(true);
+      const [productsRes, categoriesRes, brandsRes] = await Promise.all([
+        api.get("/product"),
+        api.get("/category"),
+        api.get("/brand"),
+      ]);
+      setProducts(productsRes.data);
+      setCategories(categoriesRes.data);
+      setBrands(brandsRes.data);
+      setError(null);
     };
 
-    fetchProducts();
+    fetchData();
   }, []);
 
-  const filteredProducts = useMemo(() => {
-    return products.filter((product) => {
-      const price = product.salePrice || product.originalPrice;
+  const filteredAndSortedProducts = useMemo(() => {
+    let result = products.filter((product) => {
       return (
-        price >= filters.priceRange[0] &&
-        price <= filters.priceRange[1] &&
-        (!filters.category || product.category === filters.category) &&
-        (!filters.brand || product.brand === filters.brand) &&
-        (!filters.onSaleOnly || product.salePrice) &&
-        product.rating >= filters.minRating
+        product.price >= filters.priceRange[0] &&
+        product.price <= filters.priceRange[1] &&
+        (!filters.category ||
+          product.categoryId === parseInt(filters.category)) &&
+        (!filters.brand || product.brandId === parseInt(filters.brand)) &&
+        (!filters.onSaleOnly || product.sale > 0) &&
+        product.status === true
       );
     });
-  }, [filters, products]);
 
-  const toggleWishlist = (productId) => {
-    setWishlist((prev) =>
-      prev.includes(productId)
-        ? prev.filter((id) => id !== productId)
-        : [...prev, productId]
-    );
+    switch (sortBy) {
+      case "priceLowToHigh":
+        return result.sort((a, b) => a.price - b.price);
+      case "priceHighToLow":
+        return result.sort((a, b) => b.price - a.price);
+      default:
+        return result;
+    }
+  }, [filters, products, sortBy]);
+
+  const handleFilterChange = (filterName, value) => {
+    setFilters((prev) => ({ ...prev, [filterName]: value }));
   };
-
-  const RatingStars = ({ rating }) => {
-    const fullStars = Math.floor(rating);
-    const hasHalfStar = rating % 1 !== 0;
-
-    return (
-      <div className="flex text-yellow-400">
-        {[...Array(fullStars)].map((_, i) => (
-          <FaStar key={i} />
-        ))}
-        {hasHalfStar && <FaStarHalf />}
-      </div>
-    );
-  };
-
-  const calculateDiscount = (original, sale) => {
-    return Math.round(((original - sale) / original) * 100);
-  };
+  if (error) return <div>{error}</div>;
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {loading && (
-        <div className="flex items-center justify-center h-screen">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-pink-500"></div>
-        </div>
-      )}
+    <>
+      <Header />
+      <div className="container mx-auto px-4 py-8">
+        <div className="flex flex-col md:flex-row gap-6">
+          <div className="w-full md:w-1/4 bg-white p-4 rounded-lg shadow">
+            <h2 className="text-xl font-semibold mb-4">Filters</h2>
 
-      {error && (
-        <div className="text-center py-8">
-          <p className="text-red-500">{error}</p>
-          <button
-            onClick={() => window.location.reload()}
-            className="mt-4 bg-pink-500 text-white px-4 py-2 rounded-lg hover:bg-pink-600"
-          >
-            Retry
-          </button>
-        </div>
-      )}
+            <div className="mb-6">
+              <h3 className="font-medium mb-2">Sort By</h3>
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value)}
+                className="w-full p-2 border rounded"
+              >
+                <option value="default">Default Sorting</option>
+                <option value="priceLowToHigh">Price: Low to High</option>
+                <option value="priceHighToLow">Price: High to Low</option>
+              </select>
+            </div>
 
-      {!loading && !error && (
-        <div className="container mx-auto px-4 py-8">
-          <div className="flex flex-col lg:flex-row gap-8">
-            <div className="lg:w-1/4 space-y-6 bg-white p-6 rounded-lg shadow-sm">
-              <h2 className="text-2xl font-semibold text-gray-800">Filters</h2>
-
-              <div>
-                <h3 className="font-medium mb-2">Price Range</h3>
-                <input
-                  type="range"
-                  min="0"
-                  max="200"
-                  value={filters.priceRange[1]}
-                  onChange={(e) =>
-                    setFilters((prev) => ({
-                      ...prev,
-                      priceRange: [
-                        prev.priceRange[0],
-                        parseInt(e.target.value),
-                      ],
-                    }))
-                  }
-                  className="w-full"
-                />
-                <div className="flex justify-between text-sm text-gray-600">
-                  <span>${filters.priceRange[0]}</span>
-                  <span>${filters.priceRange[1]}</span>
-                </div>
+            <div className="mb-6">
+              <h3 className="font-medium mb-2">Price Range</h3>
+              <Slider
+                range
+                min={0}
+                max={100}
+                step={5}
+                value={filters.priceRange}
+                onChange={(value) => handleFilterChange("priceRange", value)}
+              />
+              <div className="flex justify-between text-sm text-gray-600">
+                <span>{filters.priceRange[0].toLocaleString("vi-VN")} $</span>
+                <span>{filters.priceRange[1].toLocaleString("vi-VN")} $</span>
               </div>
+            </div>
 
-              <div>
-                <h3 className="font-medium mb-2">Categories</h3>
+            <div className="mb-6">
+              <h3 className="font-medium mb-2">Categories</h3>
+              <select
+                value={filters.category}
+                onChange={(e) => handleFilterChange("category", e.target.value)}
+                className="w-full p-2 border rounded"
+              >
+                <option value="">All Categories</option>
                 {categories.map((category) => (
-                  <label
-                    key={category}
-                    className="flex items-center space-x-2 mb-2"
-                  >
-                    <input
-                      type="checkbox"
-                      checked={filters.category === category}
-                      onChange={() =>
-                        setFilters((prev) => ({
-                          ...prev,
-                          category: prev.category === category ? "" : category,
-                        }))
-                      }
-                      className="rounded text-pink-500"
-                    />
-                    <span>{category}</span>
-                  </label>
+                  <option key={category.id} value={category.id}>
+                    {category.name}
+                  </option>
                 ))}
-              </div>
+              </select>
+            </div>
 
-              <div>
-                <h3 className="font-medium mb-2">Brands</h3>
+            <div className="mb-6">
+              <h3 className="font-medium mb-2">Brands</h3>
+              <select
+                value={filters.brand}
+                onChange={(e) => handleFilterChange("brand", e.target.value)}
+                className="w-full p-2 border rounded"
+              >
+                <option value="">All Brands</option>
                 {brands.map((brand) => (
-                  <label
-                    key={brand}
-                    className="flex items-center space-x-2 mb-2"
-                  >
-                    <input
-                      type="checkbox"
-                      checked={filters.brand === brand}
-                      onChange={() =>
-                        setFilters((prev) => ({
-                          ...prev,
-                          brand: prev.brand === brand ? "" : brand,
-                        }))
-                      }
-                      className="rounded text-pink-500"
-                    />
-                    <span>{brand}</span>
-                  </label>
+                  <option key={brand.id} value={brand.id}>
+                    {brand.name}
+                  </option>
                 ))}
-              </div>
+              </select>
+            </div>
 
+            <div className="mb-6">
               <label className="flex items-center space-x-2">
                 <input
                   type="checkbox"
                   checked={filters.onSaleOnly}
                   onChange={(e) =>
-                    setFilters((prev) => ({
-                      ...prev,
-                      onSaleOnly: e.target.checked,
-                    }))
+                    handleFilterChange("onSaleOnly", e.target.checked)
                   }
-                  className="rounded text-pink-500"
+                  className="rounded"
                 />
-                <span>Sale Items Only</span>
+                <span>On Sale Only</span>
               </label>
             </div>
+          </div>
 
-            <div className="lg:w-3/4">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {filteredProducts.map((product) => (
-                  <div
-                    key={product.id}
-                    className="bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow relative"
-                  >
-                    <div className="relative">
-                      <img
-                        src={product.imageUrl}
-                        alt={product.name}
-                        className="w-full h-64 object-cover hover:scale-105 transition-transform"
-                        loading="lazy"
-                      />
-                      {product.salePrice && (
-                        <div className="absolute -top-2 -right-2 overflow-hidden w-24 h-24 z-10">
-                          <div className="absolute top-0 right-0 h-8 w-32 bg-red-500 text-white text-center transform rotate-45 origin-top-left translate-y-4 translate-x-6">
-                            <span className="text-sm font-bold">
-                              {calculateDiscount(
-                                product.originalPrice,
-                                product.salePrice
-                              )}
-                              % OFF
-                            </span>
-                          </div>
-                        </div>
-                      )}
-                      <button
-                        onClick={() => toggleWishlist(product.id)}
-                        className="absolute top-2 left-2 p-2 rounded-full bg-white shadow-sm hover:bg-gray-100"
-                      >
-                        <FaHeart
-                          className={
-                            wishlist.includes(product.id)
-                              ? "text-red-500"
-                              : "text-gray-400"
-                          }
-                        />
-                      </button>
-                    </div>
-
-                    <div className="p-4">
-                      <h3 className="text-lg font-semibold text-gray-800">
-                        {product.name}
-                      </h3>
-                      <div className="flex items-center mt-1">
-                        <RatingStars rating={product.rating} />
-                        <span className="ml-2 text-sm text-gray-600">
-                          ({product.rating})
-                        </span>
-                      </div>
-
-                      <div className="mt-2 flex items-center">
-                        {product.salePrice ? (
-                          <>
-                            <span className="text-lg font-bold text-gray-800">
-                              ${product.salePrice}
-                            </span>
-                            <span className="ml-2 text-sm text-gray-500 line-through">
-                              ${product.originalPrice}
-                            </span>
-                          </>
-                        ) : (
-                          <span className="text-lg font-bold text-gray-800">
-                            ${product.originalPrice}
-                          </span>
-                        )}
-                      </div>
-
-                      <button
-                        onClick={() => setSelectedProduct(product)}
-                        className="mt-4 w-full bg-pink-500 text-white py-2 rounded-lg hover:bg-pink-600 transition-colors flex items-center justify-center gap-2"
-                      >
-                        <FaShoppingCart />
-                        Add to Cart
-                      </button>
-                    </div>
-                  </div>
-                ))}
-              </div>
+          <div className="w-full md:w-3/4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {filteredAndSortedProducts.map((product) => (
+                <ProductCard key={product.id} product={product} />
+              ))}
             </div>
           </div>
         </div>
-      )}
-
-      {selectedProduct && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-lg max-w-2xl w-full">
-            <div className="p-6">
-              <div className="flex justify-between items-start">
-                <h2 className="text-2xl font-semibold text-gray-800">
-                  {selectedProduct.name}
-                </h2>
-                <button
-                  onClick={() => setSelectedProduct(null)}
-                  className="text-gray-500 hover:text-gray-700"
-                >
-                  <RiCloseLine size={24} />
-                </button>
-              </div>
-              <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-6">
-                <img
-                  src={selectedProduct.imageUrl}
-                  alt={selectedProduct.name}
-                  className="w-full h-64 object-cover rounded-lg"
-                />
-                <div>
-                  <p className="text-gray-600 mb-4">
-                    {selectedProduct.description}
-                  </p>
-                  <div className="flex items-center mb-4">
-                    <RatingStars rating={selectedProduct.rating} />
-                    <span className="ml-2 text-gray-600">
-                      ({selectedProduct.rating})
-                    </span>
-                  </div>
-                  <div className="flex items-center">
-                    {selectedProduct.salePrice ? (
-                      <>
-                        <span className="text-2xl font-bold text-gray-800">
-                          ${selectedProduct.salePrice}
-                        </span>
-                        <span className="ml-2 text-gray-500 line-through">
-                          ${selectedProduct.originalPrice}
-                        </span>
-                      </>
-                    ) : (
-                      <span className="text-2xl font-bold text-gray-800">
-                        ${selectedProduct.originalPrice}
-                      </span>
-                    )}
-                  </div>
-                  <button className="mt-6 w-full bg-pink-500 text-white py-2 rounded-lg hover:bg-pink-600 transition-colors">
-                    Add to Cart
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
+      </div>
+      <Footer />
+    </>
   );
 };
 

@@ -69,21 +69,13 @@ const ProductManagement = () => {
       key: "price",
       render: (price) => `$${price}`,
     },
-    {
-      title: "Quantity",
-      dataIndex: "quantity",
-      key: "quantity",
-    },
+
     {
       title: "Stock",
       dataIndex: "stock",
       key: "stock",
     },
-    {
-      title: "Status",
-      dataIndex: "status",
-      key: "status",
-    },
+
     {
       title: "Sale",
       dataIndex: "sale",
@@ -249,40 +241,11 @@ const ProductManagement = () => {
           >
             <Input type="number" />
           </Form.Item>
-          <Form.Item
-            label="Quantity"
-            name="quantity"
-            rules={[
-              {
-                required: true,
-                message: "Quantity cannot be empty!",
-              },
-            ]}
-          >
+
+          <Form.Item label="Sale" name="sale">
             <Input type="number" />
           </Form.Item>
-          <Form.Item
-            label="Sale"
-            name="sale"
-            rules={[
-              {
-                required: true,
-                message: "Quantity cannot be empty!",
-              },
-            ]}
-          >
-            <Input type="number" />
-          </Form.Item>
-          <Form.Item
-            label="Stock"
-            name="stock"
-            rules={[
-              {
-                required: true,
-                message: "Stock cannot be empty!",
-              },
-            ]}
-          >
+          <Form.Item label="Stock" name="stock">
             <Input type="number" />
           </Form.Item>
           <Form.Item label="Description" name="description">
@@ -312,21 +275,10 @@ const ProductManagement = () => {
           >
             <Input />
           </Form.Item>
-          <Form.Item
-            label="Status"
-            name="status"
-            rules={[
-              {
-                required: true,
-                message: "Status cannot be empty!",
-              },
-            ]}
-          >
-            <Input />
-          </Form.Item>
+
           <Form.Item label="Image" name="image">
             <Upload
-              action="https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload"
+              action="http://localhost:5286/api/upload"
               listType="picture-card"
               fileList={fileList}
               onPreview={handlePreview}

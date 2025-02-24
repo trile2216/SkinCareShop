@@ -10,9 +10,9 @@ const Header = () => {
   const { cartCount } = useCart();
 
   const categories = [
-    { name: "Home", path: "/homepage" },
-    { name: "Brands", path: "/" },
-    { name: "Skincare Library", path: "/" },
+    { name: "Home", path: "/" },
+    { name: "Shop", path: "/productlist" },
+    { name: "Skincare Library", path: "/library" },
     { name: "Sale", path: "/sale" },
     { name: "Take The Quiz", path: "/skinquiz" },
   ];
@@ -21,16 +21,16 @@ const Header = () => {
     <div className="bg-white shadow-md">
       <div className="container mx-auto px-3">
         <div className="flex items-center justify-between py-4">
-        {/* Logo */}
-          <Link to="/homepage">
+          {/* Logo */}
+          <Link to="/">
             <img
               src="src/assets/logo.png"
               className="h-25 w-auto cursor-pointer"
               alt="Logo"
             />
           </Link>
-        
-        {/* Search Bar */}
+
+          {/* Search Bar */}
           <div className="hidden md:flex flex-1 justify-center mx-8">
             <div className="relative w-1/3">
               <input
@@ -44,7 +44,7 @@ const Header = () => {
 
           <div className="flex items-center space-x-6">
             <div className="relative">
-            {/* Profile */}
+              {/* Profile */}
               <button
                 onClick={() => setIsProfileOpen(!isProfileOpen)}
                 className="text-gray-600 hover:text-teal-900"
@@ -69,7 +69,7 @@ const Header = () => {
               )}
             </div>
 
-              {/* Cart */}
+            {/* Cart */}
             <div className="relative">
               <button
                 onClick={() => setIsCartOpen(!isCartOpen)}
