@@ -47,7 +47,9 @@ const Checkout = () => {
                         />
                       </td>
                       <td className="py-2 px-4 font-semibold">{item.name}</td>
-                      <td className="py-2 px-4 text-gray-600">{item.brand}</td>
+                      <td className="py-2 px-4 text-gray-600">
+                        {item.brandName}
+                      </td>
                       <td className="py-2 px-4 text-center">
                         <div className="flex items-center justify-center">
                           <button
@@ -84,9 +86,11 @@ const Checkout = () => {
 
               {/* Payment */}
               <div className="mt-4 text-right">
-                <button className="bg-rose-500 text-white py-2 px-6 rounded-lg hover:bg-rose-600">
-                  Proceed to Payment
-                </button>
+                <Link to="/checkoutDetail">
+                  <button className="bg-rose-500 text-white py-2 px-6 rounded-lg hover:bg-rose-600">
+                    Proceed to Payment
+                  </button>{" "}
+                </Link>
               </div>
             </div>
           )}
