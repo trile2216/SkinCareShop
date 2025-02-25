@@ -11,6 +11,7 @@ import ProductList from "./pages/productlist/productList.jsx";
 import { CartProvider } from "./context/CartContext";
 import Checkout from "./pages/checkout/CheckOut.jsx";
 import ProductManagement from "./pages/productManament/ProductManagement.jsx";
+import CheckOutDetail from "./pages/checkout/CheckOutDetails.jsx";
 
 // document.getElementById('root')
 // 1. Tìm tới root
@@ -45,6 +46,11 @@ const router = createBrowserRouter([
     path: "/productmanagement",
     element: <ProductManagement />,
   },
+  {
+    path: "/checkoutDetail",
+    element: <CheckOutDetail />,
+  },
+ 
 ]);
 
 createRoot(document.getElementById("root")).render(
