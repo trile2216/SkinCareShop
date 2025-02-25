@@ -23,6 +23,8 @@ namespace api.Mappers
                 Description = product.Description,
                 BrandName = product.Brand?.Name ?? string.Empty,
                 CategoryName = product.Category?.Name ?? string.Empty,
+                BrandId = product.BrandId,
+                CategoryId = product.CategoryId,
                 Sale = product.Sale,
                 Price = product.Price,
                 ProductSkinTypes = product.ProductSkinTypes.Select(x => x.ToProductSkinTypeDTO()).ToList(),
