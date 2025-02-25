@@ -8,7 +8,25 @@ const Checkout = () => {
 
   return (
     <>
-    <div className="container mx-auto p-12">
+      <div className="container mx-auto p-12">
+      {/* Checkout Progress Bar */}
+      <div className="flex items-center justify-center mb-8">
+        <div className="flex items-center">
+          <div className="w-8 h-8 bg-rose-500 text-white flex items-center justify-center rounded-full font-bold">1</div>
+          <span className="ml-2 text-rose-700 font-semibold">Your Cart</span>
+        </div>
+        <div className="flex-1 h-px bg-gray-300 mx-4"></div>
+        <div className="flex items-center">
+          <div className="w-8 h-8 bg-gray-300 text-white flex items-center justify-center rounded-full font-bold">2</div>
+          <span className="ml-2 text-gray-500 font-semibold">Checkout Details</span>
+        </div>
+        <div className="flex-1 h-px bg-gray-300 mx-4"></div>
+        <div className="flex items-center">
+          <div className="w-8 h-8 bg-gray-300 text-gray-500 flex items-center justify-center rounded-full font-bold">3</div>
+          <span className="ml-2 text-gray-500 font-semibold">Order Complete</span>
+        </div>
+      </div>
+
       {/* "Keep Shopping" */}
       <Link to="/homepage" className="flex items-center text-gray-600 hover:text-gray-900 mb-4">
         <FiArrowLeft className="mr-2" size={20} />
@@ -72,15 +90,23 @@ const Checkout = () => {
             </div>
 
             {/* Payment */}
-            <div className="mt-4 text-right">
-              <button className="bg-rose-500 text-white py-2 px-6 rounded-lg hover:bg-rose-600">
-                Proceed to Payment
-              </button>
-            </div>
+            
+              <div className="mt-4 text-right">
+                <Link to = "/checkoutDetail" >
+                <button className="bg-rose-500 text-white py-2 px-6 rounded-lg hover:bg-rose-600"
+                  >
+                    Proceed to Payment
+                  </button>
+                </Link>
+                  
+              </div>
+           
           </div>
         )}
       </div>
     </div>
+    
+
 
     {/* Footer */}
     <Footer />
