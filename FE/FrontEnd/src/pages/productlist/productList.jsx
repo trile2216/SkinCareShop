@@ -63,15 +63,16 @@ const ProductList = () => {
   const handleFilterChange = (filterName, value) => {
     setFilters((prev) => ({ ...prev, [filterName]: value }));
   };
+
   if (error) return <div>{error}</div>;
 
   return (
     <>
       <Header />
       <div className="container mx-auto px-4 py-8">
-        <div className="flex flex-col md:flex-row gap-6">
-          <div className="w-full md:w-1/4 bg-white p-4 rounded-lg shadow">
-            <h2 className="text-xl font-semibold mb-4">Filters</h2>
+        <div className="flex flex-col md:flex-row gap-8">
+          <div className="w-full md:w-1/4 bg-white p-6 rounded-lg shadow-md h-fit">
+            <h2 className="text-xl font-semibold mb-6">Filters</h2>
 
             <div className="mb-6">
               <h3 className="font-medium mb-2">Sort By</h3>
@@ -144,13 +145,13 @@ const ProductList = () => {
                   }
                   className="rounded"
                 />
-                <span>On Sale Only</span>
+                <span>On Sale</span>
               </label>
             </div>
           </div>
 
           <div className="w-full md:w-3/4">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredAndSortedProducts.map((product) => (
                 <ProductCard key={product.id} product={product} />
               ))}

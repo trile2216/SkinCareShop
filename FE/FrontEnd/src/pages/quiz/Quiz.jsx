@@ -504,7 +504,7 @@ const SkinQuiz = () => {
 
       <div className="bg-white rounded-lg p-8 shadow-lg">
         <h2 className="text-sm text-purple-600 mb-2">
-          {questions[step - 1].category}
+          Question: {questions[step - 1].id}/40
         </h2>
         <h3 className="text-xl font-semibold mb-6">
           {questions[step - 1].question}
