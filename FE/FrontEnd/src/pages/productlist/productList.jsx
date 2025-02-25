@@ -9,7 +9,7 @@ import { Slider } from "antd";
 const ProductList = () => {
   const [products, setProducts] = useState([]);
   const [filters, setFilters] = useState({
-    priceRange: [0, 1000000],
+    priceRange: [0, 50],
     category: "",
     brand: "",
     onSaleOnly: false,
@@ -44,7 +44,7 @@ const ProductList = () => {
         product.price <= filters.priceRange[1] &&
         (!filters.category ||
           product.categoryId === parseInt(filters.category)) &&
-        (!filters.brand || product.brandId === parseInt(filters.brand)) &&
+        (!filters.brand || product.brandId === parseInt(filters.brandName)) &&
         (!filters.onSaleOnly || product.sale > 0) &&
         product.status === true
       );

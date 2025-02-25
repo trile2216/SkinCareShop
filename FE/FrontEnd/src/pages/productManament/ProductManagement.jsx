@@ -185,11 +185,11 @@ const ProductManagement = () => {
   return (
     <div>
       <ToastContainer />
-      <h1>Order Management</h1>
-      <Button onClick={handleOpenModal}>Add new Order</Button>
+      <h1>Product Management</h1>
+      <Button onClick={handleOpenModal}>Add new Product</Button>
       <Table dataSource={studentList} columns={columns} />
       <Modal
-        title="Create new order"
+        title="Create new product"
         open={isOpen}
         onClose={handleCloseModal}
         onCancel={handleCloseModal}

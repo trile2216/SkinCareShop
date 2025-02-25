@@ -12,432 +12,423 @@ const SkinQuiz = () => {
     {
       id: "1",
       category: "D/O",
-      question: "Sau khi rửa mặt 2 giờ, da bạn cảm thấy như thế nào?",
+      question: "How does your skin feel 2 hours after washing your face?",
       options: [
-        "Rất khô, căng và có thể bong tróc",
-        "Hơi khô nhưng vẫn thoải mái",
-        "Bình thường, không khô cũng không nhờn",
-        "Bóng nhờn, đặc biệt ở vùng chữ T",
+        "Very dry, tight and possibly flaky",
+        "A little dry but still comfortable",
+        "Normal, neither dry nor oily",
+        "Oily, especially in the T-zone",
       ],
     },
     {
       id: "2",
       category: "D/O",
-      question: "Kích thước lỗ chân lông trên mặt bạn như thế nào?",
+      question: "What is the size of the pores on your face?",
       options: [
-        "Khó nhìn thấy bằng mắt thường",
-        "Nhỏ và tinh tế",
-        "Vừa phải",
-        "Lớn và dễ nhìn thấy",
+        "Hard to see with the naked eye",
+        "Small and subtle",
+        "Moderate",
+        "Large and easily visible",
       ],
     },
     {
       id: "3",
       category: "D/O",
-      question: "Bạn thường phải thoa kem dưỡng ẩm bao nhiêu lần một ngày?",
+      question:
+        "How many times a day do you usually have to apply moisturizer?",
       options: [
-        "Nhiều lần trong ngày vì da luôn cảm thấy khô",
-        "2 lần/ngày theo thói quen",
-        "1 lần/ngày là đủ",
-        "Hiếm khi cần dùng kem dưỡng ẩm",
+        "Many times a day because my skin always feels dry",
+        "2 times a day as a habit",
+        "1 time a day is enough",
+        "Rarely need to use moisturizer",
       ],
     },
     {
       id: "4",
       category: "D/O",
-      question: "Vào buổi trưa, vùng chữ T của bạn như thế nào?",
+      question: "How does your T-zone feel at noon?",
       options: [
-        "Khô và có cảm giác căng",
-        "Bình thường, không có dấu hiệu đặc biệt",
-        "Hơi bóng nhẹ",
-        "Rất bóng nhờn",
+        "Dry and feels tight",
+        "Normal, no special signs",
+        "Slightly shiny",
+        "Very oily",
       ],
     },
     {
       id: "5",
       category: "D/O",
-      question: "Khi trang điểm, phấn của bạn thường",
+      question: "When you apply makeup, how often does your powder work",
       options: [
-        "Bị khô và vón cục",
-        "Giữ nguyên trạng thái",
-        "Hơi trôi nhẹ cuối ngày",
-        "Trôi nhiều và cần phải thấm dầu thường xuyên",
+        "Dries out and clumps",
+        "Stays put",
+        "Slightly fades at the end of the day",
+        "Waves off a lot and needs to be blotted frequently",
       ],
     },
     {
       id: "6",
       category: "D/O",
-      question: "Da bạn có xu hướng bị mụn không?",
+      question: "Does your skin tend to have acne?",
       options: [
-        "Hiếm khi bị mụn",
-        "Thỉnh thoảng có 1-2 nốt",
-        "Thường xuyên có mụn nhỏ",
-        "Hay bị mụn viêm và mụn đầu đen",
+        "Rarely has acne",
+        "Occasionally has 1-2 pimples",
+        "Often has small pimples",
+        "Often has inflammatory acne and blackheads",
       ],
     },
     {
       id: "7",
       category: "D/O",
-      question: "Khi chạm vào da mặt, bạn cảm thấy",
-      options: ["Khô ráp", "Mềm mại", "Hơi nhờn", "Rất nhờn"],
+      question: "When you touch your face, how does it feel",
+      options: ["Rough", "Soft", "Slightly oily", "Very oily"],
     },
     {
       id: "8",
       category: "D/O",
-      question: "Sau khi thức dậy vào buổi sáng, da mặt bạn",
-      options: [
-        "Cảm thấy căng và khô",
-        "Bình thường",
-        "Hơi bóng nhẹ",
-        "Rất bóng nhờn",
-      ],
+      question: "After waking up in the morning, your facial skin",
+      options: ["Feels tight and dry", "Normal", "Slightly shiny", "Very oily"],
     },
     {
       id: "9",
       category: "D/O",
-      question: "Khi không sử dụng kem dưỡng ẩm, da bạn",
+      question: "When not using moisturizer, your skin",
       options: [
-        "Rất khó chịu và có thể bong tróc",
-        "Hơi khô nhưng vẫn chấp nhận được",
-        "Không có vấn đề gì",
-        "Cảm thấy thoải mái hơn",
+        "Very uncomfortable and can peel",
+        "A little dry but still acceptable",
+        "No problem",
+        "Feels more comfortable",
       ],
     },
     {
       id: "10",
       category: "D/O",
-      question: "Khi sử dụng sửa rửa mặt, bạn thích loại",
+      question: "When using facial cleanser, what type do you prefer",
       options: [
-        "Dạng kem đặc, có độ ẩm cao",
-        "Dạng sữa nhẹ nhàng",
-        "Dạng gel trong",
-        "Dạng có nhiều bọt và làm sạch sâu",
+        "Thick, moisturizing cream",
+        "Gentle milk",
+        "Clear gel",
+        "Foamy and deep cleansing",
       ],
     },
     {
       id: "11",
       category: "S/R",
-      question: "Khi sử dụng sản phẩm mới, da bạn thường phản ứng như thế nào?",
+      question: "How does your skin usually react when using new products?",
       options: [
-        "Thường xuyên bị kích ứng, đỏ hoặc ngứa",
-        "Đôi khi có phản ứng nhẹ",
-        "Hiếm khi gặp vấn đề",
-        "Hầu như không bao giờ phản ứng",
+        "Often irritated, red or itchy",
+        "Sometimes mild reactions",
+        "Rarely problems",
+        "Almost never reacts",
       ],
     },
     {
       id: "12",
       category: "S/R",
-      question: "Da bạn có dễ bị đỏ khi",
+      question: "Does your skin turn red easily when",
       options: [
-        "Luôn đỏ, ngay cả khi không có tác động",
-        "Dễ đỏ khi tiếp xúc với nắng hoặc cọ xát",
-        "Thỉnh thoảng đỏ trong điều kiện khắc nghiệt",
-        "Hiếm khi hoặc không bao giờ đỏ",
+        "Always red, even without any impact",
+        "Easily red when exposed to sunlight or rubbing",
+        "Occasionally red under harsh conditions",
+        "Rarely or never red",
       ],
     },
     {
       id: "13",
       category: "S/R",
       question:
-        "Bạn có từng bị chẩn đoán các vấn đề về da như chàm, rosacea không?",
-      options: [
-        "Có, thường xuyên gặp vấn đề",
-        "Đôi khi có biểu hiện nhẹ",
-        "Hiếm khi gặp",
-        "Không bao giờ",
-      ],
+        "Have you ever been diagnosed with skin problems such as eczema, rosacea?",
+      options: ["Yes, often", "Sometimes mild", "Rarely", "Never"],
     },
     {
       id: "14",
       category: "S/R",
-      question: "Khi thời tiết thay đổi, da bạn",
+      question: "When the weather changes, your skin",
       options: [
-        "Rất dễ bị kích ứng và đỏ",
-        "Đôi khi có phản ứng nhẹ",
-        "Ít khi bị ảnh hưởng",
-        "Không bao giờ bị ảnh hưởng",
+        "Very easily irritated and red",
+        "Sometimes has a mild reaction",
+        "Rarely affected",
+        "Never affected",
       ],
     },
     {
       id: "15",
       category: "S/R",
-      question: "Với các sản phẩm có mùi hương, da bạn",
+      question: "With scented products, your skin",
       options: [
-        "Luôn bị kích ứng",
-        "Thỉnh thoảng bị kích ứng",
-        "Hiếm khi phản ứng",
-        "Không bao giờ phản ứng",
+        "Always irritated",
+        "Occasionally irritated",
+        "Rarely reacts",
+        "Never reacts",
       ],
     },
     {
       id: "16",
       category: "S/R",
-      question: "Khi trang điểm, da bạn",
+      question: "When applying makeup, your skin",
       options: [
-        "Thường xuyên bị ngứa và khó chịu",
-        "Đôi khi cảm thấy không thoải mái",
-        "Hiếm khi gặp vấn đề",
-        "Không bao giờ gặp vấn đề",
+        "Often itchy and uncomfortable",
+        "Sometimes uncomfortable",
+        "Rarely a problem",
+        "Never a problem",
       ],
     },
     {
       id: "17",
       category: "S/R",
-      question: "Với ánh nắng mặt trời, da bạn",
+      question: "With sunlight, your skin",
       options: [
-        "Rất dễ bị cháy nắng và kích ứng",
-        "Dễ bị đỏ nhưng hồi phục nhanh",
-        "Đôi khi hơi đỏ",
-        "Hiếm khi bị ảnh hưởng",
+        "Very prone to sunburn and irritation",
+        "Prone to redness but recovers quickly",
+        "Sometimes a little red",
+        "Rarely affected",
       ],
     },
     {
       id: "18",
       category: "S/R",
-      question: "Da bạn có dễ bị đỏ khi:",
+      question: "Does your skin get red easily when:",
       options: [
-        "Hơi đỏ nhưng nhanh hết",
-        "Luôn bị đỏ và kích ứng kéo dài",
-        "Đỏ rất nhẹ",
-        "Không có phản ứng gì",
+        "Slightly red but goes away quickly",
+        "Always red and irritated for a long time",
+        "Very mild redness",
+        "No reaction",
       ],
     },
     {
       id: "19",
       category: "S/R",
-      question: "Với stress hoặc lo lắng, da bạn",
+      question: "With stress or anxiety, your skin",
       options: [
-        "Dễ bị nổi mẩn đỏ và kích ứng",
-        "Đôi khi có phản ứng nhẹ",
-        "Hiếm khi bị ảnh hưởng",
-        "Không bao giờ bị ảnh hưởng",
+        "Prone to rashes and irritation",
+        "Sometimes mild reactions",
+        "Rarely affected",
+        "Never affected",
       ],
     },
     {
       id: "20",
       category: "S/R",
-      question: "Khi uống rượu hoặc ăn đồ cay, da bạn",
+      question: "When you drink alcohol or eat spicy food, your skin",
       options: [
-        "Luôn bị đỏ và nóng",
-        "Thỉnh thoảng bị đỏ",
-        "Hiếm khi phản ứng",
-        "Không bao giờ phản ứng",
+        "Always red and hot",
+        "Sometimes red",
+        "Rarely reacts",
+        "Never reacts",
       ],
     },
     {
       id: "21",
       category: "P/N",
-      question: "Da bạn có xu hướng thâm sau mụn không?",
+      question: "Does your skin tend to darken after acne?",
       options: [
-        "Luôn để lại vết thâm kéo dài",
-        "Thỉnh thoảng có vết thâm nhẹ",
-        "Hiếm khi thâm",
-        "Không bao giờ thâm",
+        "Always leaves lasting dark spots",
+        "Sometimes has light dark spots",
+        "Rarely dark",
+        "Never dark",
       ],
     },
     {
       id: "22",
       category: "P/N",
-      question: "Khi tiếp xúc với nắng, da bạn:",
+      question: "When exposed to the sun, your skin:",
       options: [
-        "Dễ bị đen và không đều màu",
-        "Tan từ từ và đều màu",
-        "Ít thay đổi màu sắc",
-        "Hầu như không thay đổi",
+        "Easily darkens and is uneven in color",
+        "Dissolves slowly and evenly",
+        "Little color change",
+        "Almost no change",
       ],
     },
     {
       id: "23",
       category: "P/N",
-      question: "Bạn có tàn nhang hoặc đốm nâu trên da không?",
-      options: ["Có nhiều và rõ ràng", "Có một vài đốm", "Rất ít", "Không có"],
+      question: "Do you have freckles or brown spots on your skin?",
+      options: ["Many and obvious", "A few spots", "Very few", "None"],
     },
     {
       id: "24",
       category: "P/N",
-      question: "Màu da của bạn khi không trang điểm",
+      question: "Your skin tone without makeup",
       options: [
-        "Không đều màu, có nhiều vùng sẫm màu",
-        "Hơi không đều màu",
-        "Tương đối đều màu",
-        "Rất đều màu",
+        "Uneven, with many dark areas",
+        "Slightly uneven",
+        "Relatively even",
+        "Very even",
       ],
     },
     {
       id: "25",
       category: "P/N",
-      question: "Khi bị trầy xước, da bạn",
+      question: "When scratched, your skin",
       options: [
-        "Luôn để lại vết thâm lâu dài",
-        "Thâm nhẹ và mất một thời gian mới hết",
-        "Ít khi để lại vết thâm",
-        "Không bao giờ thâm",
+        "Always leaves a lasting dark spot",
+        "Light dark spot that takes a while to go away",
+        "Rarely leaves a dark spot",
+        "Never dark",
       ],
     },
     {
       id: "26",
       category: "P/N",
-      question: "Vùng quanh mắt của bạn",
+      question: "Around your eyes",
       options: [
-        "Có quầng thâm rõ rệt",
-        "Hơi thâm",
-        "Màu sắc đều",
-        "Sáng và đều màu",
+        "There are visible dark circles",
+        "Slightly dark",
+        "Even color",
+        "Bright and even",
       ],
     },
     {
       id: "27",
       category: "P/N",
-      question: "Khi dùng các sản phẩm làm trắng",
+      question: "When using whitening products",
       options: [
-        "Da dễ bị kích ứng và không đều màu",
-        "Cần thời gian dài mới thấy hiệu quả",
-        "Có hiệu quả vừa phải",
-        "Ít khi cần dùng",
+        "Skin is easily irritated and uneven in color",
+        "It takes a long time to see results",
+        "Moderately effective",
+        "Rarely needed",
       ],
     },
     {
       id: "28",
       category: "P/N",
-      question: "Với các vết sẹo cũ",
+      question: "For old scars",
       options: [
-        "Thường sẫm màu và rõ ràng",
-        "Hơi sẫm màu",
-        "Nhạt màu",
-        "Gần như không nhìn thấy",
+        "Usually dark and obvious",
+        "Slightly dark",
+        "Faint",
+        "Almost invisible",
       ],
     },
     {
       id: "29",
       category: "P/N",
-      question: "Khi bị côn trùng cắn",
+      question: "When bitten by insects",
       options: [
-        "Luôn để lại vết thâm lâu",
-        "Thâm nhẹ một thời gian",
-        "Ít khi thâm",
-        "Không bao giờ thâm",
+        "Always leaves a dark mark for a long time",
+        "Lightly dark for a while",
+        "Rarely dark",
+        "Never dark",
       ],
     },
     {
       id: "30",
       category: "P/N",
-      question: "Vùng cổ của bạn so với mặt",
+      question: "Your neck area compared to your face",
       options: [
-        "Sẫm màu hơn nhiều",
-        "Hơi sẫm màu",
-        "Tương đối đều màu",
-        "Hoàn toàn đều màu",
+        "Much darker",
+        "Slightly darker",
+        "Relatively even",
+        "Completely even",
       ],
     },
     {
       id: "31",
       category: "T/W",
-      question: "Khi bạn kéo nhẹ da và thả ra, da:",
+      question: "When you gently pull the skin and release it, the skin:",
       options: [
-        "Lập tức trở lại vị trí cũ",
-        "Trở lại chậm hơn một chút",
-        "Mất vài giây để trở lại",
-        "Trở lại rất chậm",
+        "Immediately returns to its original position",
+        "Returns a little slower",
+        "Takes a few seconds to return",
+        "Returns very slowly",
       ],
     },
     {
       id: "32",
       category: "T/W",
-      question: "Các nếp nhăn trên mặt bạn:",
+      question: "What are the wrinkles on your face:",
       options: [
-        "Không có hoặc chỉ có khi cử động",
-        "Có một vài nếp nhăn nhỏ",
-        "Có nếp nhăn rõ ràng",
-        "Có nhiều nếp nhăn sâu",
+        "None or only when moving",
+        "A few small wrinkles",
+        "Clear wrinkles",
+        "Many deep wrinkles",
       ],
     },
     {
       id: "33",
       category: "T/W",
-      question: "Khuôn mặt bạn có xu hướng",
+      question: "What does your face tend to look like",
       options: [
-        "Săn chắc và đầy đặn",
-        "Tương đối săn chắc",
-        "Bắt đầu chảy xệ nhẹ",
-        "Rõ ràng bị chảy xệ",
+        "Firm and plump",
+        "Relatively firm",
+        "Starting to sag slightly",
+        "Obviously sagging",
       ],
     },
     {
       id: "34",
       category: "T/W",
-      question: "Khi cười, các nếp nhăn",
+      question: "When you smile, wrinkles",
       options: [
-        "Biến mất ngay khi ngừng cười",
-        "Mất một lúc mới biến mất",
-        "Còn lưu lại khá lâu",
-        "Luôn hiện diện",
+        "Disappears immediately when you stop smiling",
+        "Takes a while to disappear",
+        "Stays for quite a while",
+        "Always present",
       ],
     },
     {
       id: "35",
       category: "T/W",
-      question: "Vùng mắt của bạn",
+      question: "Your eye area",
       options: [
-        "Căng và không có nếp nhăn",
-        "Có vài nếp nhăn nhỏ",
-        "Có nếp nhăn rõ",
-        "Có nhiều nếp nhăn sâu",
+        "Tight and wrinkle-free",
+        "Some fine lines",
+        "Clear lines",
+        "Many deep lines",
       ],
     },
     {
       id: "36",
       category: "T/W",
-      question: "Độ đàn hồi của da khi ấn nhẹ",
+      question: "Skin elasticity when pressed lightly",
       options: [
-        "Lập tức phục hồi",
-        "Phục hồi tương đối nhanh",
-        "Phục hồi chậm",
-        "Rất lâu mới phục hồi",
+        "Immediate recovery",
+        "Recovery is relatively fast",
+        "Recovery is slow",
+        "Recovery takes a long time",
       ],
     },
     {
       id: "37",
       category: "T/W",
-      question: "Đường viền hàm của bạn",
+      question: "Your jawline",
       options: [
-        "Rõ ràng và săn chắc",
-        "Tương đối rõ",
-        "Hơi chảy xệ",
-        "Rất chảy xệ",
+        "Definite and firm",
+        "Relatively well defined",
+        "Slightly saggy",
+        "Very saggy",
       ],
     },
     {
       id: "38",
       category: "T/W",
-      question: "Vùng má của bạn",
+      question: "Your cheeks",
       options: [
-        "Căng đầy tự nhiên",
-        "Hơi chảy",
-        "Có dấu hiệu chảy xệ",
-        "Chảy xệ rõ rệt",
+        "Naturally full",
+        "Slightly saggy",
+        "Signs of sagging",
+        "Significantly sagging",
       ],
     },
     {
       id: "39",
       category: "T/W",
-      question: "Khi ngủ dậy, các nếp nhăn gối",
+      question: "Wake up with pillow wrinkles",
       options: [
-        "Biến mất ngay",
-        "Mất khoảng 30 phút",
-        "Mất vài giờ",
-        "Kéo dài cả ngày",
+        "Disappears immediately",
+        "Takes about 30 minutes",
+        "Takes a few hours",
+        "Lasts all day",
       ],
     },
     {
       id: "40",
       category: "T/W",
-      question: "Kéo dài cả ngày",
+      question: "Lasts all day",
       options: [
-        "Kem nền lên da rất mịn",
-        "Kem nền lên da tương đối đều",
-        "Kem nền hay bị đọng trong nếp nhăn",
-        "Kem nền luôn bị đọng và làm lộ nếp nhăn",
+        "The foundation goes on very smoothly",
+        "The foundation goes on fairly evenly",
+        "The foundation tends to settle in wrinkles",
+        "The foundation always settles and shows wrinkles",
       ],
     },
   ];
@@ -485,16 +476,16 @@ const SkinQuiz = () => {
   const renderWelcome = () => (
     <div className="text-center p-8">
       <h1 className="text-3xl font-bold mb-6 text-purple-800">
-        Khám Phá Loại Da Của Bạn
+        Discover Your Skin Type
       </h1>
       <p className="text-lg mb-8 text-gray-600">
-        Theo Phương Pháp Tiến Sĩ Baumann
+        According to Dr. Baumann Method
       </p>
       <button
         onClick={() => setStep(1)}
         className="bg-purple-600 text-white px-8 py-3 rounded-full hover:bg-purple-700 transition-colors flex items-center justify-center gap-2 mx-auto"
       >
-        Bắt Đầu Kiểm Tra
+        Start Checking
         <FaArrowRight />
       </button>
     </div>
@@ -548,7 +539,7 @@ const SkinQuiz = () => {
             className="px-6 py-2 text-purple-600 hover:bg-purple-50 rounded-full"
             disabled={step === 1}
           >
-            Quay lại
+            Back
           </button>
           <button
             onClick={() => {
@@ -562,7 +553,7 @@ const SkinQuiz = () => {
             disabled={!answers[step]}
             className="px-6 py-2 bg-purple-600 text-white rounded-full disabled:opacity-50"
           >
-            {step === questions.length ? "Xem Kết Quả" : "Tiếp tục"}
+            {step === questions.length ? "Result" : "Next"}
           </button>
         </div>
       </div>
@@ -572,27 +563,12 @@ const SkinQuiz = () => {
   const renderResult = () => (
     <div className="max-w-2xl mx-auto p-6">
       <div className="bg-white rounded-lg p-8 shadow-lg text-center">
-        <h2 className="text-2xl font-bold mb-6">
-          Kết Quả Phân Tích Da Của Bạn
-        </h2>
+        <h2 className="text-2xl font-bold mb-6">Your Skin Type: </h2>
         <div className="text-4xl font-bold text-purple-600 mb-8">{result}</div>
 
-        <div className="mb-8 text-left">
-          <h3 className="font-semibold mb-4">Đặc điểm loại da của bạn:</h3>
-          <ul className="list-disc list-inside space-y-2 text-gray-600">
-            <li>Da có xu hướng dầu</li>
-            <li>Nhạy cảm với các tác nhân bên ngoài</li>
-            <li>Ít có vấn đề về sắc tố</li>
-            <li>Độ đàn hồi tốt</li>
-          </ul>
-        </div>
-
         <div className="flex gap-4 justify-center">
-          <button className="flex items-center gap-2 px-6 py-3 bg-purple-600 text-white rounded-full hover:bg-purple-700">
-            <FaShare /> Chia sẻ
-          </button>
           <button className="flex items-center gap-2 px-6 py-3 border-2 border-purple-600 text-purple-600 rounded-full hover:bg-purple-50">
-            <FaSave /> Lưu kết quả
+            <FaSave /> Save result
           </button>
         </div>
       </div>
