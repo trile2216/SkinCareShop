@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace api.DTOs.Cart
 {
-    public class UpdateQuantityDTO
+    public class CartItemDTO
     {
         [Required]
         public int ProductId { get; set; }

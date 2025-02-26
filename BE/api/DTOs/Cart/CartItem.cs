@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using api.DTOs.Cart;
 using api.DTOs.Products;
 
-namespace api.Models
+namespace api.DTOs.Cart
 {
     public class CartItem
     {
