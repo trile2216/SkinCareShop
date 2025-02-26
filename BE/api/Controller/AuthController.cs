@@ -8,6 +8,7 @@ using api.DTOs.Auth;
 using api.Enum;
 using api.Interface;
 using api.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -124,6 +125,22 @@ namespace api.Controller
 
                 return Ok(new { message = "Login successful", data = userDTO });
 
+            }
+            catch (Exception e)
+            {
+                return StatusCode(500, e);
+            }
+        }
+
+        [HttpPost]
+        [Route("logout")]
+        [Authorize]
+        public async Task<IActionResult> Logout()
+        {
+            try
+            {
+                await _signInManager.SignOutAsync();
+                return Ok("Logout successful");
             }
             catch (Exception e)
             {

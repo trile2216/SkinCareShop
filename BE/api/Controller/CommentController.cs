@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using api.DTOs.Comments;
 using api.Interface;
 using api.Mappers;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
@@ -12,6 +13,7 @@ namespace api.Controller
 {
     [ApiController]
     [Route("api/comment")]
+    [Authorize]
     public class CommentController : ControllerBase
     {
         private readonly ICommentRepository _commentRepo;
