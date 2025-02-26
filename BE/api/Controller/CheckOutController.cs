@@ -93,7 +93,7 @@ namespace api.Controller
                                 UnitPrice = item.ProductPrice
                             };
                             await _orderItemRepo.CreateOrderItemAsync(orderItem);
-                            await _productRepo.UpdateProductQuantityAsync(item.ProductId, item.Quantity);
+                            await _productRepo.UpdateProductQuantityAfterOrderAsync(item.ProductId, item.Quantity);
                         }
 
                         _cartService.ClearCart();
@@ -153,7 +153,7 @@ namespace api.Controller
                                 UnitPrice = item.ProductPrice
                             };
                             await _orderItemRepo.CreateOrderItemAsync(orderItem);
-                            await _productRepo.UpdateProductQuantityAsync(item.ProductId, item.Quantity);
+                            await _productRepo.UpdateProductQuantityAfterOrderAsync(item.ProductId, item.Quantity);
                         }
 
                         _cartService.ClearCart();
