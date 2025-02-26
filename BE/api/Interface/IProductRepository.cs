@@ -23,7 +23,6 @@ namespace api.Interface
 
         Task<List<Product>> GetProductByBrandIdAsync(int id);
 
-
-
+        Task<Product?> UpdateProductQuantityAfterOrderAsync(int id, int quantity);
     }
 }
