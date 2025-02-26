@@ -97,5 +97,19 @@ namespace api.Repository
             var products = await _context.Products.Where(p => p.BrandId == id).ToListAsync();
             return products;
         }
+
+        public async Task<Product?> UpdateProductQuantityAfterOrderAsync(int id, int quantity)
+        {
+            var existingProduct = await GetProductByIdAsync(id);
+            if (existingProduct == null)
+            {
+                return null;
+            }
+
+            existingProduct.Stock -= quantity;
+
+            await _context.SaveChangesAsync();
+            return existingProduct;
+        }
     }
 }

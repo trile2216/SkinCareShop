@@ -6,6 +6,7 @@ using api.Data;
 using api.DTOs.Products;
 using api.Interface;
 using api.Mappers;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace api.Controller
@@ -60,6 +61,7 @@ namespace api.Controller
         }
 
         [HttpPost]
+        [Authorize]
         public async Task<IActionResult> CreateProduct([FromBody] CreateProductDTO productDTO)
         {
             if (!ModelState.IsValid)
@@ -81,6 +83,7 @@ namespace api.Controller
 
         [HttpPut]
         [Route("{id:int}")]
+        [Authorize]
         public async Task<IActionResult> UpdateProduct(int id, [FromBody] UpdateProductDTO productDTO)
         {
             if (!ModelState.IsValid)
@@ -102,6 +105,7 @@ namespace api.Controller
 
         [HttpDelete]
         [Route("{id:int}")]
+        [Authorize]
         public async Task<IActionResult> DeleteProduct(int id)
         {
             if (!ModelState.IsValid)
@@ -121,6 +125,7 @@ namespace api.Controller
 
         [HttpGet]
         [Route("category/{categoryId:int}")]
+
         public async Task<IActionResult> GetProductsByCategory(int categoryId)
         {
             if (!ModelState.IsValid)
