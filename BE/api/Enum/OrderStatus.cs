@@ -2,14 +2,14 @@ namespace api.Enum
 {
     public enum OrderStatus
     {
-        Pending = 1,
+        Pending = 0,
 
-        Comfirmed = 2,
+        Comfirmed = 1,
 
-        Shipping = 3,
+        Shipping = 2,
 
-        Delivery = 4,
+        Delivery = 3,
 
-        Cancelled = 5
+        Cancelled = 4
     }
 }
