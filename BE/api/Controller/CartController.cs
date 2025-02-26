@@ -15,13 +15,13 @@ namespace api.Controller
     [Route("api/cart")]
     public class CartController : ControllerBase
     {
-        private readonly ICartServices _cartServices;
+        private readonly ICartService _cartService;
 
         private readonly IProductRepository _productRepo;
 
-        public CartController(ICartServices cartServices, IProductRepository productRepo)
+        public CartController(ICartService cartService, IProductRepository productRepo)
         {
-            _cartServices = cartServices;
+            _cartService = cartService;
             _productRepo = productRepo;
         }
 
@@ -29,39 +29,35 @@ namespace api.Controller
         [HttpGet]
         public IActionResult GetCartItems()
         {
-            var cartItems = _cartServices.GetCartItems();
+            var cartItems = _cartService.GetCartItems();
 
-            return Ok(_cartServices.GetCartItems());
+            return Ok(_cartService.GetCartItems());
         }
 
         [HttpPost]
-        [Route("{productId:int}")]
-        public async Task<IActionResult> AddCartItem([FromRoute] int productId)
+        [Route("add")]
+
+        public async Task<IActionResult> AddCartItem([FromBody] CartItemDTO cartItemDTO)
         {
-            var product = await _productRepo.GetProductByIdAsync(productId);
+            var product = await _productRepo.GetProductByIdAsync(cartItemDTO.ProductId);
 
             if (product == null)
             {
                 return NotFound();
             }
 
-            var cartItemDTO = product.ToCartItemDTO();
+            var cartItem = product.ToCartItem();
+            cartItem.Quantity = cartItemDTO.Quantity;
 
-            var cartItem = new CartItem
-            {
-                ProductId = productId,
-                ItemDTO = cartItemDTO,
-                Quantity = 1
-            };
-
-            _cartServices.AddCartItem(cartItem);
+            _cartService.AddCartItem(cartItem);
             return Ok();
         }
 
         [HttpPost]
-        public IActionResult UpdateQuantity([FromBody] UpdateQuantityDTO updateQuantityDTO)
+        [Route("update-quantity")]
+        public IActionResult UpdateQuantity([FromBody] CartItemDTO cartItemDTO)
         {
-            _cartServices.UpdateQuantity(updateQuantityDTO.ProductId, updateQuantityDTO.Quantity);
+            _cartService.UpdateQuantity(cartItemDTO.ProductId, cartItemDTO.Quantity);
             return Ok();
         }
 
@@ -69,7 +65,7 @@ namespace api.Controller
         [Route("{productId:int}")]
         public IActionResult DeleteCartItem(int productId)
         {
-            _cartServices.DeleteCartItem(productId);
+            _cartService.DeleteCartItem(productId);
             return Ok();
         }
     }

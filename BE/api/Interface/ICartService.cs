@@ -2,11 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using api.DTOs.Cart;
 using api.Models;
 
 namespace api.Interface
 {
-    public interface ICartServices
+    public interface ICartService
     {
         List<CartItem> GetCartItems();
 

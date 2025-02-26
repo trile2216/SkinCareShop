@@ -9,9 +9,16 @@ namespace api.Models
 {
     public class CartItem
     {
+
         public int ProductId { get; set; }
 
-        public CartItemDTO ItemDTO { get; set; } = null!;
+        public string? ProductImage { get; set; } = String.Empty;
+
+        public string ProductName { get; set; } = String.Empty;
+
+        public decimal ProductPrice { get; set; }
+
+        public decimal? ProductSale { get; set; }
 
         public int Quantity { get; set; }
     }

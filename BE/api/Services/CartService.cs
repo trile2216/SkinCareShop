@@ -3,20 +3,24 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using api.DTOs.Cart;
+using api.Enum;
 using api.Interface;
 using api.Models;
 using Newtonsoft.Json;
 
 namespace api.Services
 {
-    public class CartService : ICartServices
+    public class CartService : ICartService
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
+
+
         private const string CartSessionKey = "Cart";
 
         public CartService(IHttpContextAccessor httpContextAccessor)
         {
             _httpContextAccessor = httpContextAccessor;
+
         }
 
         public List<CartItem> GetCartItems()
@@ -44,7 +48,7 @@ namespace api.Services
 
             if (existingItem != null)
             {
-                existingItem.Quantity += 1;
+                existingItem.Quantity += cartItem.Quantity;
             }
             else
             {
@@ -87,11 +91,6 @@ namespace api.Services
 
             }
             SetCart(cart);
-        }
-
-        public Task<Order> CheckOut(CheckOutDTO checkOutDTO)
-        {
-            throw new NotImplementedException();
         }
     }
 }

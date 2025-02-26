@@ -69,9 +69,9 @@ namespace api.Mappers
             };
         }
 
-        public static CartItemDTO ToCartItemDTO(this Product product)
+        public static CartItem ToCartItem(this Product product)
         {
-            return new CartItemDTO
+            return new CartItem
             {
                 ProductId = product.Id,
                 ProductImage = product.Image,
