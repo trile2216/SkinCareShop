@@ -88,7 +88,7 @@ const HomePage = () => {
       button: "Shopping now",
       text: "Advanced formulas, visible results",
       slogan: "Understanding your skin starts here",
-      link: "",
+      link: "/productlist",
     },
     {
       id: 3,
@@ -105,7 +105,7 @@ const HomePage = () => {
       button: "Shopping now",
       text: "Scientific skincare, glowing results",
       slogan: "Know your skin, unlock its true potential",
-      link: "",
+      link: "/productlist",
     },
   ];
 
