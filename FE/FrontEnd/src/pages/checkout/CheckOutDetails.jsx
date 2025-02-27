@@ -461,7 +461,7 @@ const CheckOutDetail = () => {
               </p>
               <p>
                 <strong>Address:</strong> {formData.street},{" "}
-                {formData.city}, {formData.state}
+                {formData.state}, {formData.city}
               </p>
               <p>
                 <strong>Phone:</strong> {formData.phone}
