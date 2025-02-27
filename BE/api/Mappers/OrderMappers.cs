@@ -16,6 +16,7 @@ namespace api.Mappers
                 CustomerId = createOrderDTO.CustomerId,
                 TotalPrice = createOrderDTO.TotalPrice,
                 OrderDate = createOrderDTO.OrderDate,
+                ShippingFee = createOrderDTO.ShippingFee,
                 Status = createOrderDTO.Status,
             };
         }
@@ -27,6 +28,7 @@ namespace api.Mappers
                 Id = order.Id,
                 CustomerId = order.CustomerId,
                 TotalPrice = order.TotalPrice,
+                ShippingFee = order.ShippingFee,
                 OrderDate = order.OrderDate,
                 Status = order.Status,
                 OrderItems = order.OrderItems.Select(x => x.ToOrderItemDTO()).ToList()

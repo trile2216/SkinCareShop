@@ -23,5 +23,8 @@ namespace api.DTOs.CheckOut
         [Required]
         [Range(0.01, 10000000000, ErrorMessage = "TotalPrice must be greater than 0")]
         public decimal TotalPrice { get; set; }
+
+        [Required]
+        public decimal ShippingFee { get; set; }
     }
 }

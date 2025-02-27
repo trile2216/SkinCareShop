@@ -20,6 +20,9 @@ namespace api.DTOs.Order
         public DateTime OrderDate { get; set; }
 
         [Required]
+        public decimal ShippingFee { get; set; }
+
+        [Required]
         public OrderStatus Status { get; set; }
 
         [Required]

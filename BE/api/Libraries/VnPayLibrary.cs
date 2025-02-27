@@ -50,7 +50,6 @@ public class VnPayLibrary
             VnPayResponseCode = vnpResponseCode
         };
     }
-
     public string GetIpAddress(HttpContext context)
     {
         var ipAddress = string.Empty;
@@ -78,7 +77,6 @@ public class VnPayLibrary
 
         return "127.0.0.1";
     }
-
     public void AddRequestData(string key, string value)
     {
         if (!string.IsNullOrEmpty(value))
@@ -94,7 +92,6 @@ public class VnPayLibrary
             _responseData.Add(key, value);
         }
     }
-
     public string GetResponseData(string key)
     {
         return _responseData.TryGetValue(key, out var retValue) ? retValue : string.Empty;
@@ -122,7 +119,6 @@ public class VnPayLibrary
 
         return baseUrl;
     }
-
     public bool ValidateSignature(string inputHash, string secretKey)
     {
         var rspRaw = GetResponseData();
@@ -145,7 +141,6 @@ public class VnPayLibrary
 
         return hash.ToString();
     }
-
     private string GetResponseData()
     {
         var data = new StringBuilder();
@@ -173,9 +168,9 @@ public class VnPayLibrary
         return data.ToString();
     }
 
-
-
 }
+
+
 
 public class VnPayCompare : IComparer<string>
 {
@@ -188,4 +183,3 @@ public class VnPayCompare : IComparer<string>
         return vnpCompare.Compare(x, y, CompareOptions.Ordinal);
     }
 }
-
