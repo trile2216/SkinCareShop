@@ -331,7 +331,7 @@ const CheckOutDetail = () => {
                     <button
                       type="button"
                       onClick={() => setShowAllItems(!showAllItems)}
-                      className="text-blue-500 hover:text-blue-700 font-medium transition"
+                      className="text-rose-500 hover:text-rose-700 font-medium transition"
                     >
                       {showAllItems ? "Show Less ▲" : "Show More ▼"}
                     </button>
@@ -522,10 +522,10 @@ const CheckOutDetail = () => {
 
             {/* Order Total */}
             <div className="mt-4 text-right text-lg font-bold">
-              <p>Subtotal: {getTotalPrice().toLocaleString("vi-VN")}</p>
+              <p>Subtotal: {getTotalPrice().toLocaleString("vi-VN")} $</p>
               <p>Shipping Fee: {getShippingFee(formData.city).toLocaleString("en-US")} $</p>
               <p className="text-rose-700 text-xl">
-                Total: {(getTotalPrice() + getShippingFee(formData.city)).toLocaleString("en-US")} ${" "}
+                Total: {(getTotalPrice() + getShippingFee(formData.city)).toLocaleString("en-US")}{" "}
                 $
               </p>
             </div>
