@@ -58,9 +58,24 @@ namespace api.Controller
                     return BadRequest("Giỏ hàng trống");
                 }
 
+                foreach (var item in checkOutDTO.CartItems)
+                {
+                    var product = await _productRepo.GetProductByIdAsync(item.ProductId);
+                    if (product == null)
+                    {
+                        return BadRequest("Sản phẩm không tồn tại");
+                    }
+
+                    if (product.Stock - item.Quantity < 0)
+                    {
+                        return BadRequest("Số lượng sản phẩm không đủ");
+                    }
+                }
+
+
                 switch (checkOutDTO.PaymentMethod)
                 {
-                    case PaymentMethod.BankTransfer:
+                    case PaymentMethod.VNPay:
                         var paymentInfo = new PaymentInformationModel
                         {
                             OrderType = "200000",

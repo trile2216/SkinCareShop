@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using api.DTOs.Comments;
-using api.DTOs.ProductSkinType;
+using api.DTOs.SkinType;
 using api.Enum;
 using api.Models;
 

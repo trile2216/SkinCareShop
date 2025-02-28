@@ -2,12 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using api.DTOs.ProductSkinType;
+using api.DTOs.SkinType;
 using api.Models;
 
 namespace api.Mappers
 {
-    public static class ProductSkinTypeMappers
+    public static class SkinTypeMappers
     {
         public static ProductSkinTypeDTO ToProductSkinTypeDTO(this ProductSkinType productSkinType)
         {
@@ -38,6 +38,16 @@ namespace api.Mappers
                 ProductId = productSkinTypeDTO.ProductId,
                 SkinTypeId = productSkinTypeDTO.SkinTypeId,
                 RecommentedLevel = productSkinTypeDTO.RecommentedLevel,
+            };
+        }
+
+        public static SkinTypeDTO ToSkinTypeDTO(this SkinType skinType)
+        {
+            return new SkinTypeDTO
+            {
+                Name = skinType.Name,
+                Symbol = skinType.Symbol,
+                Characteristics = skinType.Characteristics,
             };
         }
     }

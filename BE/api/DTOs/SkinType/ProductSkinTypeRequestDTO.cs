@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace api.DTOs.ProductSkinType
+namespace api.DTOs.SkinType
 {
     public class ProductSkinTypeRequestDTO
     {
