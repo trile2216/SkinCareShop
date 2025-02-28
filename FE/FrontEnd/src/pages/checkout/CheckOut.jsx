@@ -9,6 +9,37 @@ const Checkout = () => {
   return (
     <>
       <div className="container mx-auto p-12">
+
+          {/* Checkout Progress Bar */}
+          <div className="flex items-center justify-center mb-8">
+            <div className="flex items-center">
+              <div className="w-8 h-8 bg-rose-500 text-white flex items-center justify-center rounded-full font-bold">
+                1
+              </div>
+              <span className="ml-2 text-rose-700 font-semibold">
+                Your Cart
+              </span>
+            </div>
+            <div className="flex-1 h-px bg-gray-300 mx-4"></div>
+            <div className="flex items-center">
+              <div className="w-8 h-8 bg-gray-300 text-white flex items-center justify-center rounded-full font-bold">
+                2
+              </div>
+              <span className="ml-2 text-gray-500 font-semibold">
+                Checkout Details
+              </span>
+            </div>
+            <div className="flex-1 h-px bg-gray-300 mx-4"></div>
+            <div className="flex items-center">
+              <div className="w-8 h-8 bg-gray-300 text-gray-500 flex items-center justify-center rounded-full font-bold">
+                3
+              </div>
+              <span className="ml-2 text-gray-500 font-semibold">
+                Order Complete
+              </span>
+            </div>
+          </div>
+
         {/* "Keep Shopping" */}
         <Link
           to="/"
@@ -72,7 +103,7 @@ const Checkout = () => {
                         </div>
                       </td>
                       <td className="py-2 px-4 text-right font-semibold">
-                        {(item.price * item.quantity).toLocaleString("vi-VN")} $
+                        {(item.price * item.quantity).toLocaleString("en-US")} $
                       </td>
                     </tr>
                   ))}
@@ -81,7 +112,7 @@ const Checkout = () => {
 
               {/* Total */}
               <div className="mt-4 text-right text-lg font-bold">
-                Subtotal: {getTotalPrice().toLocaleString("vi-VN")} $
+                Subtotal: {getTotalPrice().toLocaleString("en-US")} $
               </div>
 
               {/* Payment */}

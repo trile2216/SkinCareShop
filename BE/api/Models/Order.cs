@@ -14,6 +14,8 @@ public partial class Order
 
     public DateTime OrderDate { get; set; }
 
+    public decimal ShippingFee { get; set; }
+
     public OrderStatus Status { get; set; }
 
     public virtual Customer Customer { get; set; } = null!;

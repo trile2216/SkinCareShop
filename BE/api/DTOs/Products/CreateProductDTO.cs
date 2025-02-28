@@ -5,7 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using api.Enum;
 using api.DTOs;
-using api.DTOs.ProductSkinType;
+using api.DTOs.SkinType;
 
 namespace api.DTOs.Products
 {

@@ -274,6 +274,9 @@ public partial class ApplicationDbContext : IdentityDbContext<ApplicationUser>
             entity.Property(e => e.TotalPrice)
                 .HasColumnType("decimal(10, 2)")
                 .HasColumnName("totalPrice");
+            entity.Property(e => e.ShippingFee)
+                    .HasColumnType("decimal(10, 2)")
+                    .HasColumnName("shippingFee");
 
             entity.HasOne(d => d.Customer).WithMany(p => p.Orders)
                 .HasForeignKey(d => d.CustomerId)

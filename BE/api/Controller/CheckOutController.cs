@@ -6,7 +6,6 @@ using api.DTOs.CheckOut;
 using api.Enum;
 using api.Interface;
 using api.Models;
-using api.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -59,14 +58,29 @@ namespace api.Controller
                     return BadRequest("Giỏ hàng trống");
                 }
 
+                foreach (var item in checkOutDTO.CartItems)
+                {
+                    var product = await _productRepo.GetProductByIdAsync(item.ProductId);
+                    if (product == null)
+                    {
+                        return BadRequest("Sản phẩm không tồn tại");
+                    }
+
+                    if (product.Stock - item.Quantity < 0)
+                    {
+                        return BadRequest("Số lượng sản phẩm không đủ");
+                    }
+                }
+
+
                 switch (checkOutDTO.PaymentMethod)
                 {
-                    case PaymentMethod.BankTransfer:
+                    case PaymentMethod.VNPay:
                         var paymentInfo = new PaymentInformationModel
                         {
                             OrderType = "200000",
-                            Amount = (double)checkOutDTO.TotalPrice,
-                            OrderDescription = $"Thanh toan don hang #{DateTime.Now.Ticks}",
+                            Amount = (double)(checkOutDTO.TotalPrice + checkOutDTO.ShippingFee),
+                            OrderDescription = $"Thanh toan don hang #{DateTime.Now.Ticks}|#{checkOutDTO.TotalPrice.ToString()}|#{checkOutDTO.ShippingFee.ToString()}",
                             Name = checkOutDTO.CustomerId.ToString()
                         };
                         var url = _vnPayService.CreatePaymentUrl(paymentInfo, HttpContext);
@@ -78,7 +92,8 @@ namespace api.Controller
                             CustomerId = checkOutDTO.CustomerId,
                             OrderDate = DateTime.Now,
                             Status = OrderStatus.Pending,
-                            TotalPrice = checkOutDTO.TotalPrice
+                            TotalPrice = checkOutDTO.TotalPrice,
+                            ShippingFee = checkOutDTO.ShippingFee
                         };
 
                         var createdOrder = await _orderRepo.CreateOrderAsync(order);
@@ -117,7 +132,6 @@ namespace api.Controller
 
         [HttpGet]
         [Route("paymentcallback")]
-        [Authorize]
         public async Task<IActionResult> PaymentCallback()
         {
             var responseCode = Request.Query["vnp_ResponseCode"].ToString();
@@ -129,15 +143,19 @@ namespace api.Controller
                 {
                     try
                     {
-                        var orderInfo = Request.Query["vnp_OrderInfo"].ToString().Split(' ');
-                        var customerId = int.Parse(orderInfo[0]);
+                        var orderInfo = Request.Query["vnp_OrderInfo"].ToString().Split('|');
+
+                        var customerId = int.Parse(Request.Query["vnp_OrderInfo"].ToString().Split('#')[0]);
+                        var totalPrice = decimal.Parse(orderInfo[1].Trim('#'));
+                        var shippingFee = decimal.Parse(orderInfo[2].Trim('#'));
 
                         var order = new Order
                         {
                             CustomerId = customerId,
                             OrderDate = DateTime.Now,
                             Status = OrderStatus.Pending,
-                            TotalPrice = decimal.Parse(orderInfo[orderInfo.Length - 1])
+                            TotalPrice = totalPrice,
+                            ShippingFee = shippingFee
                         };
 
                         var createdOrder = await _orderRepo.CreateOrderAsync(order);
@@ -158,12 +176,7 @@ namespace api.Controller
 
                         _cartService.ClearCart();
 
-                        return Ok(new
-                        {
-                            Success = true,
-                            Message = "Thanh toán thành công",
-                            OrderId = order.Id
-                        });
+                        return Ok(response);
                     }
                     catch (Exception ex)
                     {

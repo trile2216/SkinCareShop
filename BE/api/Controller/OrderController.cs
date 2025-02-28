@@ -6,6 +6,7 @@ using api.DTOs.Order;
 using api.Enum;
 using api.Interface;
 using api.Mappers;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace api.Controller
