@@ -1,16 +1,16 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router";
 import { useState } from "react";
 import { useCart } from "../../context/CartContext";
 import Footer from "../../components/Footer";
 import { FiArrowLeft } from "react-icons/fi";
 import cityStateMapping from "../checkout/CityStateMapping";
+import { ToastContainer, toast } from "react-toastify";
 
 const CheckOutDetail = () => {
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
     street: "",
-    apartment: "",
     city: "",
     state: "",
     phone: "",
@@ -18,6 +18,7 @@ const CheckOutDetail = () => {
     paymentMethod: "",
   });
 
+  const [showAllItems, setShowAllItems] = useState(false);
   const [error, setError] = useState("");
   const { cartItems, getTotalPrice } = useCart();
   const navigate = useNavigate();
@@ -38,13 +39,44 @@ const CheckOutDetail = () => {
     e.preventDefault();
 
     // Kiểm tra bắt buộc
-    if (!formData.firstName || !formData.lastName) {
-      setError("First name and last name are required.");
+    if (!formData.firstName) {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      toast.error("First Name is required.");
       return;
     }
-
+    if (!formData.lastName) {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      toast.error("Last Name is required.");
+      return;
+    }
+    if (!formData.phone) {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      toast.error("Phone number is required.");
+      return;
+    }
+    if (!/^\d{10}$/.test(formData.phone)) {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      toast.error("Phone number must be correct.");
+      return;
+    }
+    if (!formData.street) {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      toast.error("Street Address is required.");
+      return;
+    }
+    if (!formData.city) {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      toast.error("City is required.");
+      return;
+    }
+    if (!formData.state) {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      toast.error("State is required.");
+      return;
+    }
     if (!formData.paymentMethod) {
-      setError("Please select a payment method.");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      toast.error("Please select a payment method.");
       return;
     }
 
@@ -54,6 +86,7 @@ const CheckOutDetail = () => {
       console.log("Payment submitted", formData);
 
       if (formData.paymentMethod === "cod") {
+        toast.success("Order placed successfully!");
         setIsPlaceOrder(true); // Đánh dấu đặt hàng thành côngg
       } else if (formData.paymentMethod === "vnpay") {
         //navigate("/vnpay");
@@ -62,15 +95,17 @@ const CheckOutDetail = () => {
     }
   };
 
-  // Shipping fee
-  const shippingFee = 4;
-
   const handlePaymentChange = (e) => {
     setFormData({ ...formData, paymentMethod: e.target.value });
     console.log("Selected Payment Method:", e.target.value);
   };
 
-  const cities = Object.keys(cityStateMapping);
+  const cities = Object.keys(cityStateMapping).sort();
+
+  const getShippingFee = (city) => {
+    return cityStateMapping[city]?.shippingFee || 0; // Mặc định 0 nếu không tìm thấy
+  };
+
 
   return (
     <>
@@ -118,15 +153,17 @@ const CheckOutDetail = () => {
 
           {error && <div className="text-red-500 mb-4">{error}</div>}
 
+          {/* Order Form*/}
           <form
             onSubmit={handleSubmit}
             className="grid grid-cols-1 lg:grid-cols-2 gap-6"
           >
+            {/* First Name*/}
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium mb-1">
-                    First Name
+                    First Name <span className="text-red-500">*</span>
                   </label>
                   <input
                     type="text"
@@ -138,9 +175,11 @@ const CheckOutDetail = () => {
                     className="border p-2 rounded w-full"
                   />
                 </div>
+
+                {/* Last Name */}
                 <div>
                   <label className="block text-sm font-medium mb-1">
-                    Last Name
+                    Last Name <span className="text-red-500">*</span>
                   </label>
                   <input
                     type="text"
@@ -153,10 +192,42 @@ const CheckOutDetail = () => {
                   />
                 </div>
               </div>
+              
 
+              {/* Phone/ Mail */}
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium mb-1">Phone <span className="text-red-500">*</span></label>
+                  <input
+                    type="text"
+                    name="phone"
+                    placeholder="Phone"
+                    value={formData.phone}
+                    onChange={handleInputChange}
+                    required
+                    className="border p-2 rounded w-full"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium mb-1">
+                    Email Address (Optional)
+                  </label>
+                  <input
+                    type="email"
+                    name="email"
+                    placeholder="Email address (optional)"
+                    value={formData.email}
+                    onChange={handleInputChange}
+                    className="border p-2 rounded w-full"
+                  />
+                </div>
+              </div>
+
+              {/* Street Address*/}
               <div>
                 <label className="block text-sm font-medium mb-1">
-                  Street Address
+                  Street Address <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="text"
@@ -169,185 +240,171 @@ const CheckOutDetail = () => {
                 />
               </div>
 
-              <div>
-                <label className="block text-sm font-medium mb-1">
-                  Apartment, Suite, etc. (Optional)
-                </label>
-                <input
-                  type="text"
-                  name="apartment"
-                  placeholder="Apartment, suite, etc. (optional)"
-                  value={formData.apartment}
-                  onChange={handleInputChange}
-                  className="border p-2 rounded w-full"
-                />
-              </div>
-
+              {/* City*/}
               <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium mb-1">City</label>
-                  <select
-                    name="city"
-                    value={formData.city}
-                    onChange={handleInputChange}
-                    required
-                    className="border p-2 rounded w-full"
-                  >
-                    <option value="">Select City</option>
-                    {cities.map((city) => (
-                      <option key={city} value={city}>
-                        {city}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium mb-1">
-                    State
-                  </label>
-                  <select
-                    name="state"
-                    value={formData.state}
-                    onChange={handleInputChange}
-                    required
-                    className="border p-2 rounded w-full"
-                    disabled={!formData.city} // Vô hiệu hóa nếu city chưa được chọn
-                  >
-                    <option value="">Select State</option>
-                    {formData.city &&
-                      cityStateMapping[formData.city].map((state) => (
-                        <option key={state} value={state}>
-                          {state}
+                  <div>
+                    <label className="block text-sm font-medium mb-1">City <span className="text-red-500">*</span></label>
+                    <select
+                      name="city"
+                      value={formData.city}
+                      onChange={handleInputChange}
+                      required
+                      className="border p-2 rounded w-full"
+                    >
+                      <option value="">Select City</option>
+                      {cities.map((city) => (
+                        <option key={city} value={city}>
+                          {city}
                         </option>
                       ))}
-                  </select>
+                    </select>
+                  </div>
+
+                  {/* States */}
+                  <div>
+                    <label className="block text-sm font-medium mb-1">State <span className="text-red-500">*</span></label>
+                    <select
+                      name="state"
+                      value={formData.state}
+                      onChange={handleInputChange}
+                      required
+                      className="border p-2 rounded w-full"
+                      disabled={!formData.city} // Vô hiệu hóa nếu chưa chọn city
+                    >
+                      <option value="">Select State</option>
+                      {formData.city &&
+                        cityStateMapping[formData.city]?.states
+                          ?.sort()
+                          .map((state) => (
+                            <option key={state} value={state}>
+                              {state}
+                            </option>
+                          ))}
+                    </select>
+                  </div>
+                </div>
+
+                {/* Payment Options */}
+                <h3 className="text-lg font-bold">Payment Options <span className="text-red-500">*</span></h3>
+                <div className="space-y-2">
+                  <label className="flex items-center">
+                    <input
+                      type="radio"
+                      name="paymentMethod"
+                      value="cod"
+                      checked={formData.paymentMethod === "cod"}
+                      onChange={handlePaymentChange}
+                      className="mr-2"
+                    />
+                    Pay on delivery
+                    <img
+                      src="https://cdn-icons-png.flaticon.com/512/2897/2897853.png"
+                      alt="COD"
+                      className="ml-2 w-16 h-auto"
+                    />
+                  </label>
+
+                  <label className="flex items-center">
+                    <input
+                      type="radio"
+                      name="paymentMethod"
+                      value="vnpay"
+                      checked={formData.paymentMethod === "vnpay"}
+                      onChange={handlePaymentChange}
+                      className="mr-2"
+                    />
+                    Pay via VN-Pay
+                    <img
+                      src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTp1v7T287-ikP1m7dEUbs2n1SbbLEqkMd1ZA&s"
+                      alt="VN-Pay"
+                      className="ml-2 w-16 h-auto"
+                    />
+                  </label>
+                </div>
+                </div> 
+
+              {/* Cart Detail */}
+              <div className="space-y-4">
+                <div className="flex justify-between items-center">
+                  <h2 className="text-xl font-bold mt-5 mb-4">Your Cart</h2>
+                  {cartItems.length > 4 && (
+                    <button
+                      type="button"
+                      onClick={() => setShowAllItems(!showAllItems)}
+                      className="text-rose-500 hover:text-rose-700 font-medium transition"
+                    >
+                      {showAllItems ? "Show Less ▲" : "Show More ▼"}
+                    </button>
+                  )}
+                </div>
+
+                <div
+                  className={`overflow-hidden transition-all duration-500 ${
+                    showAllItems ? "max-h" : "max-h-[450px]"
+                  }`}
+                >
+                  <table className="w-full border-collapse">
+                    <thead>
+                      <tr className="bg-gray-100 text-gray-600 uppercase text-sm leading-normal">
+                        <th className="py-2 px-4 text-left">Image</th>
+                        <th className="py-2 px-4 text-left">Product Name</th>
+                        <th className="py-2 px-4 text-center">Quantity</th>
+                        <th className="py-2 px-4 text-right">Price</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {cartItems.map((item) => (
+                        <tr key={item.id} className="border-b">
+                          <td className="py-2 px-4">
+                            <img
+                              src={item.image}
+                              alt={item.name}
+                              className="w-20 h-20 object-cover rounded-md"
+                            />
+                          </td>
+                          <td className="py-2 px-4 font-semibold">{item.name}</td>
+                          <td className="py-2 px-4 text-center">{item.quantity}</td>
+                          <td className="py-2 px-4 text-right font-semibold">
+                            {(item.price * item.quantity).toLocaleString("en-US")} $
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
                 </div>
               </div>
+            </form>       
 
-              <div>
-                <label className="block text-sm font-medium mb-1">Phone</label>
-                <input
-                  type="text"
-                  name="phone"
-                  placeholder="Phone"
-                  value={formData.phone}
-                  onChange={handleInputChange}
-                  required
-                  className="border p-2 rounded w-full"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium mb-1">
-                  Email Address (Optional)
-                </label>
-                <input
-                  type="email"
-                  name="email"
-                  placeholder="Email address (optional)"
-                  value={formData.email}
-                  onChange={handleInputChange}
-                  className="border p-2 rounded w-full"
-                />
-              </div>
+            {/* Sub cart total*/}
+            <div className="mt-4 text-right text-lg font-bold">
+              Subtotal: {getTotalPrice().toLocaleString("en-US")}$
             </div>
 
-            <div className="space-y-4">
-              <h3 className="text-lg font-bold">Payment Options</h3>
-
-              <div className="space-y-2">
-                <label className="flex items-center">
-                  <input
-                    type="radio"
-                    name="paymentMethod"
-                    value="cod"
-                    checked={formData.paymentMethod === "cod"}
-                    onChange={handlePaymentChange}
-                    className="mr-2"
-                  />
-                  Pay on delivery
-                </label>
-
-                <label className="flex items-center">
-                  <input
-                    type="radio"
-                    name="paymentMethod"
-                    value="vnpay"
-                    checked={formData.paymentMethod === "vnpay"}
-                    onChange={handlePaymentChange}
-                    className="mr-2"
-                  />
-                  Pay via VN-Pay
-                  <img
-                    src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTp1v7T287-ikP1m7dEUbs2n1SbbLEqkMd1ZA&s"
-                    alt="VN-Pay"
-                    className="ml-2 w-16 h-auto"
-                  />
-                </label>
-              </div>
-
-              {/* Shipping fee */}
-              {formData.city !== "" && formData.state !== "" && (
+            {/* Shipping fee */}
+            {formData.city !== "" && formData.state !== "" && (
                 <h3 className="text-rose-700 text-right text-lg font-semibold">
-                  Shipping fee: {shippingFee.toLocaleString("vi-VN")}$
+                  Shipping fee: {getShippingFee(formData.city).toLocaleString("en-US")} $
                 </h3>
-              )}
+            )}
 
-              {/* Total */}
-              {formData.city !== "" && formData.state !== "" && (
-                <h3 className="text-rose-700 text-right text-lg font-semibold">
-                  Total:{" "}
-                  {(getTotalPrice() + shippingFee).toLocaleString("vi-VN")}$
+            {/* Total */}
+            {formData.city !== "" && formData.state !== "" && (
+              <h3 className="text-rose-700 text-right text-lg font-semibold">
+                Total:{" "}
+                {(getTotalPrice() + getShippingFee(formData.city)).toLocaleString("en-US")} $
                 </h3>
-              )}
+            )}
 
               {/* Place Order*/}
               <button
-                type="submit"
+                type="button"
+                onClick={handleSubmit}
                 className="bg-rose-500 text-white py-1 px-4 rounded-lg hover:bg-rose-600 float-right"
               >
                 Place Order
               </button>
-            </div>
-          </form>
 
-          {/* Cart Detail*/}
-          <h2 className="text-xl font-bold mt-10 mb-4">Your Cart</h2>
-
-          <table className="w-full border-collapse">
-            <thead>
-              <tr className="bg-gray-100 text-gray-600 uppercase text-sm leading-normal">
-                <th className="py-2 px-4 text-left">Image</th>
-                <th className="py-2 px-4 text-left">Product Name</th>
-                <th className="py-2 px-4 text-center">Quantity</th>
-                <th className="py-2 px-4 text-right">Price</th>
-              </tr>
-            </thead>
-            <tbody>
-              {cartItems.map((item) => (
-                <tr key={item.id} className="border-b">
-                  <td className="py-2 px-4">
-                    <img
-                      src={item.image}
-                      alt={item.name}
-                      className="w-20 h-20 object-cover rounded-md"
-                    />
-                  </td>
-                  <td className="py-2 px-4 font-semibold">{item.name}</td>
-                  <td className="py-2 px-4 text-center">{item.quantity}</td>
-                  <td className="py-2 px-4 text-right font-semibold">
-                    {(item.price * item.quantity).toLocaleString("vi-VN")}$
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-
-          {/* Sub cart total*/}
-          <div className="mt-4 text-right text-lg font-bold">
-            Subtotal: {getTotalPrice().toLocaleString("vi-VN")}$
-          </div>
+              <ToastContainer position="top-center" autoClose={3000} />
         </div>
       )}
 
@@ -404,8 +461,7 @@ const CheckOutDetail = () => {
               </p>
               <p>
                 <strong>Address:</strong> {formData.street},{" "}
-                {formData.apartment ? `${formData.apartment},` : ""}{" "}
-                {formData.city}, {formData.state}
+                {formData.state}, {formData.city}
               </p>
               <p>
                 <strong>Phone:</strong> {formData.phone}
@@ -457,7 +513,7 @@ const CheckOutDetail = () => {
                     <td className="py-2 px-4 font-semibold">{item.name}</td>
                     <td className="py-2 px-4 text-center">{item.quantity}</td>
                     <td className="py-2 px-4 text-right font-semibold">
-                      {(item.price * item.quantity).toLocaleString("vi-VN")} $
+                      {(item.price * item.quantity).toLocaleString("en-US")} $
                     </td>
                   </tr>
                 ))}
@@ -466,10 +522,10 @@ const CheckOutDetail = () => {
 
             {/* Order Total */}
             <div className="mt-4 text-right text-lg font-bold">
-              <p>Subtotal: {getTotalPrice().toLocaleString("vi-VN")}</p>
-              <p>Shipping Fee: {shippingFee.toLocaleString("vi-VN")}</p>
+              <p>Subtotal: {getTotalPrice().toLocaleString("vi-VN")} $</p>
+              <p>Shipping Fee: {getShippingFee(formData.city).toLocaleString("en-US")} $</p>
               <p className="text-rose-700 text-xl">
-                Total: {(getTotalPrice() + shippingFee).toLocaleString("vi-VN")}{" "}
+                Total: {(getTotalPrice() + getShippingFee(formData.city)).toLocaleString("en-US")}{" "}
                 $
               </p>
             </div>
