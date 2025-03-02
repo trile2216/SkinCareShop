@@ -2,13 +2,13 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { FiSearch, FiShoppingCart, FiUser } from "react-icons/fi";
 import Cart from "./Cart";
-import { useCart } from "../context/CartContext";
+import { useSelector } from "react-redux";
 
 const Header = () => {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
-  const { cartCount } = useCart();
-
+  const cartCount = useSelector((state) => state.cart.cartCount);
+  
   const categories = [
     { name: "Home", path: "/" },
     { name: "Shop", path: "/productlist" },
