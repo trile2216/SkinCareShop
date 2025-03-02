@@ -51,7 +51,7 @@ const AdminLayout = () => {
                         <Link to="/dashboard/customers">Customers</Link>
                     </Menu.Item>
                     <Menu.Item key="3" icon={<AppstoreOutlined />}>
-                        <Link to="/dashboard/products">Product</Link>
+                        <Link to="/dashboard/product">Product</Link>
                     </Menu.Item>
                     <Menu.Item key="4" icon={<ReadOutlined />}>
                         <Link to="/dashboard/blogs">Blogs</Link>
