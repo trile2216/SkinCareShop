@@ -4,6 +4,6 @@ namespace api.Enum
     {
         COD = 0,
 
-        BankTransfer = 1,
+        VNPay = 1,
     }
 }

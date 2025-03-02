@@ -5,8 +5,10 @@ import Footer from "../../components/Footer";
 import { FiArrowLeft } from "react-icons/fi";
 import cityStateMapping from "../checkout/CityStateMapping";
 import { ToastContainer, toast } from "react-toastify";
+import axios from "../../config/axios";
+import VNPayPayment from "../../components/VNPayPayment";
 
-const CheckOutDetail = () => {
+const CheckOutDetails = ({ cart, totalPrice }) => {
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -27,7 +29,6 @@ const CheckOutDetail = () => {
   const handleInputChange = (e) => {
     const { name, value } = e.target;
 
-    // Xóa state nếu người dùng thay đổi city
     if (name === "city") {
       setFormData({ ...formData, city: value, state: "" });
     } else {
@@ -38,7 +39,6 @@ const CheckOutDetail = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    // Kiểm tra bắt buộc
     if (!formData.firstName) {
       window.scrollTo({ top: 0, behavior: "smooth" });
       toast.error("First Name is required.");
@@ -87,9 +87,9 @@ const CheckOutDetail = () => {
 
       if (formData.paymentMethod === "cod") {
         toast.success("Order placed successfully!");
-        setIsPlaceOrder(true); // Đánh dấu đặt hàng thành côngg
+        setIsPlaceOrder(true);
       } else if (formData.paymentMethod === "vnpay") {
-        //navigate("/vnpay");
+        navigate("/payment");
         setIsPlaceOrder(true);
       }
     }
@@ -103,9 +103,47 @@ const CheckOutDetail = () => {
   const cities = Object.keys(cityStateMapping).sort();
 
   const getShippingFee = (city) => {
-    return cityStateMapping[city]?.shippingFee || 0; // Mặc định 0 nếu không tìm thấy
+    return cityStateMapping[city]?.shippingFee || 0;
   };
 
+  const handleSubmitOrder = async (e) => {
+    e.preventDefault();
+
+    if (
+      window.confirm("Are you sure? Your order cannot be changed once placed.")
+    ) {
+      try {
+        const orderData = {
+          customerId: user.id,
+          cartItems: cart.map((item) => ({
+            productId: item.id,
+            quantity: item.quantity,
+            productPrice: item.price,
+          })),
+          totalPrice: totalPrice,
+          shippingFee: getShippingFee(formData.city),
+          paymentMethod: formData.paymentMethod,
+        };
+
+        const response = await axios.post(
+          "/api/checkout/processpayment",
+          orderData
+        );
+
+        if (formData.paymentMethod === "vnpay") {
+          if (response.data.paymentUrl) {
+            window.location.href = response.data.paymentUrl;
+          }
+        } else if (formData.paymentMethod === "cod") {
+          toast.success("Order placed successfully!");
+          setIsPlaceOrder(true);
+        }
+      } catch (error) {
+        toast.error("Failed to place order. Please try again.");
+        console.error("Order submission error:", error);
+      }
+    }
+  };
 
   return (
     <>
@@ -192,12 +230,13 @@ const CheckOutDetail = () => {
                   />
                 </div>
               </div>
-              
 
               {/* Phone/ Mail */}
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium mb-1">Phone <span className="text-red-500">*</span></label>
+                  <label className="block text-sm font-medium mb-1">
+                    Phone <span className="text-red-500">*</span>
+                  </label>
                   <input
                     type="text"
                     name="phone"
@@ -242,169 +281,187 @@ const CheckOutDetail = () => {
 
               {/* City*/}
               <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium mb-1">City <span className="text-red-500">*</span></label>
-                    <select
-                      name="city"
-                      value={formData.city}
-                      onChange={handleInputChange}
-                      required
-                      className="border p-2 rounded w-full"
-                    >
-                      <option value="">Select City</option>
-                      {cities.map((city) => (
-                        <option key={city} value={city}>
-                          {city}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-
-                  {/* States */}
-                  <div>
-                    <label className="block text-sm font-medium mb-1">State <span className="text-red-500">*</span></label>
-                    <select
-                      name="state"
-                      value={formData.state}
-                      onChange={handleInputChange}
-                      required
-                      className="border p-2 rounded w-full"
-                      disabled={!formData.city} // Vô hiệu hóa nếu chưa chọn city
-                    >
-                      <option value="">Select State</option>
-                      {formData.city &&
-                        cityStateMapping[formData.city]?.states
-                          ?.sort()
-                          .map((state) => (
-                            <option key={state} value={state}>
-                              {state}
-                            </option>
-                          ))}
-                    </select>
-                  </div>
+                <div>
+                  <label className="block text-sm font-medium mb-1">
+                    City <span className="text-red-500">*</span>
+                  </label>
+                  <select
+                    name="city"
+                    value={formData.city}
+                    onChange={handleInputChange}
+                    required
+                    className="border p-2 rounded w-full"
+                  >
+                    <option value="">Select City</option>
+                    {cities.map((city) => (
+                      <option key={city} value={city}>
+                        {city}
+                      </option>
+                    ))}
+                  </select>
                 </div>
 
-                {/* Payment Options */}
-                <h3 className="text-lg font-bold">Payment Options <span className="text-red-500">*</span></h3>
+                {/* States */}
+                <div>
+                  <label className="block text-sm font-medium mb-1">
+                    State <span className="text-red-500">*</span>
+                  </label>
+                  <select
+                    name="state"
+                    value={formData.state}
+                    onChange={handleInputChange}
+                    required
+                    className="border p-2 rounded w-full"
+                    disabled={!formData.city}
+                  >
+                    <option value="">Select State</option>
+                    {formData.city &&
+                      cityStateMapping[formData.city]?.states
+                        ?.sort()
+                        .map((state) => (
+                          <option key={state} value={state}>
+                            {state}
+                          </option>
+                        ))}
+                  </select>
+                </div>
+              </div>
+
+              {/* Payment Options */}
+              <div className="mb-6">
+                <h3 className="font-medium mb-2">Payment Method</h3>
                 <div className="space-y-2">
                   <label className="flex items-center">
                     <input
                       type="radio"
                       name="paymentMethod"
-                      value="cod"
-                      checked={formData.paymentMethod === "cod"}
-                      onChange={handlePaymentChange}
-                      className="mr-2"
+                      value="COD"
+                      checked={formData.paymentMethod === "COD"}
+                      onChange={(e) => handleInputChange({
+                        target: { name: "paymentMethod", value: e.target.value }
+                      })}
                     />
-                    Pay on delivery
-                    <img
-                      src="https://cdn-icons-png.flaticon.com/512/2897/2897853.png"
-                      alt="COD"
-                      className="ml-2 w-16 h-auto"
-                    />
+                    <span className="ml-2">COD (Cash on Delivery)</span>
                   </label>
 
                   <label className="flex items-center">
                     <input
                       type="radio"
                       name="paymentMethod"
-                      value="vnpay"
-                      checked={formData.paymentMethod === "vnpay"}
-                      onChange={handlePaymentChange}
-                      className="mr-2"
+                      value="VNPAY"
+                      checked={formData.paymentMethod === "VNPAY"}
+                      onChange={(e) => handleInputChange({
+                        target: { name: "paymentMethod", value: e.target.value }
+                      })}
                     />
-                    Pay via VN-Pay
-                    <img
-                      src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTp1v7T287-ikP1m7dEUbs2n1SbbLEqkMd1ZA&s"
-                      alt="VN-Pay"
-                      className="ml-2 w-16 h-auto"
-                    />
+                    <span className="ml-2">VNPAY</span>
                   </label>
                 </div>
-                </div> 
-
-              {/* Cart Detail */}
-              <div className="space-y-4">
-                <div className="flex justify-between items-center">
-                  <h2 className="text-xl font-bold mt-5 mb-4">Your Cart</h2>
-                  {cartItems.length > 4 && (
-                    <button
-                      type="button"
-                      onClick={() => setShowAllItems(!showAllItems)}
-                      className="text-rose-500 hover:text-rose-700 font-medium transition"
-                    >
-                      {showAllItems ? "Show Less ▲" : "Show More ▼"}
-                    </button>
-                  )}
-                </div>
-
-                <div
-                  className={`overflow-hidden transition-all duration-500 ${
-                    showAllItems ? "max-h" : "max-h-[450px]"
-                  }`}
-                >
-                  <table className="w-full border-collapse">
-                    <thead>
-                      <tr className="bg-gray-100 text-gray-600 uppercase text-sm leading-normal">
-                        <th className="py-2 px-4 text-left">Image</th>
-                        <th className="py-2 px-4 text-left">Product Name</th>
-                        <th className="py-2 px-4 text-center">Quantity</th>
-                        <th className="py-2 px-4 text-right">Price</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {cartItems.map((item) => (
-                        <tr key={item.id} className="border-b">
-                          <td className="py-2 px-4">
-                            <img
-                              src={item.image}
-                              alt={item.name}
-                              className="w-20 h-20 object-cover rounded-md"
-                            />
-                          </td>
-                          <td className="py-2 px-4 font-semibold">{item.name}</td>
-                          <td className="py-2 px-4 text-center">{item.quantity}</td>
-                          <td className="py-2 px-4 text-right font-semibold">
-                            {(item.price * item.quantity).toLocaleString("en-US")} $
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
               </div>
-            </form>       
-
-            {/* Sub cart total*/}
-            <div className="mt-4 text-right text-lg font-bold">
-              Subtotal: {getTotalPrice().toLocaleString("en-US")}$
             </div>
 
-            {/* Shipping fee */}
-            {formData.city !== "" && formData.state !== "" && (
-                <h3 className="text-rose-700 text-right text-lg font-semibold">
-                  Shipping fee: {getShippingFee(formData.city).toLocaleString("en-US")} $
-                </h3>
-            )}
+            {/* Cart Detail */}
+            <div className="space-y-4">
+              <div className="flex justify-between items-center">
+                <h2 className="text-xl font-bold mt-5 mb-4">Your Cart</h2>
+                {cartItems.length > 4 && (
+                  <button
+                    type="button"
+                    onClick={() => setShowAllItems(!showAllItems)}
+                    className="text-rose-500 hover:text-rose-700 font-medium transition"
+                  >
+                    {showAllItems ? "Show Less ▲" : "Show More ▼"}
+                  </button>
+                )}
+              </div>
 
-            {/* Total */}
-            {formData.city !== "" && formData.state !== "" && (
-              <h3 className="text-rose-700 text-right text-lg font-semibold">
-                Total:{" "}
-                {(getTotalPrice() + getShippingFee(formData.city)).toLocaleString("en-US")} $
-                </h3>
-            )}
-
-              {/* Place Order*/}
-              <button
-                type="button"
-                onClick={handleSubmit}
-                className="bg-rose-500 text-white py-1 px-4 rounded-lg hover:bg-rose-600 float-right"
+              <div
+                className={`overflow-hidden transition-all duration-500 ${showAllItems ? "max-h" : "max-h-[450px]"
+                  }`}
               >
-                Place Order
-              </button>
+                <table className="w-full border-collapse">
+                  <thead>
+                    <tr className="bg-gray-100 text-gray-600 uppercase text-sm leading-normal">
+                      <th className="py-2 px-4 text-left">Image</th>
+                      <th className="py-2 px-4 text-left">Product Name</th>
+                      <th className="py-2 px-4 text-center">Quantity</th>
+                      <th className="py-2 px-4 text-right">Price</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {cartItems.map((item) => (
+                      <tr key={item.id} className="border-b">
+                        <td className="py-2 px-4">
+                          <img
+                            src={item.image}
+                            alt={item.name}
+                            className="w-20 h-20 object-cover rounded-md"
+                          />
+                        </td>
+                        <td className="py-2 px-4 font-semibold">{item.name}</td>
+                        <td className="py-2 px-4 text-center">
+                          {item.quantity}
+                        </td>
+                        <td className="py-2 px-4 text-right font-semibold">
+                          {(item.price * item.quantity).toLocaleString("en-US")}{" "}
+                          $
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </form>
 
-              <ToastContainer position="top-center" autoClose={3000} />
+          {/* Sub cart total*/}
+          <div className="mt-4 text-right text-lg font-bold">
+            Subtotal: {getTotalPrice().toLocaleString("en-US")}$
+          </div>
+
+          {/* Shipping fee */}
+          {formData.city !== "" && formData.state !== "" && (
+            <h3 className="text-rose-700 text-right text-lg font-semibold">
+              Shipping fee:{" "}
+              {getShippingFee(formData.city).toLocaleString("en-US")} $
+            </h3>
+          )}
+
+          {/* Total */}
+          {formData.city !== "" && formData.state !== "" && (
+            <h3 className="text-rose-700 text-right text-lg font-semibold">
+              Total:{" "}
+              {(getTotalPrice() + getShippingFee(formData.city)).toLocaleString(
+                "en-US"
+              )}{" "}
+              $
+            </h3>
+          )}
+
+          {/* Place Order*/}
+          <button
+            type="button"
+            onClick={handleSubmitOrder}
+            className="bg-rose-500 text-white py-1 px-4 rounded-lg hover:bg-rose-600 float-right"
+          >
+            Place Order
+          </button>
+
+          {formData.paymentMethod === "VNPAY" && (
+            <VNPayPayment
+              amount={getTotalPrice() + getShippingFee(formData.city)}
+              orderId={Date.now()}
+              onSuccess={(response) => {
+                console.log("Payment success:", response);
+              }}
+              onError={(error) => {
+                console.error("Payment error:", error);
+                toast.error(error);
+              }}
+            />
+          )}
+
+          <ToastContainer position="top-center" autoClose={3000} />
         </div>
       )}
 
@@ -460,8 +517,8 @@ const CheckOutDetail = () => {
                 <strong>Name:</strong> {formData.firstName} {formData.lastName}
               </p>
               <p>
-                <strong>Address:</strong> {formData.street},{" "}
-                {formData.state}, {formData.city}
+                <strong>Address:</strong> {formData.street}, {formData.state},{" "}
+                {formData.city}
               </p>
               <p>
                 <strong>Phone:</strong> {formData.phone}
@@ -523,9 +580,15 @@ const CheckOutDetail = () => {
             {/* Order Total */}
             <div className="mt-4 text-right text-lg font-bold">
               <p>Subtotal: {getTotalPrice().toLocaleString("vi-VN")} $</p>
-              <p>Shipping Fee: {getShippingFee(formData.city).toLocaleString("en-US")} $</p>
+              <p>
+                Shipping Fee:{" "}
+                {getShippingFee(formData.city).toLocaleString("en-US")} $
+              </p>
               <p className="text-rose-700 text-xl">
-                Total: {(getTotalPrice() + getShippingFee(formData.city)).toLocaleString("en-US")}{" "}
+                Total:{" "}
+                {(
+                  getTotalPrice() + getShippingFee(formData.city)
+                ).toLocaleString("en-US")}{" "}
                 $
               </p>
             </div>
@@ -548,5 +611,4 @@ const CheckOutDetail = () => {
     </>
   );
 };
-
-export default CheckOutDetail;
+export default CheckOutDetails;

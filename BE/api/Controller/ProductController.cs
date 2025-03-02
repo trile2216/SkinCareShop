@@ -61,7 +61,7 @@ namespace api.Controller
         }
 
         [HttpPost]
-        [Authorize]
+
         public async Task<IActionResult> CreateProduct([FromBody] CreateProductDTO productDTO)
         {
             if (!ModelState.IsValid)

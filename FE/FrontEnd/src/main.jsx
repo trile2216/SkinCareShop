@@ -13,6 +13,9 @@ import Checkout from "./pages/checkout/CheckOut.jsx";
 import ProductManagement from "./pages/productManament/ProductManagement.jsx";
 import ProductDetail from "./pages/productDetail/productDetail.jsx";
 import CheckOutDetail from "./pages/checkout/CheckOutDetails.jsx";
+import VNPayPayment from "./components/VNPayPayment.jsx";
+import PaymentSuccess from "./pages/checkout/PaymentSuccess.jsx.jsx";
+import PaymentFailure from "./pages/checkout/PaymentFailure.jsx";
 
 // document.getElementById('root')
 // 1. Tìm tới root
@@ -54,6 +57,18 @@ const router = createBrowserRouter([
   {
     path: "/checkoutDetail",
     element: <CheckOutDetail />,
+  },
+  {
+    path: "/payment",
+    element: <VNPayPayment />,
+  },
+  {
+    path: "/payment/success",
+    element: <PaymentSuccess />,
+  },
+  {
+    path: "/payment/failure",
+    element: <PaymentFailure />,
   },
 ]);
 

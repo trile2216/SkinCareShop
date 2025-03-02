@@ -1,0 +1,13 @@
+.payment-method-card {
+  transition: all 0.3s ease;
+}
+
+.payment-method-card:hover {
+  transform: translateY(-2px);
+}
+
+.payment-method-card input:checked + div {
+  box-shadow: 0 0 0 2px #3b82f6;
+}
+
+/* Add any additional custom styles you need */
