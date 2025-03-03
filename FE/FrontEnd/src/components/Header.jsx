@@ -22,6 +22,10 @@ const Header = () => {
     dispatch(logout()); 
     setShowLogoutConfirm(false); 
     toast.success("Log out success!", { position: "top-right", autoClose: 3000 });
+
+    setTimeout(() => {
+      navigate("/"); 
+    }, 1500);
   };
 
   const categories = [
