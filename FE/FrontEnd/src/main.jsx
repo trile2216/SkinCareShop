@@ -8,12 +8,16 @@ import { ToastContainer } from "react-toastify";
 import HomePage from "./pages/homepage/HomePage.jsx";
 import SkinQuiz from "./pages/quiz/Quiz.jsx";
 import ProductList from "./pages/productlist/productList.jsx";
-import { CartProvider } from "./context/CartContext";
 import Checkout from "./pages/checkout/CheckOut.jsx";
 import ProductManagement from "./pages/productManament/ProductManagement.jsx";
 import ProductDetail from "./pages/productDetail/productDetail.jsx";
 import CheckOutDetail from "./pages/checkout/CheckOutDetails.jsx";
-
+import VNPayPayment from "./components/VNPayPayment.jsx";
+import PaymentSuccess from "./pages/checkout/PaymentSuccess.jsx.jsx";
+import PaymentFailure from "./pages/checkout/PaymentFailure.jsx";
+import { Provider } from "react-redux";
+import { store } from "./context/store.jsx";
+import CustomerProfile from "./pages/customerProfile/index.jsx";
 // document.getElementById('root')
 // 1. Tìm tới root
 // 2. Lấy code ở trong App gắn vào root
@@ -55,14 +59,30 @@ const router = createBrowserRouter([
     path: "/checkoutDetail",
     element: <CheckOutDetail />,
   },
+  {
+    path: "/payment",
+    element: <VNPayPayment />,
+  },
+  {
+    path: "/payment/success",
+    element: <PaymentSuccess />,
+  },
+  {
+    path: "/payment/failure",
+    element: <PaymentFailure />,
+  },
+  {
+    path: "/customerProfile",
+    element: <CustomerProfile/>,
+  },
 ]);
 
 createRoot(document.getElementById("root")).render(
   <>
-    <CartProvider>
+     <Provider store={store}>
       <RouterProvider router={router} />
       <ToastContainer />
-    </CartProvider>
+      </Provider>
   </>
 );
 

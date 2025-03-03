@@ -7,6 +7,9 @@ import {
   Popconfirm,
   Table,
   Upload,
+  Space,
+  InputNumber,
+  Select,
 } from "antd";
 import { useForm } from "antd/es/form/Form";
 
@@ -24,6 +27,8 @@ const ProductManagement = () => {
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewImage, setPreviewImage] = useState("");
   const [fileList, setFileList] = useState([]);
+  const [skinTypes, setSkinTypes] = useState([]);
+
   const handlePreview = async (file) => {
     if (!file.url && !file.preview) {
       file.preview = await getBase64(file.originFileObj);
@@ -31,7 +36,9 @@ const ProductManagement = () => {
     setPreviewImage(file.url || file.preview);
     setPreviewOpen(true);
   };
+
   const handleChange = ({ fileList: newFileList }) => setFileList(newFileList);
+
   const uploadButton = (
     <button
       style={{
@@ -69,13 +76,11 @@ const ProductManagement = () => {
       key: "price",
       render: (price) => `$${price}`,
     },
-
     {
       title: "Stock",
       dataIndex: "stock",
       key: "stock",
     },
-
     {
       title: "Sale",
       dataIndex: "sale",
@@ -151,34 +156,48 @@ const ProductManagement = () => {
   const handleOpenModal = () => {
     setOpen(true);
   };
+
   const handleCloseModal = () => {
     setOpen(false);
   };
 
   const handleSubmitForm = async (value) => {
-    console.log(value);
+    try {
+      if (value.image?.file?.originFileObj) {
+        const url = await uploadFile(value.image.file.originFileObj);
+        value.image = url;
+      }
 
-    // //upload ảnh lên firebase storage
-    if (value.image.file?.originFileObj) {
-      const url = await uploadFile(value.image.file.originFileObj);
-      value.image = url;
-    }
+      if (!Array.isArray(value.productSkinTypes)) {
+        value.productSkinTypes = [];
+      }
 
-    if (value.id) {
-      //update
-      await api.put(`/product/${value.id}`, value);
-    } else {
-      //create
-      await api.post("/product", value);
+      if (value.id) {
+        await api.put(`/product/${value.id}`, value);
+      } else {
+        await api.post("/product", value);
+      }
+
+      toast.success("Successfully!");
+      handleCloseModal();
+      fetchOrders();
+      form.resetFields();
+    } catch (error) {
+      toast.error("An error occurred!");
+      console.error(error);
     }
-    toast.success("Successfully!");
-    handleCloseModal();
-    fetchOrders();
-    form.resetFields();
   };
 
-  //event => chạy khi page vừa load lên
   useEffect(() => {
+    const fetchSkinTypes = async () => {
+      try {
+        const response = await api.get("/skintype");
+        setSkinTypes(response.data);
+      } catch (error) {
+        console.error("Error fetching skin types:", error);
+      }
+    };
+    fetchSkinTypes();
     fetchOrders();
   }, []);
 
@@ -194,6 +213,7 @@ const ProductManagement = () => {
         onClose={handleCloseModal}
         onCancel={handleCloseModal}
         onOk={() => form.submit()}
+        width={800}
       >
         <Form
           labelCol={{
@@ -241,7 +261,6 @@ const ProductManagement = () => {
           >
             <Input type="number" />
           </Form.Item>
-
           <Form.Item label="Sale" name="sale">
             <Input type="number" />
           </Form.Item>
@@ -252,20 +271,20 @@ const ProductManagement = () => {
             <Input.TextArea />
           </Form.Item>
           <Form.Item
-            label="Category ID"
+            label="Category"
             name="categoryId"
             rules={[
               {
                 required: true,
-                message: "Category ID cannot be empty!",
+                message: "Category cannot be empty!",
               },
             ]}
           >
-            <Input />
+            <Input type="number" />
           </Form.Item>
           <Form.Item
             label="Brand"
-            name="brand"
+            name="brandId"
             rules={[
               {
                 required: true,
@@ -273,11 +292,10 @@ const ProductManagement = () => {
               },
             ]}
           >
-            <Input />
+            <Input type="number" />
           </Form.Item>
-
           <Form.Item label="Image" name="image">
-            <Upload
+            {/* <Upload
               action="http://localhost:5286/api/upload"
               listType="picture-card"
               fileList={fileList}
@@ -285,8 +303,72 @@ const ProductManagement = () => {
               onChange={handleChange}
             >
               {fileList.length >= 8 ? null : uploadButton}
-            </Upload>
+            </Upload> */}
+            <Input />
           </Form.Item>
+
+          <Form.List name="productSkinTypes">
+            {(fields, { add, remove }) => (
+              <div style={{ marginBottom: 24 }}>
+                <div className="flex justify-between items-center mb-4">
+                  <label className="font-medium">
+                    Skin Type Recommendations
+                  </label>
+                  <Button type="dashed" onClick={() => add()} block>
+                    + Add Skin Type
+                  </Button>
+                </div>
+
+                {fields.map(({ key, name, ...restField }) => (
+                  <Space
+                    key={key}
+                    style={{ display: "flex", marginBottom: 8 }}
+                    align="baseline"
+                  >
+                    <Form.Item
+                      {...restField}
+                      name={[name, "skinTypeId"]}
+                      //rules={[{ required: true, message: "Missing skin type" }]}
+                    >
+                      <Select
+                        placeholder="Select skin type"
+                        style={{ width: 200 }}
+                        
+                      >
+                        {skinTypes.map((type) => (
+                          <Select.Option key={type.id} value={type.id}>
+                            {type.symbol}
+                          </Select.Option>
+                        ))}
+                      </Select>
+                    </Form.Item>
+
+                    <Form.Item
+                      {...restField}
+                      name={[name, "recommentedLevel"]}
+                      rules={[
+                        {
+                          required: true,
+                          message: "Missing recommendation level",
+                        },
+                      ]}
+                    >
+                      <InputNumber
+                        placeholder="Recommendation Level (1-5)"
+                        min={1}
+                        max={5}
+                        style={{ width: 200 }}
+                      />
+                    </Form.Item>
+
+                    <Button type="text" danger onClick={() => remove(name)}>
+                      Delete
+                    </Button>
+                  </Space>
+                ))}
+              </div>
+            )}
+          </Form.List>
         </Form>
       </Modal>
       {previewImage && (
@@ -305,4 +387,5 @@ const ProductManagement = () => {
     </div>
   );
 };
+
 export default ProductManagement;
