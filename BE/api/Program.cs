@@ -125,7 +125,7 @@ builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped<IOrderItemRepository, OrderItemRepository>();
 builder.Services.AddScoped<IVnPayService, VnPayService>();
 builder.Services.AddScoped<ISkinTypeRepository, SkinTypeRepository>();
-
+builder.Services.AddScoped<IImageService, ImageService>();
 
 var app = builder.Build();
 
