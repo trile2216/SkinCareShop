@@ -72,6 +72,7 @@ namespace api.Controller
                     }
                 }
 
+                var deliveryAddress = $"{checkOutDTO.Street}, {checkOutDTO.State}, {checkOutDTO.City}";
 
                 switch (checkOutDTO.PaymentMethod)
                 {
@@ -79,8 +80,10 @@ namespace api.Controller
                         var paymentInfo = new PaymentInformationModel
                         {
                             OrderType = "200000",
-                            Amount = (double)(checkOutDTO.TotalPrice + checkOutDTO.ShippingFee),
-                            OrderDescription = $"Thanh toan don hang #{DateTime.Now.Ticks}|#{checkOutDTO.TotalPrice.ToString()}|#{checkOutDTO.ShippingFee.ToString()}",
+                            DeliveryAddress = deliveryAddress,
+                            Amount = (double)checkOutDTO.TotalPrice,
+                            ShippingFee = (double)checkOutDTO.ShippingFee,
+                            OrderDescription = $"Thanh toan don hang #{DateTime.Now.Ticks}",
                             Name = checkOutDTO.CustomerId.ToString()
                         };
                         var url = _vnPayService.CreatePaymentUrl(paymentInfo, HttpContext);
@@ -93,7 +96,8 @@ namespace api.Controller
                             OrderDate = DateTime.Now,
                             Status = OrderStatus.Pending,
                             TotalPrice = checkOutDTO.TotalPrice,
-                            ShippingFee = checkOutDTO.ShippingFee
+                            ShippingFee = checkOutDTO.ShippingFee,
+                            DeliveryAddress = deliveryAddress
                         };
 
                         var createdOrder = await _orderRepo.CreateOrderAsync(order);
@@ -144,10 +148,16 @@ namespace api.Controller
                     try
                     {
                         var orderInfo = Request.Query["vnp_OrderInfo"].ToString().Split('|');
+                        var customerIdStr = orderInfo[0].Trim('#');
+                        var totalPrice = decimal.Parse(orderInfo[2].Trim('#'));
+                        var shippingFee = decimal.Parse(orderInfo[3].Trim('#'));
+                        var deliveryAddress = orderInfo[4].Trim('#');
+                        if (string.IsNullOrEmpty(customerIdStr))
+                        {
+                            return BadRequest(new { Success = false, Message = "Không tìm thấy thông tin khách hàng" });
+                        }
 
-                        var customerId = int.Parse(Request.Query["vnp_OrderInfo"].ToString().Split('#')[0]);
-                        var totalPrice = decimal.Parse(orderInfo[1].Trim('#'));
-                        var shippingFee = decimal.Parse(orderInfo[2].Trim('#'));
+                        var customerId = int.Parse(customerIdStr);
 
                         var order = new Order
                         {
@@ -155,7 +165,8 @@ namespace api.Controller
                             OrderDate = DateTime.Now,
                             Status = OrderStatus.Pending,
                             TotalPrice = totalPrice,
-                            ShippingFee = shippingFee
+                            ShippingFee = shippingFee,
+                            DeliveryAddress = deliveryAddress
                         };
 
                         var createdOrder = await _orderRepo.CreateOrderAsync(order);

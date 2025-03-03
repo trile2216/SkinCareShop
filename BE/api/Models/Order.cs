@@ -16,6 +16,9 @@ public partial class Order
 
     public decimal ShippingFee { get; set; }
 
+    public string? DeliveryAddress { get; set; }
+
+
     public OrderStatus Status { get; set; }
 
     public virtual Customer Customer { get; set; } = null!;

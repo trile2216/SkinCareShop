@@ -26,5 +26,14 @@ namespace api.DTOs.CheckOut
 
         [Required]
         public decimal ShippingFee { get; set; }
+
+        [Required]
+        public string Street { get; set; }
+
+        [Required]
+        public string City { get; set; }
+
+        [Required]
+        public string State { get; set; }
     }
 }

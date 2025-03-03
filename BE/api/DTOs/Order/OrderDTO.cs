@@ -18,6 +18,8 @@ namespace api.DTOs.Order
 
         public decimal ShippingFee { get; set; }
 
+        public string? DeliveryAddress { get; set; }
+
         public DateTime OrderDate { get; set; }
 
         public OrderStatus Status { get; set; }

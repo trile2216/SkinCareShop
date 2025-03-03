@@ -16,11 +16,12 @@ namespace api.DTOs.Order
         [Required]
         public decimal TotalPrice { get; set; }
 
-        [Required]
-        public DateTime OrderDate { get; set; }
 
         [Required]
         public decimal ShippingFee { get; set; }
+
+        [Required]
+        public string DeliveryAddress { get; set; }
 
         [Required]
         public OrderStatus Status { get; set; }

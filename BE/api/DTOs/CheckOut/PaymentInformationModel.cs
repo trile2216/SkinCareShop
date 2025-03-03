@@ -9,7 +9,13 @@ namespace api.DTOs.CheckOut
     {
         public string OrderType { get; set; }
         public double Amount { get; set; }
+
+        public double ShippingFee { get; set; }
+
         public string OrderDescription { get; set; }
+        
+        public string DeliveryAddress { get; set; }
+
         public string Name { get; set; }
     }
 }
