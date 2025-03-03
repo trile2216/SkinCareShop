@@ -17,6 +17,7 @@ import PaymentSuccess from "./pages/checkout/PaymentSuccess.jsx.jsx";
 import PaymentFailure from "./pages/checkout/PaymentFailure.jsx";
 import { Provider } from "react-redux";
 import { store } from "./context/store.jsx";
+import CustomerProfile from "./pages/customerProfile/index.jsx";
 // document.getElementById('root')
 // 1. Tìm tới root
 // 2. Lấy code ở trong App gắn vào root
@@ -69,6 +70,10 @@ const router = createBrowserRouter([
   {
     path: "/payment/failure",
     element: <PaymentFailure />,
+  },
+  {
+    path: "/customerProfile",
+    element: <CustomerProfile/>,
   },
 ]);
 

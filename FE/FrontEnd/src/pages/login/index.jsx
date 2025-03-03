@@ -5,7 +5,14 @@ import api from "../../config/axios";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 
+import { useDispatch } from "react-redux";
+import { loginSuccess } from "../../context/UserSlice";
+
+
 const LoginPage = () => {
+
+  const dispatch = useDispatch();
+
   const [formData, setFormData] = useState({
     username: "",
     password: "",
@@ -43,7 +50,10 @@ const LoginPage = () => {
 
       try {
         const response = await api.post("/auth/login", formData);
-        const { token, role } = response.data.data;
+        const { token, role, user } = response.data.data;
+
+        dispatch(loginSuccess({ user, token })); // Cập nhật Redux Store
+
         localStorage.setItem("token", token);
         toast.success("Successfully login!");
 
