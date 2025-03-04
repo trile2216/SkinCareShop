@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using api.DTOs.Customer;
 using api.Enum;
 using api.Models;
 
@@ -17,6 +18,6 @@ namespace api.DTOs.Account
 
         public bool IsActive { get; set; }
 
-        public virtual Customer? Customer { get; set; }
+        public virtual api.Models.Customer? Customer { get; set; } // chỉnh lại thành customer DTO     
     }
 }

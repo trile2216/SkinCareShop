@@ -15,6 +15,7 @@ namespace api.Mappers
             {
                 Id = brand.Id,
                 Name = brand.Name,
+                Status = brand.Status,
             };
         }
 
@@ -23,6 +24,7 @@ namespace api.Mappers
             return new Brand
             {
                 Name = createBrandDTO.Name,
+                Status = true,
             };
         }
 

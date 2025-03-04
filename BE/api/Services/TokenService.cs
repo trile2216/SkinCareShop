@@ -23,6 +23,7 @@ namespace api.Services
         {
             var claims = new List<Claim>
             {
+                new Claim("customerId", user.Account.Customer?.Id.ToString() ?? ""),
                 new Claim(System.IdentityModel.Tokens.Jwt.JwtRegisteredClaimNames.GivenName, user.UserName),
                 new Claim(ClaimTypes.Role, user.Account.Role.ToString())
             };
