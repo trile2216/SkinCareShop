@@ -34,7 +34,8 @@ namespace api.Controller
             return Ok(customers);
         }
 
-        [HttpGet("{id}")]
+        [HttpGet]
+        [Route("{id:int}")]
         public async Task<IActionResult> GetCustomerByIdAsync(int id)
         {
             var customer = await _customerRepo.GetCustomerByIdAsync(id);
