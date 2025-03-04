@@ -34,5 +34,19 @@ namespace api.Controller
 
             return Ok(skinTypeDTOs);
         }
+
+        [HttpGet]
+        [Route("{id:int}")]
+        public async Task<IActionResult> GetSkinTypeById(int id)
+        {
+            var skinType = await _skinTypeRepo.GetSkinTypeByIdAsync(id);
+            if (skinType == null)
+            {
+                return NotFound("Skin type not found");
+            }
+            return Ok(skinType.ToSkinTypeDTO());
+        }
+
+        
     }
 }

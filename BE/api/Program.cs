@@ -127,6 +127,8 @@ builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
 builder.Services.AddScoped<IVnPayService, VnPayService>();
 builder.Services.AddScoped<ISkinTypeRepository, SkinTypeRepository>();
 builder.Services.AddScoped<IImageService, ImageService>();
+builder.Services.AddScoped<ISkinCareStepRepository, SkinCareStepRepository>();
+builder.Services.AddScoped<ISkinCareRoutineRepository, SkinCareRoutineRepository>();
 
 var app = builder.Build();
 
