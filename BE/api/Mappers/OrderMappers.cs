@@ -32,7 +32,7 @@ namespace api.Mappers
                 ShippingFee = order.ShippingFee,
                 OrderDate = order.OrderDate,
                 DeliveryAddress = order.DeliveryAddress,
-                Status = order.Status,
+                Status = order.Status.ToString(),
                 OrderItems = order.OrderItems.Select(x => x.ToOrderItemDTO()).ToList()
             };
         }
