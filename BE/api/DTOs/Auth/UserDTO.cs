@@ -11,6 +11,8 @@ namespace api.DTOs.Auth
 
         public string Token { get; set; } = string.Empty;
 
+        public int? CustomerId { get; set; }
+
 
     }
 }

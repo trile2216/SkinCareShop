@@ -27,12 +27,20 @@ namespace api.Controller
 
         private readonly UserManager<ApplicationUser> _userManager;
 
-        public AuthController(ApplicationDbContext context, ITokenService tokenService, SignInManager<ApplicationUser> signInManager, UserManager<ApplicationUser> userManager)
+        private readonly IAccountRepository _accountRepo;
+
+        public AuthController(
+            ApplicationDbContext context,
+            ITokenService tokenService,
+            SignInManager<ApplicationUser> signInManager,
+            UserManager<ApplicationUser> userManager,
+            IAccountRepository accountRepo)
         {
             _context = context;
             _tokenService = tokenService;
             _signInManager = signInManager;
             _userManager = userManager;
+            _accountRepo = accountRepo;
         }
 
         [HttpPost]
@@ -67,8 +75,7 @@ namespace api.Controller
                     IdentityUserId = user.Id
                 };
 
-                _context.Accounts.Add(account);
-                await _context.SaveChangesAsync();
+                await _accountRepo.CreateAccountAsync(account);
                 var customer = new Customer
                 {
                     FirstName = registerDTO.FirstName,
@@ -101,7 +108,10 @@ namespace api.Controller
                     return BadRequest(ModelState);
                 }
 
-                var user = await _userManager.Users.Include(u => u.Account).FirstOrDefaultAsync(x => x.UserName == loginDTO.UserName);
+                var user = await _userManager.Users
+                    .Include(u => u.Account)
+                    .Include(u => u.Account.Customer)
+                    .FirstOrDefaultAsync(x => x.UserName == loginDTO.UserName);
 
                 if (user == null)
                     return Unauthorized("Invalid username");
@@ -118,6 +128,7 @@ namespace api.Controller
 
                 var userDTO = new UserDTO
                 {
+                    CustomerId = user.Account.Customer?.Id,
                     Role = user.Account.Role.ToString(),
                     Token = _tokenService.CreateToken(user)
                 };

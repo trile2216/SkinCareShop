@@ -21,7 +21,9 @@ namespace api.Repository
 
         public async Task<List<Account>> GetAllAccountAsync()
         {
-            return await _context.Accounts.ToListAsync();
+            return await _context.Accounts
+                .Include(a => a.Customer)
+                .ToListAsync();
         }
 
         public async Task<Account?> GetAccountByIdAsync(int id)
