@@ -1,131 +1,87 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import api from "../config/axios"; 
-
-// Lấy dữ liệu giỏ hàng từ localStorage nếu có
-const cartItems = JSON.parse(localStorage.getItem("cart")) || [];
+import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-    cartItems: cartItems,
-    cartCount: cartItems.reduce((total, item) => total + item.quantity, 0),
-    loading: false,
+  cartItems: JSON.parse(localStorage.getItem("cartItems")) || [],
+  cartCount: 0,
+  totalPrice: 0,
 };
-
-//Lấy dữ liệu giỏ hàng từ server
-export const fetchCartData = createAsyncThunk("cart/fetchCart", async () => {
-  try {
-    const response = await api.get("/cart");
-    return response.data;
-  } catch (error) {
-    console.error("Error fetching cart data:", error);
-    throw error;
-  }
-});
-
-//Cập nhật giỏ hàng lên server
-export const updateCartInBackend = createAsyncThunk("cart/updateCart", async (_, { getState }) => {
-  try {
-    const cartItems = getState().cart.cartItems; // Lấy giỏ hàng từ state hiện tại
-    await api.post("/cart", cartItems);
-  } catch (error) {
-    console.error("Error updating cart:", error);
-  }
-});
 
 const cartSlice = createSlice({
   name: "cart",
   initialState,
   reducers: {
-    addToCart: (state, action) => {
-      const existingItem = state.cartItems.find((item) => item.id === action.payload.id);
-      if (existingItem) {
-        const newQuantity = Math.min(
-          existingItem.quantity + (action.payload.quantity || 1),
-          action.payload.stock
-        );
+    addToCart(state, action) {
+      const product = action.payload;
+      const existingItem = state.cartItems.find((item) => item.id === product.id);
 
-        if (newQuantity !== existingItem.quantity) {
-          existingItem.quantity = newQuantity;
-        }
+      if (existingItem) {
+        existingItem.quantity = Math.min(
+          existingItem.quantity + (product.quantity || 1),
+          product.stock
+        );
       } else {
-        state.cartItems.push({ ...action.payload, quantity: action.payload.quantity || 1 });
+        state.cartItems.push({ ...product, quantity: product.quantity || 1 });
       }
 
       state.cartCount = state.cartItems.reduce((total, item) => total + item.quantity, 0);
-      localStorage.setItem("cart", JSON.stringify(state.cartItems));
+      state.totalPrice = state.cartItems.reduce(
+        (total, item) => total + item.price * item.quantity,
+        0
+      );
+      localStorage.setItem("cartItems", JSON.stringify(state.cartItems));
     },
 
-    removeFromCart: (state, action) => {
-      state.cartItems = state.cartItems.filter((item) => item.id !== action.payload);
+    removeFromCart(state, action) {
+      const productId = action.payload;
+      state.cartItems = state.cartItems.filter((item) => item.id !== productId);
+
       state.cartCount = state.cartItems.reduce((total, item) => total + item.quantity, 0);
-      localStorage.setItem("cart", JSON.stringify(state.cartItems));
+      state.totalPrice = state.cartItems.reduce(
+        (total, item) => total + item.price * item.quantity,
+        0
+      );
+      localStorage.setItem("cartItems", JSON.stringify(state.cartItems));
     },
 
-    updateQuantity: (state, action) => {
-      const { id, quantity } = action.payload;
-      const item = state.cartItems.find((item) => item.id === id);
+    updateQuantity(state, action) {
+      const { productId, newQuantity } = action.payload;
+      const item = state.cartItems.find((item) => item.id === productId);
 
       if (item) {
-        if (quantity < 1) {
-          state.cartItems = state.cartItems.filter((item) => item.id !== id);
+        if (newQuantity < 1) {
+          state.cartItems = state.cartItems.filter((item) => item.id !== productId);
         } else {
-          item.quantity = Math.min(quantity, item.stock);
+          item.quantity = Math.min(newQuantity, item.stock);
         }
       }
 
       state.cartCount = state.cartItems.reduce((total, item) => total + item.quantity, 0);
-      localStorage.setItem("cart", JSON.stringify(state.cartItems));
+      state.totalPrice = state.cartItems.reduce(
+        (total, item) => total + item.price * item.quantity,
+        0
+      );
+      localStorage.setItem("cartItems", JSON.stringify(state.cartItems));
     },
 
-    clearCart: (state) => {
+    clearCart(state) {
       state.cartItems = [];
       state.cartCount = 0;
-      localStorage.removeItem("cart");
+      state.totalPrice = 0;
+      localStorage.removeItem("cartItems");
     },
-  },
 
-  extraReducers: (builder) => {
-    builder
-      .addCase(fetchCartData.pending, (state) => {
-        state.loading = true;
-      })
-      .addCase(fetchCartData.fulfilled, (state, action) => {
-        state.cartItems = action.payload;
-        state.cartCount = action.payload.reduce((total, item) => total + item.quantity, 0);
-        state.loading = false;
-        localStorage.setItem("cart", JSON.stringify(state.cartItems));
-      })
-      .addCase(fetchCartData.rejected, (state) => {
-        state.loading = false;
-      })
-      .addCase(updateCartInBackend.fulfilled, () => {
-        console.log("Cart updated in backend");
-      });
+    // 
+    setCartItems(state, action) {
+      state.cartItems = action.payload;
+      state.cartCount = state.cartItems.reduce((total, item) => total + item.quantity, 0);
+      state.totalPrice = state.cartItems.reduce(
+        (total, item) => total + item.price * item.quantity,
+        0
+      );
+      localStorage.setItem("cartItems", JSON.stringify(state.cartItems));
+    }    
   },
 });
 
-// Middleware Thêm sản phẩm vào giỏ hàng và cập nhật lên server
-export const addToCartAndSync = (payload) => (dispatch) => {
-  dispatch(addToCart(payload)); // Thêm vào Redux state
-  dispatch(updateCartInBackend()); // Gửi lên server
-};
-
-// Middleware Xóa sản phẩm khỏi giỏ hàng và cập nhật lên server
-export const removeFromCartAndSync = (id) => (dispatch) => {
-  dispatch(removeFromCart(id)); // Xóa khỏi Redux state
-  dispatch(updateCartInBackend()); // Gửi lên server
-};
-
-// Middleware Cập nhật số lượng sản phẩm và đồng bộ với server
-export const updateQuantityAndSync = (payload) => (dispatch) => {
-  dispatch(updateQuantity(payload)); // Cập nhật Redux state
-  dispatch(updateCartInBackend()); // Gửi lên server
-};
-
-// Total price selector
-export const getTotalPrice = (state) => {
-  return state.cart.cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
-};
-
-// Export reducers
-export const { addToCart, removeFromCart, updateQuantity, clearCart } = cartSlice.actions;
+export const { addToCart, removeFromCart, updateQuantity, clearCart, setCartItems } = cartSlice.actions;
 export default cartSlice.reducer;

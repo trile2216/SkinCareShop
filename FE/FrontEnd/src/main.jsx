@@ -18,6 +18,8 @@ import PaymentFailure from "./pages/checkout/PaymentFailure.jsx";
 import { Provider } from "react-redux";
 import { store } from "./context/store.jsx";
 import CustomerProfile from "./pages/customerProfile/index.jsx";
+
+import { CartProvider } from "./context/CartContext"; 
 // document.getElementById('root')
 // 1. Tìm tới root
 // 2. Lấy code ở trong App gắn vào root
@@ -80,8 +82,10 @@ const router = createBrowserRouter([
 createRoot(document.getElementById("root")).render(
   <>
      <Provider store={store}>
-      <RouterProvider router={router} />
-      <ToastContainer />
+        <CartProvider>
+            <RouterProvider router={router} />
+            <ToastContainer />
+        </CartProvider>
       </Provider>
   </>
 );

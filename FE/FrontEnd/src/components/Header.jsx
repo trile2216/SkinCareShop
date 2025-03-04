@@ -3,6 +3,7 @@ import {  Link, useNavigate  } from "react-router-dom";
 import { FiSearch, FiShoppingCart, FiUser } from "react-icons/fi";
 import Cart from "./Cart";
 import { useDispatch, useSelector } from "react-redux";
+import {useCart} from "../context/CartContext";
 import { logout } from "../context/UserSlice";
 import {toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -10,7 +11,8 @@ import "react-toastify/dist/ReactToastify.css";
 const Header = () => {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
-  const cartCount = useSelector((state) => state.cart.cartCount);
+  // const cartCount = useSelector((state) => state.cart.cartCount);
+  const { cartCount } = useCart();
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
 
   const navigate = useNavigate();
