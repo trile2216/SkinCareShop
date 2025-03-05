@@ -9,8 +9,6 @@ public partial class SkinQuiz
 
     public int MainQuizId { get; set; }
 
-    public decimal? Score { get; set; }
-
     public int SkinElement { get; set; }
 
     public virtual MainQuiz MainQuiz { get; set; } = null!;

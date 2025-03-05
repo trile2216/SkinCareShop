@@ -252,6 +252,10 @@ public partial class ApplicationDbContext : IdentityDbContext<ApplicationUser>
                 .HasPrecision(0)
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnName("createdAt");
+
+            entity.Property(e => e.IsActive)
+            .HasDefaultValue(true)
+            .HasColumnName("isActive");
         });
 
         modelBuilder.Entity<Order>(entity =>
@@ -466,12 +470,9 @@ public partial class ApplicationDbContext : IdentityDbContext<ApplicationUser>
 
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.MainQuizId).HasColumnName("mainQuizId");
-            entity.Property(e => e.Score)
-                .HasColumnType("decimal(4, 2)")
-                .HasColumnName("score");
             entity.Property(e => e.SkinElement)
-            .HasConversion<int>()
-            .HasColumnName("skinElement");
+                .HasConversion<int>()
+                .HasColumnName("skinElement");
 
             entity.HasOne(d => d.MainQuiz).WithMany(p => p.SkinQuizzes)
                 .HasForeignKey(d => d.MainQuizId)
