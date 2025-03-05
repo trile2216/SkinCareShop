@@ -295,15 +295,15 @@ const ProductManagement = () => {
             <Input type="number" />
           </Form.Item>
           <Form.Item label="Image" name="image">
-            {/* <Upload
-              action="http://localhost:5286/api/upload"
+            <Upload
+              action="http://localhost:5286/api/image/upload"
               listType="picture-card"
               fileList={fileList}
               onPreview={handlePreview}
               onChange={handleChange}
             >
               {fileList.length >= 8 ? null : uploadButton}
-            </Upload> */}
+            </Upload>
             <Input />
           </Form.Item>
 
@@ -328,12 +328,11 @@ const ProductManagement = () => {
                     <Form.Item
                       {...restField}
                       name={[name, "skinTypeId"]}
-                      //rules={[{ required: true, message: "Missing skin type" }]}
+                      rules={[{ required: true, message: "Missing skin type" }]}
                     >
                       <Select
                         placeholder="Select skin type"
                         style={{ width: 200 }}
-                        
                       >
                         {skinTypes.map((type) => (
                           <Select.Option key={type.id} value={type.id}>

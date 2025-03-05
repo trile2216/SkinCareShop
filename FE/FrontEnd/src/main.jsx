@@ -12,14 +12,15 @@ import Checkout from "./pages/checkout/CheckOut.jsx";
 import ProductManagement from "./pages/productManament/ProductManagement.jsx";
 import ProductDetail from "./pages/productDetail/productDetail.jsx";
 import CheckOutDetail from "./pages/checkout/CheckOutDetails.jsx";
-import VNPayPayment from "./components/VNPayPayment.jsx";
-import PaymentSuccess from "./pages/checkout/PaymentSuccess.jsx.jsx";
-import PaymentFailure from "./pages/checkout/PaymentFailure.jsx";
 import { Provider } from "react-redux";
 import { store } from "./context/store.jsx";
 import CustomerProfile from "./pages/customerProfile/index.jsx";
+<<<<<<< Updated upstream
 
 import { CartProvider } from "./context/CartContext"; 
+=======
+import { CartProvider } from "./context/CartContext.jsx";
+>>>>>>> Stashed changes
 // document.getElementById('root')
 // 1. Tìm tới root
 // 2. Lấy code ở trong App gắn vào root
@@ -61,32 +62,30 @@ const router = createBrowserRouter([
     path: "/checkoutDetail",
     element: <CheckOutDetail />,
   },
-  {
-    path: "/payment",
-    element: <VNPayPayment />,
-  },
-  {
-    path: "/payment/success",
-    element: <PaymentSuccess />,
-  },
-  {
-    path: "/payment/failure",
-    element: <PaymentFailure />,
-  },
+
   {
     path: "/customerProfile",
-    element: <CustomerProfile/>,
+    element: <CustomerProfile />,
   },
 ]);
 
 createRoot(document.getElementById("root")).render(
   <>
+<<<<<<< Updated upstream
      <Provider store={store}>
         <CartProvider>
             <RouterProvider router={router} />
             <ToastContainer />
         </CartProvider>
       </Provider>
+=======
+    <Provider store={store}>
+      <CartProvider>
+        <RouterProvider router={router} />
+        <ToastContainer />
+      </CartProvider>
+    </Provider>
+>>>>>>> Stashed changes
   </>
 );
 

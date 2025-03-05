@@ -6,7 +6,6 @@ import { FiArrowLeft } from "react-icons/fi";
 import cityStateMapping from "../checkout/CityStateMapping";
 import { ToastContainer, toast } from "react-toastify";
 import axios from "../../config/axios";
-import VNPayPayment from "../../components/VNPayPayment";
 
 const CheckOutDetails = ({ cart, totalPrice }) => {
   const [formData, setFormData] = useState({
@@ -337,9 +336,14 @@ const CheckOutDetails = ({ cart, totalPrice }) => {
                       name="paymentMethod"
                       value="COD"
                       checked={formData.paymentMethod === "COD"}
-                      onChange={(e) => handleInputChange({
-                        target: { name: "paymentMethod", value: e.target.value }
-                      })}
+                      onChange={(e) =>
+                        handleInputChange({
+                          target: {
+                            name: "paymentMethod",
+                            value: e.target.value,
+                          },
+                        })
+                      }
                     />
                     <span className="ml-2">COD (Cash on Delivery)</span>
                   </label>
@@ -350,9 +354,14 @@ const CheckOutDetails = ({ cart, totalPrice }) => {
                       name="paymentMethod"
                       value="VNPAY"
                       checked={formData.paymentMethod === "VNPAY"}
-                      onChange={(e) => handleInputChange({
-                        target: { name: "paymentMethod", value: e.target.value }
-                      })}
+                      onChange={(e) =>
+                        handleInputChange({
+                          target: {
+                            name: "paymentMethod",
+                            value: e.target.value,
+                          },
+                        })
+                      }
                     />
                     <span className="ml-2">VNPAY</span>
                   </label>
@@ -376,8 +385,9 @@ const CheckOutDetails = ({ cart, totalPrice }) => {
               </div>
 
               <div
-                className={`overflow-hidden transition-all duration-500 ${showAllItems ? "max-h" : "max-h-[450px]"
-                  }`}
+                className={`overflow-hidden transition-all duration-500 ${
+                  showAllItems ? "max-h" : "max-h-[450px]"
+                }`}
               >
                 <table className="w-full border-collapse">
                   <thead>

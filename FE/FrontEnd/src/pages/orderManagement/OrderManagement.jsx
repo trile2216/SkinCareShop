@@ -19,7 +19,7 @@ const OrderManagement = () => {
 
   const fetchOrders = async () => {
     try {
-      const response = await axios.get("/orders");
+      const response = await axios.get("/order");
       setOrders(response.data);
     } catch (error) {
       console.error("Error fetching orders:", error);
@@ -30,21 +30,10 @@ const OrderManagement = () => {
 
   const handleUpdateStatus = async (orderId, newStatus) => {
     try {
-      await axios.patch(`/orders/${orderId}`, { status: newStatus });
+      await axios.patch(`/order/${orderId}`, { status: newStatus });
       fetchOrders(); // Refresh orders list
     } catch (error) {
       console.error("Error updating order:", error);
-    }
-  };
-
-  const handleDeleteOrder = async (orderId) => {
-    if (!window.confirm("Are you sure you want to delete this order??")) return;
-
-    try {
-      await axios.delete(`/orders/${orderId}`);
-      fetchOrders();
-    } catch (error) {
-      console.error("Error deleting order:", error);
     }
   };
 
@@ -98,7 +87,7 @@ const OrderManagement = () => {
                     {new Date(order.orderDate).toLocaleDateString()}
                   </td>
                   <td className="px-6 py-4">
-                    {order.totalAmount.toLocaleString("vi-VN")}đ
+                    {order.totalAmount.toLocaleString("vi-VN")}$
                   </td>
                   <td className="px-6 py-4">
                     <span
@@ -118,12 +107,6 @@ const OrderManagement = () => {
                       className="text-blue-600 hover:text-blue-800 mr-3"
                     >
                       Update
-                    </button>
-                    <button
-                      onClick={() => handleDeleteOrder(order.id)}
-                      className="text-red-600 hover:text-red-800"
-                    >
-                      Delete
                     </button>
                   </td>
                 </tr>
