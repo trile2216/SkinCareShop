@@ -46,7 +46,7 @@ namespace api.DTOs.Products
         public decimal Price { get; set; }
 
         [Required]
-        public List<ProductSkinTypeDTO> ProductSkinTypes { get; set; } = new List<ProductSkinTypeDTO>();
+        public List<ProductSkinTypeDTO> ProductSkinTypeDTOs { get; set; } = new List<ProductSkinTypeDTO>();
 
         [Required]
         public bool Status { get; set; }

@@ -49,6 +49,11 @@ namespace api.Repository
             return await _context.SkinTypes.FirstOrDefaultAsync(x => x.Id == id);
         }
 
+        public async Task<SkinType?> GetSkinTypeBySymbolAsync(string symbol)
+        {
+            return await _context.SkinTypes.FirstOrDefaultAsync(x => x.Symbol == symbol);
+        }
+
         public async Task<SkinType?> UpdateSkinTypeAsync(int id, SkinType skinType)
         {
             var existingSkinType = await GetSkinTypeByIdAsync(id);

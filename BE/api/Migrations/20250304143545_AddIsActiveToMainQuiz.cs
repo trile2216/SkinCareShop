@@ -5,21 +5,14 @@
 namespace api.Migrations
 {
     /// <inheritdoc />
-    public partial class AddStatusToBrandAndCategory : Migration
+    public partial class AddIsActiveToMainQuiz : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AddColumn<bool>(
-                name: "status",
-                table: "Category",
-                type: "bit",
-                nullable: false,
-                defaultValue: true);
-
-            migrationBuilder.AddColumn<bool>(
-                name: "status",
-                table: "Brand",
+                name: "isActive",
+                table: "MainQuiz",
                 type: "bit",
                 nullable: false,
                 defaultValue: true);
@@ -29,12 +22,8 @@ namespace api.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
-         name: "status",
-         table: "Category");
-
-            migrationBuilder.DropColumn(
-                name: "status",
-                table: "Brand");
+                name: "isActive",
+                table: "MainQuiz");
         }
     }
 }

@@ -129,6 +129,8 @@ builder.Services.AddScoped<ISkinTypeRepository, SkinTypeRepository>();
 builder.Services.AddScoped<IImageService, ImageService>();
 builder.Services.AddScoped<ISkinCareStepRepository, SkinCareStepRepository>();
 builder.Services.AddScoped<ISkinCareRoutineRepository, SkinCareRoutineRepository>();
+builder.Services.AddScoped<IQuizRepository, QuizRepository>();
+builder.Services.AddScoped<IQuizService, QuizService>();
 
 var app = builder.Build();
 
