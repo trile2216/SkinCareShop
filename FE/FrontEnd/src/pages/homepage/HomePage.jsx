@@ -113,9 +113,6 @@ const HomePage = () => {
 
   return (
     <>
-      {/* Header */}
-      <Header />
-
       {/* Body Contain */}
       <div className="container mx-auto px-4 py-8">
         {/* Banner */}
@@ -223,9 +220,6 @@ const HomePage = () => {
           </Swiper>
         </section>
       </div>
-
-      {/* Footer */}
-      <Footer />
     </>
   );
 };

@@ -1,17 +1,13 @@
-import React, { useState, useEffect } from "react";
-import {
-  ORDER_STATUS,
-  STATUS_COLORS,
-  STATUS_LABELS,
-} from "../../utils/orderStatus";
-import OrderStatusModal from "../../components/OrderStatusModal";
-import axios from "../../config/axios";
+import React, { useEffect, useState } from "react";
+import { Table, Tag, Space, Button, Modal, message } from "antd";
+import { orderService } from "../services/orderService";
+import { ORDER_STATUS } from "../constants/orderConstants";
 
 const OrderManagement = () => {
   const [orders, setOrders] = useState([]);
+  const [loading, setLoading] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const [isModalVisible, setIsModalVisible] = useState(false);
 
   useEffect(() => {
     fetchOrders();
@@ -19,112 +15,168 @@ const OrderManagement = () => {
 
   const fetchOrders = async () => {
     try {
-      const response = await axios.get("/order");
-      setOrders(response.data);
+      setLoading(true);
+      const data = await orderService.getAllOrders();
+      setOrders(data);
     } catch (error) {
-      console.error("Error fetching orders:", error);
+      message.error("Failed to fetch orders");
     } finally {
       setLoading(false);
     }
   };
 
-  const handleUpdateStatus = async (orderId, newStatus) => {
+  const handleStatusUpdate = async (orderId, newStatus) => {
     try {
-      await axios.patch(`/order/${orderId}`, { status: newStatus });
-      fetchOrders(); // Refresh orders list
+      await orderService.updateOrderStatus(orderId, newStatus);
+      message.success("Order status updated successfully");
+      fetchOrders();
     } catch (error) {
-      console.error("Error updating order:", error);
+      message.error("Failed to update order status");
     }
   };
 
-  return (
-    <div className="p-6">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">Order management</h1>
-        <button
-          className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
-          onClick={() => {
-            /* Handle create new order */
-          }}
-        >
-          Create new order
-        </button>
-      </div>
+  const getStatusColor = (status) => {
+    switch (status) {
+      case ORDER_STATUS.PENDING:
+        return "gold";
+      case ORDER_STATUS.PROCESSING:
+        return "blue";
+      case ORDER_STATUS.SHIPPED:
+        return "cyan";
+      case ORDER_STATUS.DELIVERED:
+        return "green";
+      case ORDER_STATUS.CANCELLED:
+        return "red";
+      default:
+        return "default";
+    }
+  };
 
-      {loading ? (
-        <div>Loading...</div>
-      ) : (
-        <div className="overflow-x-auto">
-          <table className="min-w-full bg-white border rounded-lg">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                  ID
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                  Customer
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                  Date
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                  Total
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                  Status
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-200">
-              {orders.map((order) => (
-                <tr key={order.id}>
-                  <td className="px-6 py-4">{order.id}</td>
-                  <td className="px-6 py-4">{order.customerName}</td>
-                  <td className="px-6 py-4">
-                    {new Date(order.orderDate).toLocaleDateString()}
-                  </td>
-                  <td className="px-6 py-4">
-                    {order.totalAmount.toLocaleString("vi-VN")}$
-                  </td>
-                  <td className="px-6 py-4">
-                    <span
-                      className={`px-2 py-1 rounded-full text-sm ${
-                        STATUS_COLORS[order.status]
-                      }`}
-                    >
-                      {STATUS_LABELS[order.status]}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4">
-                    <button
-                      onClick={() => {
-                        setSelectedOrder(order);
-                        setIsModalOpen(true);
-                      }}
-                      className="text-blue-600 hover:text-blue-800 mr-3"
-                    >
-                      Update
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+  const columns = [
+    {
+      title: "Order ID",
+      dataIndex: "id",
+      key: "id",
+    },
+    {
+      title: "Order Date",
+      dataIndex: "orderDate",
+      key: "orderDate",
+      render: (date) => new Date(date).toLocaleDateString(),
+    },
+    {
+      title: "Total Amount",
+      dataIndex: "totalAmount",
+      key: "totalAmount",
+      render: (amount) => `$${amount.toFixed(2)}`,
+    },
+    {
+      title: "Status",
+      dataIndex: "status",
+      key: "status",
+      render: (status) => <Tag color={getStatusColor(status)}>{status}</Tag>,
+    },
+    {
+      title: "Actions",
+      key: "actions",
+      render: (_, record) => (
+        <Space>
+          <Button
+            onClick={() => {
+              setSelectedOrder(record);
+              setIsModalVisible(true);
+            }}
+          >
+            View Details
+          </Button>
+          <Button
+            type="primary"
+            onClick={() =>
+              handleStatusUpdate(record.id, ORDER_STATUS.PROCESSING)
+            }
+            disabled={record.status === ORDER_STATUS.DELIVERED}
+          >
+            Update Status
+          </Button>
+        </Space>
+      ),
+    },
+  ];
+
+  const OrderDetailsModal = () => (
+    <Modal
+      title="Order Details"
+      open={isModalVisible}
+      onCancel={() => setIsModalVisible(false)}
+      footer={null}
+      width={800}
+    >
+      {selectedOrder && (
+        <div>
+          <div className="order-info">
+            <p>
+              <strong>Order ID:</strong> {selectedOrder.id}
+            </p>
+            <p>
+              <strong>Customer ID:</strong> {selectedOrder.userId}
+            </p>
+            <p>
+              <strong>Shipping Address:</strong> {selectedOrder.shippingAddress}
+            </p>
+            <p>
+              <strong>Payment Method:</strong> {selectedOrder.paymentMethod}
+            </p>
+          </div>
+
+          <div className="order-items">
+            <h3 className="mt-4 mb-2">Order Items</h3>
+            <Table
+              dataSource={selectedOrder.items}
+              columns={[
+                {
+                  title: "Product",
+                  dataIndex: "productName",
+                },
+                {
+                  title: "Quantity",
+                  dataIndex: "quantity",
+                },
+                {
+                  title: "Price",
+                  dataIndex: "price",
+                  render: (price) => `$${price.toFixed(2)}`,
+                },
+                {
+                  title: "Subtotal",
+                  dataIndex: "subtotal",
+                  render: (subtotal) => `$${subtotal.toFixed(2)}`,
+                },
+              ]}
+              pagination={false}
+              rowKey="productId"
+            />
+          </div>
         </div>
       )}
+    </Modal>
+  );
 
-      <OrderStatusModal
-        isOpen={isModalOpen}
-        onClose={() => {
-          setIsModalOpen(false);
-          setSelectedOrder(null);
-        }}
-        order={selectedOrder}
-        onUpdateStatus={handleUpdateStatus}
-      />
+  return (
+    <div className="order-management">
+      <div className="order-management__header">
+        <h1 className="text-2xl font-bold mb-6">Order Management</h1>
+      </div>
+
+      <div className="order-management__content">
+        <Table
+          columns={columns}
+          dataSource={orders}
+          loading={loading}
+          rowKey="id"
+        />
+      </div>
+
+      <OrderDetailsModal />
     </div>
   );
 };

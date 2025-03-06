@@ -1,8 +1,8 @@
 import axios from '../config/axios';
 
-export const getSkinCareRoutine = async (skinTypeId) => {
+export const getRoutineBySkinTypeId = async (skinTypeId) => {
   try {
-    const response = await axios.get(`/api/skincare-routine/${skinTypeId}`);
+    const response = await axios.get(`/routine/skintype/${skinTypeId}`);
     return response.data;
   } catch (error) {
     console.error('Error fetching skin care routine:', error);
@@ -12,7 +12,7 @@ export const getSkinCareRoutine = async (skinTypeId) => {
 
 export const getRecommendedProducts = async (skinTypeId) => {
   try {
-    const response = await axios.get(`/api/products/recommended/${skinTypeId}`);
+    const response = await axios.get(`/products/recommended/${skinTypeId}`);
     return response.data;
   } catch (error) {
     console.error('Error fetching recommended products:', error);
