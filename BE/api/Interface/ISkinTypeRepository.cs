@@ -12,6 +12,8 @@ namespace api.Interface
 
         Task<SkinType?> GetSkinTypeByIdAsync(int id);
 
+        Task<SkinType?> GetSkinTypeBySymbolAsync(string symbol);
+
         Task<SkinType?> CreateSkinTypeAsync(SkinType skinType);
 
         Task<SkinType?> UpdateSkinTypeAsync(int id, SkinType skinType);

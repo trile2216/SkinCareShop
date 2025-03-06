@@ -9,6 +9,8 @@ public partial class MainQuiz
 
     public DateTime CreatedAt { get; set; }
 
+    public bool IsActive { get; set; }
+
     public virtual ICollection<CustomerTestResult> CustomerTestResults { get; set; } = new List<CustomerTestResult>();
 
     public virtual ICollection<SkinQuiz> SkinQuizzes { get; set; } = new List<SkinQuiz>();
