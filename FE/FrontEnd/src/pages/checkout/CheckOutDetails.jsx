@@ -84,10 +84,10 @@ const CheckOutDetails = () => {
     ) {
       console.log("Payment submitted", formData);
 
-      if (formData.paymentMethod === "cod") {
+      if (formData.paymentMethod === "COD") {
         toast.success("Order placed successfully!");
         setIsPlaceOrder(true);
-      } else if (formData.paymentMethod === "vnpay") {
+      } else if (formData.paymentMethod === "VNPay") {
         navigate("/payment");
         setIsPlaceOrder(true);
       }
@@ -132,11 +132,12 @@ const CheckOutDetails = () => {
           orderData
         );
 
-        if (formData.paymentMethod === "vnpay") {
+        if (formData.paymentMethod === "VNPAY") {
+          console.log("Payment Response:", response.data.paymentUrl);
           if (response.data.paymentUrl) {
             window.location.href = response.data.paymentUrl;
           }
-        } else if (formData.paymentMethod === "cod") {
+        } else if (formData.paymentMethod === "COD") {
           toast.success("Order placed successfully!");
           setIsPlaceOrder(true);
         }
