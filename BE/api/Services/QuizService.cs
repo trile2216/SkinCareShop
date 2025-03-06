@@ -24,7 +24,7 @@ namespace api.Services
             var quiz = await _quizRepo.GetMainQuizByIdAsync(submission.MainQuizId);
             foreach (var quizAnswer in submission.CustomerAnswers)
             {
-                var skinQuiz = quiz.SkinQuizzes.FirstOrDefault(sq => sq.Id == quizAnswer.SkinQuizId);
+                var skinQuiz = await _quizRepo.GetSkinQuizByIdAsync(quizAnswer.SkinQuizId);
                 if (skinQuiz == null)
                 {
                     continue;
