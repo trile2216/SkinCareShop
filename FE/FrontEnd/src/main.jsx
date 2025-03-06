@@ -16,7 +16,9 @@ import { Provider } from "react-redux";
 import { store } from "./context/store.jsx";
 import CustomerProfile from "./pages/customerProfile/index.jsx";
 import { CartProvider } from "./context/CartContext.jsx";
-
+import AdminLayout from "./components/adminLayout.jsx";
+import ManageProduct from "./pages/productManament/manage-product.jsx";
+import OrderManagement from "./pages/orderManagement/OrderManagement.jsx";
 // document.getElementById('root')
 // 1. Tìm tới root
 // 2. Lấy code ở trong App gắn vào root
@@ -58,16 +60,29 @@ const router = createBrowserRouter([
     path: "/checkoutDetail",
     element: <CheckOutDetail />,
   },
-
   {
-    path: "/customerProfile",
-    element: <CustomerProfile />,
+    path: "/dashboard",
+    element: <AdminLayout />,
+    children: [
+      {
+        path: "/dashboard/product",
+        element: <ManageProduct />,
+      },
+      {
+        path: "/dashboard/order",
+        element: <OrderManagement />,
+      },
+    ],
   },
+
+  // {
+  //   path: "/customerProfile",
+  //   element: <CustomerProfile />,
+  // },
 ]);
 
 createRoot(document.getElementById("root")).render(
   <>
-
     <Provider store={store}>
       <CartProvider>
         <RouterProvider router={router} />
