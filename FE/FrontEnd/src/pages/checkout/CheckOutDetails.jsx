@@ -84,10 +84,10 @@ const CheckOutDetails = () => {
     ) {
       console.log("Payment submitted", formData);
 
-      if (formData.paymentMethod === "cod") {
+      if (formData.paymentMethod === "COD") {
         toast.success("Order placed successfully!");
         setIsPlaceOrder(true);
-      } else if (formData.paymentMethod === "vnpay") {
+      } else if (formData.paymentMethod === "VNPay") {
         navigate("/payment");
         setIsPlaceOrder(true);
       }
@@ -132,11 +132,11 @@ const CheckOutDetails = () => {
           orderData
         );
 
-        if (formData.paymentMethod === "vnpay") {
+        if (formData.paymentMethod === "VNPay") {
           if (response.data.paymentUrl) {
             window.location.href = response.data.paymentUrl;
           }
-        } else if (formData.paymentMethod === "cod") {
+        } else if (formData.paymentMethod === "COD") {
           toast.success("Order placed successfully!");
           setIsPlaceOrder(true);
         }
@@ -355,8 +355,8 @@ const CheckOutDetails = () => {
                     <input
                       type="radio"
                       name="paymentMethod"
-                      value="VNPAY"
-                      checked={formData.paymentMethod === "VNPAY"}
+                      value="VNPay"
+                      checked={formData.paymentMethod === "VNPay"}
                       onChange={(e) =>
                         handleInputChange({
                           target: {
@@ -366,7 +366,7 @@ const CheckOutDetails = () => {
                         })
                       }
                     />
-                    <span className="ml-2">VNPAY</span>
+                    <span className="ml-2">VNPay</span>
                   </label>
                 </div>
               </div>
@@ -460,7 +460,7 @@ const CheckOutDetails = () => {
             Place Order
           </button>
 
-          {/* {formData.paymentMethod === "VNPAY" && (
+          {/* {formData.paymentMethod === "VNPay" && (
             <VNPayPayment
               amount={getTotalPrice() + getShippingFee(formData.city)}
               orderId={Date.now()}
@@ -547,7 +547,7 @@ const CheckOutDetails = () => {
             <div className="mb-4">
               <h4 className="text-lg font-medium">Payment Method</h4>
               <p>
-                {formData.paymentMethod === "cod"
+                {formData.paymentMethod === "COD"
                   ? "Cash on Delivery"
                   : "VN-Pay"}
               </p>
