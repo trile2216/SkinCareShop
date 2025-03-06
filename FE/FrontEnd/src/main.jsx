@@ -9,18 +9,16 @@ import HomePage from "./pages/homepage/HomePage.jsx";
 import SkinQuiz from "./pages/quiz/Quiz.jsx";
 import ProductList from "./pages/productlist/productList.jsx";
 import Checkout from "./pages/checkout/CheckOut.jsx";
-import ProductManagement from "./pages/productManament/manage-product.jsx";
 import ProductDetail from "./pages/productDetail/productDetail.jsx";
 import CheckOutDetail from "./pages/checkout/CheckOutDetails.jsx";
 import { Provider } from "react-redux";
 import { store } from "./context/store.jsx";
-import CustomerProfile from "./pages/customerProfile/index.jsx";
 import { CartProvider } from "./context/CartContext.jsx";
-import SalePage from "./pages/sale/sale.jsx";
 import Sale from "./pages/sale/sale.jsx";
 import AdminLayout from "./layouts/adminLayout.jsx";
 import ManageProduct from "./pages/productManament/manage-product.jsx";
 import OrderManagement from "./pages/orderManagement/index.jsx";
+import Blog from "./pages/blog/Blog.jsx";
 
 // document.getElementById('root')
 // 1. Tìm tới root
@@ -51,7 +49,10 @@ const router = createBrowserRouter([
     path: "/sale",
     element: <Sale />,
   },
-
+  {
+    path: "/blog",
+    element: <Blog />,
+  },
   {
     path: "/checkout",
     element: <Checkout />,
