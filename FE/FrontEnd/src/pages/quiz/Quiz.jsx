@@ -257,7 +257,7 @@ const SkinQuiz = () => {
   return (
     <>
       <Header />
-      <div className="min-h-screen bg-rose-100 py-12">
+      <div className="min-h-screen bg-rose-50 py-12">
         {step === 0 && renderWelcome()}
         {step > 0 && step <= questions.length && renderQuestion()}
         {step > questions.length && renderResult()}
