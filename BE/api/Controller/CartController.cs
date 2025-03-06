@@ -27,11 +27,16 @@ namespace api.Controller
 
 
         [HttpGet]
-        public IActionResult GetCartItems()
+        public async Task<IActionResult> GetCartItems()
         {
             var cartItems = _cartService.GetCartItems();
+            if (cartItems == null)
+            {
+                return NotFound();
+            }
 
-            return Ok(_cartService.GetCartItems());
+            ;
+            return Ok(cartItems);
         }
 
         [HttpPost]
@@ -50,7 +55,7 @@ namespace api.Controller
             cartItem.Quantity = cartItemDTO.Quantity;
 
             _cartService.AddCartItem(cartItem);
-            return Ok();
+            return Ok(cartItem);
         }
 
         [HttpPost]
