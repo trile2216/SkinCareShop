@@ -16,8 +16,8 @@ import { Provider } from "react-redux";
 import { store } from "./context/store.jsx";
 import CustomerProfile from "./pages/customerProfile/index.jsx";
 import { CartProvider } from "./context/CartContext.jsx";
-import SalePage from "./pages/sale/sale.jsx";
 import Sale from "./pages/sale/sale.jsx";
+import Blog from "./pages/blog/Blog.jsx";
 
 // document.getElementById('root')
 // 1. Tìm tới root
@@ -47,6 +47,10 @@ const router = createBrowserRouter([
   {
     path: "/sale",
     element: <Sale />,
+  },
+  {
+    path: "/blog",
+    element: <Blog />,
   },
 
   {
