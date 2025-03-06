@@ -18,6 +18,9 @@ import CustomerProfile from "./pages/customerProfile/index.jsx";
 import { CartProvider } from "./context/CartContext.jsx";
 import SalePage from "./pages/sale/sale.jsx";
 import Sale from "./pages/sale/sale.jsx";
+import AdminLayout from "./layouts/adminLayout.jsx";
+import ManageProduct from "./pages/productManament/manage-product.jsx";
+import OrderManagement from "./pages/orderManagement/index.jsx";
 
 // document.getElementById('root')
 // 1. Tìm tới root
@@ -62,13 +65,24 @@ const router = createBrowserRouter([
     path: "/checkoutDetail",
     element: <CheckOutDetail />,
   },
-
-
+  {
+    path: "/dashboard",
+    element: <AdminLayout />,
+    children: [
+      {
+        path: "/dashboard/product",
+        element: <ManageProduct />,
+      },
+      {
+        path: "/dashboard/order",
+        element: <OrderManagement />,
+      },
+    ],
+  },
 ]);
 
 createRoot(document.getElementById("root")).render(
   <>
-
     <Provider store={store}>
       <CartProvider>
         <RouterProvider router={router} />
