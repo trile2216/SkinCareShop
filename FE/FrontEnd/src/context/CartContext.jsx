@@ -48,6 +48,9 @@ export const CartProvider = ({ children }) => {
   const fetchCartData = async () => {
     try {
       const response = await api.get("/cart");
+      if (response.data === null) {
+        setCartItems([]);
+      }
       setCartItems(response.data);
       // dispatch(setCartItemsAction(response.data));
       setLoading(false);
@@ -58,10 +61,12 @@ export const CartProvider = ({ children }) => {
   };
 
   const addToCart = async (product) => {
-    await api.post("/cart/add", {
+    const response = await api.post("/cart/add", {
       productId: product.id,
       quantity: product.quantity || 1,
     });
+
+    console.log("Add to cart response:", response.data);
     try {
       setCartItems((prevCart) => {
         const existingItem = prevCart.find((item) => item.id === product.id);
@@ -83,7 +88,6 @@ export const CartProvider = ({ children }) => {
 
         return [...prevCart, { ...product, quantity: product.quantity || 1 }];
       });
-      fetchCartData();
       // dispatch(addToCartAction(product));
     } catch (error) {
       console.error("Error adding to cart:", error);

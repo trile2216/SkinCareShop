@@ -107,7 +107,8 @@ builder.Services.AddSession(options =>
 
 builder.Services.AddCors(p => p.AddPolicy(name: corsName, policy =>
 {
-    policy.AllowAnyOrigin()
+    policy.WithOrigins("http://localhost:5177")
+        .AllowCredentials()
         .AllowAnyMethod()
         .AllowAnyHeader();
 }));
