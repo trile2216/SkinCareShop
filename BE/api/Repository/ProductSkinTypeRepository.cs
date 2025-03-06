@@ -33,13 +33,10 @@ namespace api.Repository
 
         public async Task<List<ProductSkinType>> UpdateProductSkinTypesAsync(int productId, List<ProductSkinType> newProductSkinTypes)
         {
-            // Lấy danh sách các ProductSkinType hiện tại
             var existingProductSkinTypes = await GetProductSkinTypesAsync(productId);
 
-            // Tạo danh sách các bản ghi cần cập nhật
             var recordsToUpdate = new List<ProductSkinType>();
 
-            // Cập nhật các bản ghi đã tồn tại
             foreach (var newProductSkinType in newProductSkinTypes)
             {
                 var existingProductSkinType = existingProductSkinTypes.FirstOrDefault(p => p.Id == newProductSkinType.Id);
@@ -51,12 +48,10 @@ namespace api.Repository
                 }
                 else
                 {
-                    // Nếu không tồn tại, thêm mới
                     await _context.ProductSkinTypes.AddAsync(newProductSkinType);
                 }
             }
 
-            // Xóa các bản ghi không còn trong danh sách mới
             var idsToKeep = newProductSkinTypes.Select(p => p.Id).ToList();
             var recordsToDelete = existingProductSkinTypes.Where(p => !idsToKeep.Contains(p.Id)).ToList();
             if (recordsToDelete.Any())
@@ -64,13 +59,25 @@ namespace api.Repository
                 _context.ProductSkinTypes.RemoveRange(recordsToDelete);
             }
 
-            // Lưu tất cả thay đổi một lần
             await _context.SaveChangesAsync();
 
-            // Trả về danh sách các bản ghi đã cập nhật
             return await _context.ProductSkinTypes
                 .Where(p => p.ProductId == productId)
                 .ToListAsync();
         }
+
+        public async Task<List<ProductSkinType>> DeleteProductSkinTypeByProductId(int productId)
+        {
+            var productSkinTypes = await GetProductSkinTypesAsync(productId);
+
+            if (productSkinTypes.Any())
+            {
+                _context.ProductSkinTypes.RemoveRange(productSkinTypes);
+                await _context.SaveChangesAsync();
+            }
+
+            return productSkinTypes;
+        }
+
     }
 }

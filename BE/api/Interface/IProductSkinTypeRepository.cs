@@ -14,6 +14,7 @@ namespace api.Interface
 
         Task<List<ProductSkinType>> GetProductSkinTypesAsync(int productId);
 
+        Task<List<ProductSkinType>> DeleteProductSkinTypeByProductId(int productId);
 
     }
 }

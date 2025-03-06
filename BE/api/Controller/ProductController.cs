@@ -61,7 +61,7 @@ namespace api.Controller
         }
 
         [HttpPost]
-
+        [Authorize]
         public async Task<IActionResult> CreateProduct([FromBody] CreateProductDTO productDTO)
         {
             if (!ModelState.IsValid)
@@ -73,9 +73,10 @@ namespace api.Controller
 
             await _productRepo.CreateProductAsync(product);
 
-            foreach (var productSkinType in productDTO.ProductSkinTypes)
+            foreach (var productSkinTypeDTO in productDTO.ProductSkinTypeDTOs)
             {
-                await _productSkinTypeRepo.AddProductSkinTypeAsync(productSkinType.ToProductSkinTypeFromRequestDTO(product.Id));
+                var productSkinType = productSkinTypeDTO.ToProductSkinTypeFromRequestDTO(product.Id);
+                await _productSkinTypeRepo.AddProductSkinTypeAsync(productSkinType);
             }
 
             return CreatedAtAction(nameof(GetProductById), new { id = product.Id }, product.ToProductDTO());
@@ -97,7 +98,9 @@ namespace api.Controller
             {
                 return NotFound("Product not found");
             }
-            var productSkinTypes = productDTO.ProductSkinTypes.Select(p => p.ToProductSkinTypeFromDTO(p.ProductId)).ToList();
+
+            var productSkinTypes = productDTO.ProductSkinTypeDTOs.Select(p => p.ToProductSkinTypeFromDTO(p.ProductId)).ToList();
+
             await _productSkinTypeRepo.UpdateProductSkinTypesAsync(product.Id, productSkinTypes);
 
             return Ok(product.ToProductDTO());
@@ -113,6 +116,7 @@ namespace api.Controller
                 return BadRequest(ModelState);
             }
 
+            await _productSkinTypeRepo.DeleteProductSkinTypeByProductId(id);
             var product = await _productRepo.DeleteProductAsync(id);
 
             if (product == null)
@@ -157,6 +161,22 @@ namespace api.Controller
                 return NotFound("No products found");
             }
             return Ok(products.Select(p => p.ToProductDTO()));
+        }
+
+        [HttpGet]
+        [Route("recommendation/{skinTypeId:int}&{categoryId:int}")]
+        public async Task<IActionResult> GetRecommendationProducts([FromRoute] int categoryId, int skinTypeId)
+        {
+            var products = await _productRepo.GetRecommendProductsByCateAndSkinType(categoryId, skinTypeId);
+
+            if (products.Count == 0)
+            {
+                return NotFound("No products found");
+            }
+
+            var productDTOs = products.Select(p => p.ToProductDTO());
+
+            return Ok(productDTOs);
         }
     }
 }

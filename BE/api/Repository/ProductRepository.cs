@@ -38,7 +38,7 @@ namespace api.Repository
                 .Include(p => p.Category)
                 .Include(p => p.Comments)
                 .Include(p => p.ProductSkinTypes)
-                .FirstOrDefaultAsync(p => p.Id == id);
+                .FirstOrDefaultAsync(p => p.Id == id && p.Status == true);
         }
 
         public async Task<Product> CreateProductAsync(Product product)
@@ -110,6 +110,16 @@ namespace api.Repository
 
             await _context.SaveChangesAsync();
             return existingProduct;
+        }
+
+        public async Task<List<Product>> GetRecommendProductsByCateAndSkinType(int categoryId, int skinTypeId)
+        {
+            return await _context.Products
+                .Include(p => p.Brand)
+                .Include(p => p.Category)
+                .Include(p => p.ProductSkinTypes)
+                .Where(p => p.CategoryId == categoryId && p.ProductSkinTypes.Any(pst => pst.SkinTypeId == skinTypeId))
+                .ToListAsync();
         }
     }
 }

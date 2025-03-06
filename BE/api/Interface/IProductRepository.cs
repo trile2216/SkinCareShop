@@ -24,5 +24,7 @@ namespace api.Interface
         Task<List<Product>> GetProductByBrandIdAsync(int id);
 
         Task<Product?> UpdateProductQuantityAfterOrderAsync(int id, int quantity);
+
+        Task<List<Product>> GetRecommendProductsByCateAndSkinType(int categoryId, int skinTypeId);
     }
 }
