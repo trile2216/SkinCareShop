@@ -99,7 +99,7 @@ builder.Services.AddControllers().AddNewtonsoftJson(options =>
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(options =>
 {
-    options.IdleTimeout = TimeSpan.FromMinutes(60); // Thời gian session tồn tại
+    options.IdleTimeout = TimeSpan.FromDays(3); // Thời gian session tồn tại
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
 });

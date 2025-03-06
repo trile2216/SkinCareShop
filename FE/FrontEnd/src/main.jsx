@@ -9,21 +9,24 @@ import HomePage from "./pages/homepage/HomePage.jsx";
 import SkinQuiz from "./pages/quiz/Quiz.jsx";
 import ProductList from "./pages/productlist/productList.jsx";
 import Checkout from "./pages/checkout/CheckOut.jsx";
-import ProductManagement from "./pages/productManament/ProductManagement.jsx";
 import ProductDetail from "./pages/productDetail/productDetail.jsx";
 import CheckOutDetail from "./pages/checkout/CheckOutDetails.jsx";
 import { Provider } from "react-redux";
 import { store } from "./context/store.jsx";
-import CustomerProfile from "./pages/customerProfile/index.jsx";
 import { CartProvider } from "./context/CartContext.jsx";
-import AdminLayout from "./components/adminLayout.jsx";
 import ManageProduct from "./pages/productManament/manage-product.jsx";
-import OrderManagement from "./pages/orderManagement/OrderManagement.jsx";
+import AdminLayout from "./layouts/adminLayout.jsx";
+import OrderManagement from "./pages/orderManagement/index.jsx";
 // document.getElementById('root')
 // 1. Tìm tới root
 // 2. Lấy code ở trong App gắn vào root
 
 const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <HomePage />,
+  },
+
   {
     path: "/login",
     element: <LoginPage />,
@@ -32,10 +35,7 @@ const router = createBrowserRouter([
     path: "/register",
     element: <RegisterPage />,
   },
-  {
-    path: "/",
-    element: <HomePage />,
-  },
+
   {
     path: "/skinquiz",
     element: <SkinQuiz />,
@@ -47,10 +47,6 @@ const router = createBrowserRouter([
   {
     path: "/checkout",
     element: <Checkout />,
-  },
-  {
-    path: "/productmanagement",
-    element: <ProductManagement />,
   },
   {
     path: "/product/:id",

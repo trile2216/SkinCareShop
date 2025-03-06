@@ -1,0 +1,33 @@
+.order-management {
+  padding: 24px;
+}
+
+.order-management__header {
+  margin-bottom: 24px;
+}
+
+.order-management__header h1 {
+  font-size: 24px;
+  font-weight: bold;
+  margin: 0;
+}
+
+.order-management__content {
+  background: #fff;
+  padding: 24px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.order-info {
+  margin-bottom: 24px;
+}
+
+.order-info p {
+  margin-bottom: 8px;
+}
+
+.order-items h3 {
+  font-size: 18px;
+  margin-bottom: 16px;
+} 

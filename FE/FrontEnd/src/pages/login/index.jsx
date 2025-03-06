@@ -8,9 +8,7 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { loginSuccess } from "../../context/UserSlice";
 
-
 const LoginPage = () => {
-
   const dispatch = useDispatch();
 
   const [formData, setFormData] = useState({
@@ -50,11 +48,13 @@ const LoginPage = () => {
 
       try {
         const response = await api.post("/auth/login", formData);
-        const { token, role, user } = response.data.data;
+        const { token, role, customerId } = response.data.data;
 
-        dispatch(loginSuccess({ user, token })); // Cập nhật Redux Store
+        dispatch(loginSuccess({ customerId, token, role })); // Cập nhật Redux Store
 
         localStorage.setItem("token", token);
+        localStorage.setItem("role", role);
+        if (customerId) localStorage.setItem("customerId", customerId);
         toast.success("Successfully login!");
 
         if (role === "Admin") {

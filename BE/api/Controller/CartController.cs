@@ -13,7 +13,6 @@ namespace api.Controller
 {
     [ApiController]
     [Route("api/cart")]
-    [Authorize]
     public class CartController : ControllerBase
     {
         private readonly ICartService _cartService;
