@@ -42,7 +42,6 @@ namespace api.Controller
 
         [HttpPost]
         [Route("processpayment")]
-        [Authorize]
         public async Task<IActionResult> ProcessPayment([FromBody] CheckOutDTO checkOutDTO)
         {
             if (!ModelState.IsValid)

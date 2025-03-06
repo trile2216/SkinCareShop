@@ -26,7 +26,6 @@ const Cart = ({ isCartOpen, onClose }) => {
   const getTotalPrice = () =>
     cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
 
-
   return (
     isCartOpen && (
       <div className="absolute right-10 top-12 w-96 bg-white rounded-lg shadow-lg py-4 z-50">
@@ -62,8 +61,8 @@ const Cart = ({ isCartOpen, onClose }) => {
                     {/* Increase/Decrease Quantity */}
                     <div className="flex items-center space-x-2 mt-1">
                       <button
-                      //  onClick={() => dispatch(updateQuantityAndSync({ id: item.id, quantity: item.quantity - 1 }))} 
-                      onClick={() =>
+                        //  onClick={() => dispatch(updateQuantityAndSync({ id: item.id, quantity: item.quantity - 1 }))}
+                        onClick={() =>
                           updateQuantity(item.id, item.quantity - 1)
                         }
                         className="p-1 rounded-full bg-rose-200 hover:bg-rose-300"
@@ -74,8 +73,8 @@ const Cart = ({ isCartOpen, onClose }) => {
                         {item.quantity}
                       </span>
                       <button
-                          // onClick={() => dispatch(updateQuantityAndSync({ id: item.id, quantity: item.quantity + 1 }))} 
-                          onClick={() =>
+                        // onClick={() => dispatch(updateQuantityAndSync({ id: item.id, quantity: item.quantity + 1 }))}
+                        onClick={() =>
                           updateQuantity(item.id, item.quantity - 1)
                         }
                         className="p-1 rounded-full bg-rose-200 hover:bg-rose-300"
@@ -87,7 +86,7 @@ const Cart = ({ isCartOpen, onClose }) => {
 
                   {/* Remove*/}
                   <button
-                    // onClick={() => dispatch(removeFromCartAndSync(item.id))} 
+                    // onClick={() => dispatch(removeFromCartAndSync(item.id))}
                     onClick={() => removeFromCart(item.id)}
                     className="text-rose-500 hover:text-rose-700"
                   >

@@ -1,7 +1,7 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import api from "../config/axios";
 
-// // 
+// //
 // import { useSelector, useDispatch } from "react-redux";
 // import {
 //   setCartItems as setCartItemsAction,
@@ -10,7 +10,7 @@ import api from "../config/axios";
 //   updateQuantity as updateQuantityAction,
 //   clearCart as clearCartAction,
 // } from "../context/CartSlice";
-// // 
+// //
 
 const CartContext = createContext();
 
@@ -21,7 +21,7 @@ export const CartProvider = ({ children }) => {
   const [cartCount, setCartCount] = useState(0);
   const [loading, setLoading] = useState(true);
 
-  // // 
+  // //
   // const dispatch = useDispatch();
   // const cartItems = useSelector((state) => state.cart.cartItems);
   // const cartCount = useSelector((state) =>
@@ -31,25 +31,25 @@ export const CartProvider = ({ children }) => {
   //   state.cart.cartItems.reduce((total, item) => total + item.price * item.quantity, 0)
   // );
 
-  // // 
+  // //
   useEffect(() => {
     fetchCartData();
   }, []);
 
   useEffect(() => {
     setCartCount(cartItems.reduce((total, item) => total + item.quantity, 0));
-    const totalQuantity = cartItems.reduce((total, item) => total + item.quantity, 0);
+    const totalQuantity = cartItems.reduce(
+      (total, item) => total + item.quantity,
+      0
+    );
     console.log("Cart updated:", { totalQuantity, cartItems });
-    if (!loading) {
-      updateCartInBackend(cartItems);
-    }
   }, [cartItems, loading]);
 
   const fetchCartData = async () => {
     try {
       const response = await api.get("/cart");
       setCartItems(response.data);
-      // dispatch(setCartItemsAction(response.data)); 
+      // dispatch(setCartItemsAction(response.data));
       setLoading(false);
     } catch (error) {
       console.error("Error fetching cart data:", error);
@@ -57,15 +57,11 @@ export const CartProvider = ({ children }) => {
     }
   };
 
-  const updateCartInBackend = async (updatedCart) => {
-    try {
-      await api.post("/cart", updatedCart);
-    } catch (error) {
-      console.error("Error updating cart:", error);
-    }
-  };
-
   const addToCart = async (product) => {
+    await api.post("/cart/add", {
+      productId: product.id,
+      quantity: product.quantity || 1,
+    });
     try {
       setCartItems((prevCart) => {
         const existingItem = prevCart.find((item) => item.id === product.id);
@@ -87,6 +83,7 @@ export const CartProvider = ({ children }) => {
 
         return [...prevCart, { ...product, quantity: product.quantity || 1 }];
       });
+      fetchCartData();
       // dispatch(addToCartAction(product));
     } catch (error) {
       console.error("Error adding to cart:", error);
@@ -129,8 +126,6 @@ export const CartProvider = ({ children }) => {
   const clearCart = async () => {
     try {
       setCartItems([]);
-      // dispatch(clearCartAction());
-      await api.post("/cart", []);
     } catch (error) {
       console.error("Error clearing cart:", error);
     }

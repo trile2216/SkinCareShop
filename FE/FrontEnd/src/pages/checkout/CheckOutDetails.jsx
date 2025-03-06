@@ -7,7 +7,7 @@ import cityStateMapping from "../checkout/CityStateMapping";
 import { ToastContainer, toast } from "react-toastify";
 import axios from "../../config/axios";
 
-const CheckOutDetails = ({ cart, totalPrice }) => {
+const CheckOutDetails = () => {
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -113,19 +113,22 @@ const CheckOutDetails = ({ cart, totalPrice }) => {
     ) {
       try {
         const orderData = {
-          customerId: user.id,
-          cartItems: cart.map((item) => ({
+          customerId: parseInt(localStorage.getItem("customerId")),
+          cartItems: cartItems.map((item) => ({
             productId: item.id,
             quantity: item.quantity,
             productPrice: item.price,
           })),
-          totalPrice: totalPrice,
+          totalPrice: getTotalPrice(),
           shippingFee: getShippingFee(formData.city),
           paymentMethod: formData.paymentMethod,
+          street: formData.street,
+          city: formData.city,
+          state: formData.state,
         };
 
         const response = await axios.post(
-          "/api/checkout/processpayment",
+          "/checkout/processpayment",
           orderData
         );
 
@@ -457,7 +460,7 @@ const CheckOutDetails = ({ cart, totalPrice }) => {
             Place Order
           </button>
 
-          {formData.paymentMethod === "VNPAY" && (
+          {/* {formData.paymentMethod === "VNPAY" && (
             <VNPayPayment
               amount={getTotalPrice() + getShippingFee(formData.city)}
               orderId={Date.now()}
@@ -469,7 +472,7 @@ const CheckOutDetails = ({ cart, totalPrice }) => {
                 toast.error(error);
               }}
             />
-          )}
+          )} */}
 
           <ToastContainer position="top-center" autoClose={3000} />
         </div>

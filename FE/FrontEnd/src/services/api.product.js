@@ -30,7 +30,7 @@ export const updateProduct = async ({ id, product }) => {
 
 export const deleteProduct = async (id) => {
   try {
-    const response = await api.delete(`/product/${id}`);
+    const response = await api.delete(`/product/${id}`,id);
     return response.data;
   } catch (error) {
     toast.error(error.response.data);

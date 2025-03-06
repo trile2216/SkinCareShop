@@ -7,6 +7,7 @@ import Header from "../../components/Header";
 import Footer from "../../components/Footer";
 import { useEffect, useState } from "react";
 import api from "../../config/axios";
+import ProductCard from "../productlist/ProductCard";
 
 const HomePage = () => {
   // Trending product
@@ -113,6 +114,7 @@ const HomePage = () => {
 
   return (
     <>
+      <Header />
       {/* Body Contain */}
       <div className="container mx-auto px-4 py-8">
         {/* Banner */}
@@ -193,33 +195,24 @@ const HomePage = () => {
             slidesPerView={1}
             navigation={true}
             breakpoints={{
-              640: { slidesPerView: 1 },
-              768: { slidesPerView: 2 },
-              1024: { slidesPerView: 3 },
+              640: { slidesPerView: 2 },
+              768: { slidesPerView: 3 },
+              1024: { slidesPerView: 4 },
             }}
             className="swiper"
           >
             {product.map((product) => (
-              <SwiperSlide key={product.id} className="p-4">
-                <div className="bg-white shadow-md rounded-lg overflow-hidden">
-                  <img
-                    src={product.image}
-                    alt={product.title}
-                    className="w-full h-60 object-cover"
-                  />
-                  <div className="p-4">
-                    <h4 className="text-lg font-bold">{product.title}</h4>
-                    <p className="text-gray-600 mt-2">{product.description}</p>
-                    <button className="mt-3 text-rose-500 font-semibold">
-                      Shop Now
-                    </button>
-                  </div>
+              <SwiperSlide key={product.id} className="p-2">
+                <div className="scale-90">
+                  {" "}
+                  <ProductCard product={product} />
                 </div>
               </SwiperSlide>
             ))}
           </Swiper>
         </section>
       </div>
+      <Footer />
     </>
   );
 };

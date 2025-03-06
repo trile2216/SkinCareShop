@@ -9,36 +9,33 @@ const Checkout = () => {
   return (
     <>
       <div className="container mx-auto p-12">
-
-          {/* Checkout Progress Bar */}
-          <div className="flex items-center justify-center mb-8">
-            <div className="flex items-center">
-              <div className="w-8 h-8 bg-rose-500 text-white flex items-center justify-center rounded-full font-bold">
-                1
-              </div>
-              <span className="ml-2 text-rose-700 font-semibold">
-                Your Cart
-              </span>
+        {/* Checkout Progress Bar */}
+        <div className="flex items-center justify-center mb-8">
+          <div className="flex items-center">
+            <div className="w-8 h-8 bg-rose-500 text-white flex items-center justify-center rounded-full font-bold">
+              1
             </div>
-            <div className="flex-1 h-px bg-gray-300 mx-4"></div>
-            <div className="flex items-center">
-              <div className="w-8 h-8 bg-gray-300 text-white flex items-center justify-center rounded-full font-bold">
-                2
-              </div>
-              <span className="ml-2 text-gray-500 font-semibold">
-                Checkout Details
-              </span>
-            </div>
-            <div className="flex-1 h-px bg-gray-300 mx-4"></div>
-            <div className="flex items-center">
-              <div className="w-8 h-8 bg-gray-300 text-gray-500 flex items-center justify-center rounded-full font-bold">
-                3
-              </div>
-              <span className="ml-2 text-gray-500 font-semibold">
-                Order Complete
-              </span>
-            </div>
+            <span className="ml-2 text-rose-700 font-semibold">Your Cart</span>
           </div>
+          <div className="flex-1 h-px bg-gray-300 mx-4"></div>
+          <div className="flex items-center">
+            <div className="w-8 h-8 bg-gray-300 text-white flex items-center justify-center rounded-full font-bold">
+              2
+            </div>
+            <span className="ml-2 text-gray-500 font-semibold">
+              Checkout Details
+            </span>
+          </div>
+          <div className="flex-1 h-px bg-gray-300 mx-4"></div>
+          <div className="flex items-center">
+            <div className="w-8 h-8 bg-gray-300 text-gray-500 flex items-center justify-center rounded-full font-bold">
+              3
+            </div>
+            <span className="ml-2 text-gray-500 font-semibold">
+              Order Complete
+            </span>
+          </div>
+        </div>
 
         {/* "Keep Shopping" */}
         <Link
