@@ -59,7 +59,7 @@ const SkinQuiz = () => {
 
   const renderWelcome = () => (
     <div className="text-center p-8">
-      <h1 className="text-3xl font-bold mb-6 text-purple-800">
+      <h1 className="text-3xl font-bold mb-6 text-rose-600">
         Discover Your Skin Type
       </h1>
       <p className="text-lg mb-8 text-gray-600">
@@ -67,7 +67,7 @@ const SkinQuiz = () => {
       </p>
       <button
         onClick={() => setStep(1)}
-        className="bg-purple-600 text-white px-8 py-3 rounded-full hover:bg-purple-700 transition-colors flex items-center justify-center gap-2 mx-auto"
+        className="bg-rose-400 text-white px-8 py-3 rounded-full hover:bg-rose-400 transition-colors flex items-center justify-center gap-2 mx-auto"
       >
         Start Quiz
         <FaArrowRight />
@@ -109,11 +109,10 @@ const SkinQuiz = () => {
             {currentQuestion.options.map((option, index) => (
               <label
                 key={index}
-                className={`block p-4 rounded-lg border-2 cursor-pointer transition-all ${
-                  answers[currentQuestion.id] === option
-                    ? "border-purple-600 bg-purple-50"
-                    : "border-gray-200 hover:border-purple-200"
-                }`}
+                className={`block p-4 rounded-lg border-2 cursor-pointer transition-all ${answers[currentQuestion.id] === option
+                  ? "border-purple-600 bg-purple-50"
+                  : "border-gray-200 hover:border-purple-200"
+                  }`}
               >
                 <input
                   type="radio"
@@ -258,7 +257,7 @@ const SkinQuiz = () => {
   return (
     <>
       <Header />
-      <div className="min-h-screen bg-purple-50 py-12">
+      <div className="min-h-screen bg-rose-100 py-12">
         {step === 0 && renderWelcome()}
         {step > 0 && step <= questions.length && renderQuestion()}
         {step > questions.length && renderResult()}
