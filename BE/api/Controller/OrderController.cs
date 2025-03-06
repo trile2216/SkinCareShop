@@ -93,6 +93,20 @@ namespace api.Controller
             return NoContent();
         }
 
+        [HttpGet]
+        [Route("customer/{customerId:int}")]
+        public async Task<IActionResult> GetOrdersByCustomerIdAsync([FromRoute] int customerId)
+        {
+            var orders = await _orderRepo.GetOrderByCustomerIdAsync(customerId);
 
+            if (orders.Count == 0)
+            {
+                return NotFound("No orders found");
+            }
+
+            var orderDTOs = orders.Select(o => o.ToOrderDTO());
+
+            return Ok(orderDTOs);
+        }
     }
 }

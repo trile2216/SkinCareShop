@@ -20,6 +20,6 @@ namespace api.Interface
 
         Task<Order?> CancelOrderAsync(int orderId);
 
-        Task<Order?> GetOrderByCustomerIdAsync(int CustomerId);
+        Task<List<Order>> GetOrderByCustomerIdAsync(int CustomerId);
     }
 }

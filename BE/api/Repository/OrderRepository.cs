@@ -58,11 +58,12 @@ namespace api.Repository
 
         }
 
-        public async Task<Order?> GetOrderByCustomerIdAsync(int CustomerId)
+        public async Task<List<Order>> GetOrderByCustomerIdAsync(int CustomerId)
         {
             return await _context.Orders
+                .Where(o => o.CustomerId == CustomerId)
                 .Include(o => o.OrderItems)
-                .FirstOrDefaultAsync(o => o.CustomerId == CustomerId);
+                .ToListAsync();
         }
 
 
