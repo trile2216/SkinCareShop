@@ -49,7 +49,7 @@ const Header = () => {
           <Link to="/">
             <img
               src="src/assets/logo.png"
-              className="h-25 w-auto cursor-pointer"
+              className=" ml-10 h-25 w-auto cursor-pointer"
               alt="Logo"
             />
           </Link>
