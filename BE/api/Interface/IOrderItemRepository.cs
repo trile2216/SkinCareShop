@@ -12,5 +12,7 @@ namespace api.Interface
         Task<OrderItem> CreateOrderItemAsync(OrderItem orderItem);
 
         Task<List<OrderItem>> GetOrderItemsByOrderIdAsync(int orderId);
+
+        Task<OrderItem?> DeleteOrderItemByIdAsync(int id);
     }
 }

@@ -40,8 +40,7 @@ namespace api.Services
             pay.AddRequestData("vnp_Locale", _configuration["Vnpay:Locale"]);
 
 
-
-            var orderInfo = $"#{model.Name.ToString()}|#{model.OrderDescription.ToString()}|#{model.Amount.ToString()}|#{model.ShippingFee.ToString()}|#{model.DeliveryAddress.ToString()}";
+            var orderInfo = $"#{model.Name.ToString()}|#{model.OrderDescription.ToString()}";
             pay.AddRequestData("vnp_OrderInfo", orderInfo);
             pay.AddRequestData("vnp_OrderType", model.OrderType);
             pay.AddRequestData("vnp_ReturnUrl", urlCallBack);

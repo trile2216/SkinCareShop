@@ -8,7 +8,7 @@ namespace api.Enum
 
         Shipping = 2,
 
-        Delivery = 3,
+        Delivered = 3,
 
         Cancelled = 4
     }
