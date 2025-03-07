@@ -75,7 +75,7 @@ const Cart = ({ isCartOpen, onClose }) => {
                       <button
                         // onClick={() => dispatch(updateQuantityAndSync({ id: item.id, quantity: item.quantity + 1 }))}
                         onClick={() =>
-                          updateQuantity(item.id, item.quantity - 1)
+                          updateQuantity(item.id, item.quantity + 1)
                         }
                         className="p-1 rounded-full bg-rose-200 hover:bg-rose-300"
                       >
