@@ -29,6 +29,7 @@ namespace api.Repository
         {
             return await _context.OrderItems
                 .Where(oi => oi.OrderId == orderId)
+                .Include(oi => oi.Product)
                 .ToListAsync();
         }
     }

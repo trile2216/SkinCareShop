@@ -31,6 +31,7 @@ namespace api.Repository
         {
             return _context.Orders
                 .Include(o => o.OrderItems)
+                     .ThenInclude(oi => oi.Product)
                 .ToListAsync();
         }
 
@@ -38,6 +39,7 @@ namespace api.Repository
         {
             return await _context.Orders
                 .Include(o => o.OrderItems)
+                    .ThenInclude(oi => oi.Product)
                 .FirstOrDefaultAsync(o => o.Id == orderId);
         }
 
@@ -63,6 +65,7 @@ namespace api.Repository
             return await _context.Orders
                 .Where(o => o.CustomerId == CustomerId)
                 .Include(o => o.OrderItems)
+                    .ThenInclude(oi => oi.Product)
                 .ToListAsync();
         }
 

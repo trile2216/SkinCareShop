@@ -15,6 +15,7 @@ namespace api.Mappers
             return new OrderItemDTO
             {
                 Id = orderItem.Id,
+                ProductName = orderItem.Product.Name,
                 ProductId = orderItem.ProductId,
                 Quantity = orderItem.Quantity,
                 UnitPrice = orderItem.UnitPrice
