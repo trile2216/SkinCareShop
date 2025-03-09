@@ -115,9 +115,9 @@ export const CartProvider = ({ children }) => {
         prevCart.map((item) =>
           item.id === productId
             ? {
-                ...item,
-                quantity: Math.min(newQuantity, item.stock),
-              }
+              ...item,
+              quantity: Math.min(newQuantity, item.stock),
+            }
             : item
         )
       );

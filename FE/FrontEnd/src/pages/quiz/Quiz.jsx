@@ -7,50 +7,74 @@ import Footer from "../../components/Footer";
 
 const SkinQuiz = () => {
   const [step, setStep] = useState(0);
-  const [questions, setQuestions] = useState([]);
+  const [quizData, setQuizData] = useState(null);
+  const [currentQuizIndex, setCurrentQuizIndex] = useState(0);
   const [answers, setAnswers] = useState({});
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState(null);
   const [recommendations, setRecommendations] = useState(null);
 
   useEffect(() => {
-    fetchQuestions();
+    fetchQuizData();
   }, []);
 
-  const fetchQuestions = async () => {
+  const fetchQuizData = async () => {
     try {
       setLoading(true);
-      const data = await quizService.getQuestions();
-      setQuestions(data);
+      const response = await quizService.getQuestions();
+      if (response && response.data) {
+        setQuizData(response.data);
+      } else {
+        message.error("Invalid quiz data format");
+      }
     } catch (error) {
-      message.error("Failed to fetch questions");
+      message.error("Failed to fetch quiz questions: " + error.message);
       console.error("Error:", error);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleAnswer = (questionId, answer) => {
+  const handleAnswer = (questionId, answerId) => {
     setAnswers((prev) => ({
       ...prev,
-      [questionId]: answer,
+      [questionId]: answerId,
     }));
+  };
+
+  const getCurrentQuestions = () => {
+    if (!quizData || !quizData.questions) return [];
+    return quizData.questions;
+  };
+
+  const getCurrentQuestion = () => {
+    const questions = getCurrentQuestions();
+    if (step <= 0 || step > questions.length) return null;
+    return questions[step - 1];
   };
 
   const submitQuiz = async () => {
     try {
       setLoading(true);
-      const resultData = await quizService.submitAnswers(answers);
-      setResult(resultData.skinType);
+      const submitData = {
+        answers: Object.entries(answers).map(([questionId, answerId]) => ({
+          questionId: parseInt(questionId),
+          answerId: parseInt(answerId)
+        }))
+      };
 
-      const recommendData = await quizService.getRecommendations(
-        resultData.skinType
-      );
-      setRecommendations(recommendData);
+      const resultData = await quizService.submitAnswers(submitData);
+      if (resultData && resultData.data) {
+        setResult(resultData.data);
+        setStep(getCurrentQuestions().length + 1);
 
-      setStep(questions.length + 1);
+        const recommendData = await quizService.getRecommendations(resultData.data.skinType);
+        if (recommendData && recommendData.data) {
+          setRecommendations(recommendData.data);
+        }
+      }
     } catch (error) {
-      message.error("Failed to submit quiz");
+      message.error("Failed to submit quiz: " + error.message);
       console.error("Error:", error);
     } finally {
       setLoading(false);
@@ -76,7 +100,7 @@ const SkinQuiz = () => {
   );
 
   const renderQuestion = () => {
-    if (loading || !questions.length) {
+    if (loading || !quizData) {
       return (
         <div className="flex justify-center items-center min-h-[400px]">
           <Spin size="large" />
@@ -84,7 +108,11 @@ const SkinQuiz = () => {
       );
     }
 
-    const currentQuestion = questions[step - 1];
+    const currentQuestion = getCurrentQuestion();
+    if (!currentQuestion) return null;
+
+    const questions = getCurrentQuestions();
+    const totalQuestions = questions.length;
 
     return (
       <div className="max-w-2xl mx-auto p-6">
@@ -92,38 +120,37 @@ const SkinQuiz = () => {
           <div className="h-2 w-full bg-gray-200 rounded-full">
             <div
               className="h-2 bg-purple-600 rounded-full transition-all"
-              style={{ width: `${(step / questions.length) * 100}%` }}
+              style={{ width: `${(step / totalQuestions) * 100}%` }}
             ></div>
           </div>
           <div className="text-right text-sm text-gray-500 mt-2">
-            {step}/{questions.length}
+            {step}/{totalQuestions}
           </div>
         </div>
 
         <div className="bg-white rounded-lg p-8 shadow-lg">
           <h3 className="text-xl font-semibold mb-6">
-            {currentQuestion.question}
+            {currentQuestion.content}
           </h3>
 
           <div className="space-y-4">
-            {currentQuestion.options.map((option, index) => (
+            {currentQuestion.answers.map((answer) => (
               <label
-                key={index}
-                className={`block p-4 rounded-lg border-2 cursor-pointer transition-all ${
-                  answers[currentQuestion.id] === option
-                    ? "border-purple-600 bg-purple-50"
-                    : "border-gray-200 hover:border-purple-200"
-                }`}
+                key={answer.id}
+                className={`block p-4 rounded-lg border-2 cursor-pointer transition-all ${answers[currentQuestion.id] === answer.id
+                  ? "border-purple-600 bg-purple-50"
+                  : "border-gray-200 hover:border-purple-200"
+                  }`}
               >
                 <input
                   type="radio"
                   name={`question-${currentQuestion.id}`}
-                  value={option}
-                  checked={answers[currentQuestion.id] === option}
-                  onChange={() => handleAnswer(currentQuestion.id, option)}
+                  value={answer.id}
+                  checked={answers[currentQuestion.id] === answer.id}
+                  onChange={() => handleAnswer(currentQuestion.id, answer.id)}
                   className="hidden"
                 />
-                <span className="text-gray-700">{option}</span>
+                <span className="text-gray-700">{answer.content}</span>
               </label>
             ))}
           </div>
@@ -138,7 +165,7 @@ const SkinQuiz = () => {
             </button>
             <button
               onClick={() => {
-                if (step === questions.length) {
+                if (step === totalQuestions) {
                   submitQuiz();
                 } else {
                   setStep(step + 1);
@@ -147,7 +174,7 @@ const SkinQuiz = () => {
               disabled={!answers[currentQuestion.id]}
               className="px-6 py-2 bg-purple-600 text-white rounded-full disabled:opacity-50"
             >
-              {step === questions.length ? "See Results" : "Next"}
+              {step === totalQuestions ? "See Results" : "Next"}
             </button>
           </div>
         </div>
@@ -195,7 +222,7 @@ const SkinQuiz = () => {
   );
 
   const renderResult = () => {
-    if (loading || !recommendations) {
+    if (loading || !result) {
       return (
         <div className="flex justify-center items-center min-h-[400px]">
           <Spin size="large" />
@@ -206,14 +233,13 @@ const SkinQuiz = () => {
     return (
       <div className="max-w-6xl mx-auto p-6">
         <div className="bg-white rounded-lg p-8 shadow-lg">
-          {/* Skin Type Result */}
           <div className="text-center mb-12">
             <h2 className="text-2xl font-bold mb-4">Your Skin Type Results</h2>
             <div className="text-4xl font-bold text-purple-600 mb-8">
-              {result}
+              {result.skinType}
             </div>
             <p className="text-gray-600 max-w-2xl mx-auto mb-8">
-              {recommendations.description}
+              {result.description}
             </p>
             <div className="flex gap-4 justify-center">
               <button className="flex items-center gap-2 px-6 py-3 bg-purple-600 text-white rounded-full hover:bg-purple-700">
@@ -226,30 +252,34 @@ const SkinQuiz = () => {
           </div>
 
           {/* Recommended Routine */}
-          <div className="mb-12">
-            <h3 className="text-xl font-semibold mb-6">
-              Your Personalized Skincare Routine
-            </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {recommendations.routines.map((routine, index) => (
-                <div key={index}>{renderRoutineCard(routine)}</div>
-              ))}
+          {recommendations && (
+            <div className="mb-12">
+              <h3 className="text-xl font-semibold mb-6">
+                Your Personalized Skincare Routine
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {recommendations.routines.map((routine, index) => (
+                  <div key={index}>{renderRoutineCard(routine)}</div>
+                ))}
+              </div>
             </div>
-          </div>
+          )}
 
           {/* Recommended Products */}
-          <div>
-            <h3 className="text-xl font-semibold mb-6">
-              Recommended Products for Your Skin Type
-            </h3>
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-              {recommendations.products.map((product, index) => (
-                <div key={index} className="flex justify-center">
-                  {renderProductCard(product)}
-                </div>
-              ))}
+          {recommendations && (
+            <div>
+              <h3 className="text-xl font-semibold mb-6">
+                Recommended Products for Your Skin Type
+              </h3>
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                {recommendations.products.map((product, index) => (
+                  <div key={index} className="flex justify-center">
+                    {renderProductCard(product)}
+                  </div>
+                ))}
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </div>
     );
@@ -260,8 +290,8 @@ const SkinQuiz = () => {
       <Header />
       <div className="min-h-screen bg-purple-50 py-12">
         {step === 0 && renderWelcome()}
-        {step > 0 && step <= questions.length && renderQuestion()}
-        {step > questions.length && renderResult()}
+        {step > 0 && step <= getCurrentQuestions().length && renderQuestion()}
+        {step > getCurrentQuestions().length && renderResult()}
       </div>
       <Footer />
     </>

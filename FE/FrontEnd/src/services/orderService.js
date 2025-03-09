@@ -22,13 +22,10 @@ export const orderService = {
         }
     },
 
-    updateOrderStatus: async (id, status) => {
-        try {
-            const response = await api.put(`/order/${id}`, { status });
+    updateOrderStatus: async (orderId, orderStatus) => {
+       
+            const response = await api.put(`/order/changestatus/${orderId}?orderStatus=${orderStatus}`);
             return response.data;
-        } catch (error) {
-            console.error('Error in updateOrderStatus:', error);
-            throw error;
-        }
-    }
+
+    },
 }; 
