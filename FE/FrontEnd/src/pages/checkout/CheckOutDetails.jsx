@@ -108,6 +108,42 @@ const CheckOutDetails = () => {
   const handleSubmitOrder = async (e) => {
     e.preventDefault();
 
+    // Check form validation
+    if (!formData.firstName) {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      toast.error("First Name is required.");
+      return;
+    }
+    if (!formData.lastName) {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      toast.error("Last Name is required.");
+      return;
+    }
+    if (!/^\d{10}$/.test(formData.phone)) {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      toast.error("Phone number must be correct.");
+      return;
+    }
+    if (!formData.street) {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      toast.error("Street Address is required.");
+      return;
+    }
+    if (!formData.city) {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      toast.error("City is required.");
+      return;
+    }
+    if (!formData.state) {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      toast.error("State is required.");
+      return;
+    }
+    if (!formData.paymentMethod) {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      toast.error("Please select a payment method.");
+      return;
+    }
     if (
       window.confirm("Are you sure? Your order cannot be changed once placed.")
     ) {
@@ -331,7 +367,7 @@ const CheckOutDetails = () => {
 
               {/* Payment Options */}
               <div className="mb-6">
-                <h3 className="font-medium mb-2">Payment Method</h3>
+                <h3 className="font-medium mb-2">Payment Method <span className="text-red-500">*</span> </h3>
                 <div className="space-y-2">
                   <label className="flex items-center">
                     <input

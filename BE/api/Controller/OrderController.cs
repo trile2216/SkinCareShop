@@ -74,7 +74,7 @@ namespace api.Controller
 
         [HttpPut]
         [Route("{orderId:int}")]
-        public async Task<IActionResult> UpdateOrderAsync([FromRoute] int orderId, [FromBody] OrderStatus orderStatus)
+        public async Task<IActionResult> UpdateOrderAsync([FromRoute] int orderId, [FromBody] int orderStatus)
         {
             if (!ModelState.IsValid)
             {

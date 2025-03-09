@@ -25,11 +25,28 @@ namespace api.Repository
             return orderItem;
         }
 
+        public async Task<OrderItem?> GetOrderItemByIdAsync(int id)
+        {
+            return await _context.OrderItems.FirstOrDefaultAsync(oi => oi.Id == id);
+        }
         public async Task<List<OrderItem>> GetOrderItemsByOrderIdAsync(int orderId)
         {
             return await _context.OrderItems
                 .Where(oi => oi.OrderId == orderId)
+                .Include(oi => oi.Product)
                 .ToListAsync();
+        }
+
+        public async Task<OrderItem?> DeleteOrderItemByIdAsync(int id)
+        {
+            var item = await GetOrderItemByIdAsync(id);
+            if (item == null)
+            {
+                return null;
+            }
+            _context.OrderItems.Remove(item);
+            await _context.SaveChangesAsync();
+            return item;
         }
     }
 }

@@ -98,20 +98,6 @@ namespace api.Repository
             return products;
         }
 
-        public async Task<Product?> UpdateProductQuantityAfterOrderAsync(int id, int quantity)
-        {
-            var existingProduct = await GetProductByIdAsync(id);
-            if (existingProduct == null)
-            {
-                return null;
-            }
-
-            existingProduct.Stock -= quantity;
-
-            await _context.SaveChangesAsync();
-            return existingProduct;
-        }
-
         public async Task<List<Product>> GetRecommendProductsByCateAndSkinType(int categoryId, int skinTypeId)
         {
             return await _context.Products

@@ -31,6 +31,7 @@ namespace api.Repository
         {
             return _context.Orders
                 .Include(o => o.OrderItems)
+                     .ThenInclude(oi => oi.Product)
                 .ToListAsync();
         }
 
@@ -38,38 +39,21 @@ namespace api.Repository
         {
             return await _context.Orders
                 .Include(o => o.OrderItems)
+                    .ThenInclude(oi => oi.Product)
                 .FirstOrDefaultAsync(o => o.Id == orderId);
         }
 
-
-        public async Task<Order?> CancelOrderAsync(int orderId)
-        {
-            var order = await GetOrderByIdAsync(orderId);
-
-            if (order == null)
-            {
-                return null;
-            }
-
-            order.Status = OrderStatus.Cancelled;
-            await _context.SaveChangesAsync();
-
-            return order;
-
-        }
 
         public async Task<List<Order>> GetOrderByCustomerIdAsync(int CustomerId)
         {
             return await _context.Orders
                 .Where(o => o.CustomerId == CustomerId)
                 .Include(o => o.OrderItems)
+                    .ThenInclude(oi => oi.Product)
                 .ToListAsync();
         }
 
-
-
-
-        public async Task<Order?> UpdateOrderStatusAsync(int id, OrderStatus orderStatus)
+        public async Task<Order?> UpdateOrderStatusAsync(int id, int orderStatus)
         {
             var existingOrder = await GetOrderByIdAsync(id);
 
@@ -78,10 +62,11 @@ namespace api.Repository
                 return null;
             }
 
-            existingOrder.Status = orderStatus;
+            existingOrder.Status = (OrderStatus)orderStatus;
 
             await _context.SaveChangesAsync();
             return existingOrder;
         }
+
     }
 }
