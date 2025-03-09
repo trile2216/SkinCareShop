@@ -1,74 +1,64 @@
-import { useState } from "react";
-import {
-  FaShoppingCart,
-  FaMapMarkerAlt,
-  FaDollarSign,
-  FaEdit,
-  FaTimes,
-  FaCheck,
-} from "react-icons/fa";
+import { useState, useEffect } from "react";
+import { FaEdit, FaCheck, FaTimes } from "react-icons/fa";
 
 const CustomerProfile = () => {
+  const [customer, setCustomer] = useState(null);
+  const [orders, setOrders] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
+  const [formData, setFormData] = useState(null);
   const [errors, setErrors] = useState({});
 
-  const [customer, setCustomer] = useState({
-    firstName: "Minh",
-    lastName: "Thu",
-    email: "thultmsel85044@fpt.edu.vn",
-    phoneNumber: "0123456789",
-    address: "123 Nguyen Trai, Hanoi",
-    skinType: ["Sensitive"],
-    totalSpent: "0đ",
-    allOrders: 0,
-    addresses: 1,
-  });
+  useEffect(() => {
+    const fetchCustomerData = async () => {
+      try {
+        const response = await fetch("https://localhost:5286/customers");
+        if (!response.ok) throw new Error("Failed to fetch customer data");
+        const data = await response.json();
+        setCustomer(data);
+        setFormData(data);
+      } catch (err) {
+        console.error(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchCustomerData();
+  }, []);
 
-  const [formData, setFormData] = useState(customer);
+  useEffect(() => {
+    const fetchOrderHistory = async () => {
+      try {
+        const response = await fetch("https://localhost:5286/customers/orders");
+        if (!response.ok) throw new Error("Failed to fetch orders");
+        const data = await response.json();
+        setOrders(data);
+      } catch (err) {
+        console.error(err.message);
+      }
+    };
+    fetchOrderHistory();
+  }, []);
 
-  // Xử lý thay đổi input
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-
-    const formattedValue =
-      name === "firstName" || name === "lastName"
-        ? value.charAt(0).toUpperCase() + value.slice(1)
-        : value;
-
-    setFormData((prev) => ({ ...prev, [name]: formattedValue }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSkinTypeChange = (e) => {
-    const { value, checked } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      skinType: checked
-        ? [...prev.skinType, value] // Thêm vào danh sách nếu chọn
-        : prev.skinType.filter((type) => type !== value), // Bỏ khỏi danh sách nếu bỏ chọn
-    }));
-  };
-
-  const validateForm = () => {
-    let newErrors = {};
-
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(formData.email)) {
-      newErrors.email = "Please enter a valid email address";
+  const handleSave = async () => {
+    if (!validateForm()) return;
+    try {
+      const response = await fetch("https://localhost:5286/customers", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+      if (!response.ok) throw new Error("Failed to update profile");
+      setCustomer(formData);
+      setIsEditing(false);
+    } catch (error) {
+      console.error(error.message);
     }
-
-    const phoneRegex = /^\d{10}$/;
-    if (!phoneRegex.test(formData.phoneNumber)) {
-      newErrors.phoneNumber = "Phone number must be exactly 10 digits";
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  const handleSave = () => {
-    if (!validateForm()) return; // Dừng lại nếu form có lỗi
-    setCustomer(formData);
-    setIsEditing(false);
   };
 
   const handleCancel = () => {
@@ -76,153 +66,68 @@ const CustomerProfile = () => {
     setIsEditing(false);
   };
 
+  const validateForm = () => {
+    let newErrors = {};
+    if (!formData.phoneNumber.match(/^\d{10}$/)) {
+      newErrors.phoneNumber = "Phone number must be exactly 10 digits";
+    }
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  if (loading) return <div className="text-center py-10">Loading...</div>;
+
   return (
-    <div className="flex min-h-screen bg-gray-100">
-      {/* Sidebar */}
-      <aside className="w-1/4 bg-white p-6 shadow-lg">
-        <div className="text-lg font-semibold">{customer.firstName}</div>
-        <div className="text-gray-500 text-sm mb-6">{customer.email}</div>
-        <nav>
-          <ul className="space-y-4">
-            <li className="bg-rose-300 text-white p-3 rounded-lg">
-              My profile
-            </li>
-            <li className="p-3 rounded-lg hover:bg-gray-200 cursor-pointer">
-              Orders
-            </li>
-            <li className="p-3 rounded-lg hover:bg-gray-200 cursor-pointer">
-              Addresses
-            </li>
-            <li className="p-3 rounded-lg hover:bg-gray-200 cursor-pointer">
-              Change password
-            </li>
-            <li className="p-3 rounded-lg hover:bg-gray-200 cursor-pointer">
-              Logout
-            </li>
-          </ul>
-        </nav>
-      </aside>
-
-      {/* Main Content */}
+    <div className="flex min-h-screen bg-rose-100">
       <main className="w-3/4 p-8">
-        {/* Stats */}
-        <div className="grid grid-cols-3 gap-4 mb-6">
-          <StatCard
-            icon={<FaDollarSign />}
-            label="Total spent"
-            value={customer.totalSpent}
-          />
-          <StatCard
-            icon={<FaShoppingCart />}
-            label="All orders"
-            value={customer.allOrders}
-          />
-          <StatCard
-            icon={<FaMapMarkerAlt />}
-            label="Addresses"
-            value={customer.addresses}
-          />
-        </div>
-
-        {/* Profile Info */}
-        <div className="bg-white p-6 shadow-lg rounded-lg relative">
-          <h2 className="text-xl font-semibold mb-4">My profile</h2>
+        <div className="bg-rose-300 p-6 shadow-lg rounded-lg mb-6 relative text-white">
+          <h2 className="text-xl font-semibold mb-4">My Profile</h2>
           {isEditing ? (
             <>
-              <button
-                onClick={handleSave}
-                className="absolute top-6 right-12 text-green-600 hover:text-green-800"
-              >
+              <button onClick={handleSave} className="absolute top-6 right-12 text-white hover:text-gray-300">
                 <FaCheck size={20} />
               </button>
-              <button
-                onClick={handleCancel}
-                className="absolute top-6 right-6 text-red-600 hover:text-red-800"
-              >
+              <button onClick={handleCancel} className="absolute top-6 right-6 text-white hover:text-gray-300">
                 <FaTimes size={20} />
               </button>
             </>
           ) : (
-            <button
-              onClick={() => setIsEditing(true)}
-              className="absolute top-6 right-6 text-gray-600 hover:text-gray-800"
-            >
+            <button onClick={() => setIsEditing(true)} className="absolute top-6 right-6 text-white hover:text-gray-300">
               <FaEdit size={20} />
             </button>
           )}
-
-          <ProfileField
-            label="First name"
-            name="firstName"
-            value={formData.firstName}
-            onChange={handleInputChange}
-            isEditing={isEditing}
-          />
-          <ProfileField
-            label="Last name"
-            name="lastName"
-            value={formData.lastName}
-            onChange={handleInputChange}
-            isEditing={isEditing}
-          />
-          <ProfileField
-            label="Email"
-            name="email"
-            value={formData.email}
-            onChange={handleInputChange}
-            isEditing={isEditing}
-            error={errors.email}
-          />
-          <ProfileField
-            label="Phone Number"
-            name="phoneNumber"
-            value={formData.phoneNumber}
-            onChange={handleInputChange}
-            isEditing={isEditing}
-            error={errors.phoneNumber}
-          />
-          <ProfileField
-            label="Address"
-            name="address"
-            value={formData.address}
-            onChange={handleInputChange}
-            isEditing={isEditing}
-          />
-
-          {/* Skin Type với checkbox */}
-          <div className="border-b py-3">
-            <p className="text-gray-500">Skin Type</p>
-            {isEditing ? (
-              <>
-                <div className="grid grid-cols-2 gap-2">
-                  {["Normal", "Dry", "Oily", "Combination", "Sensitive"].map(
-                    (type) => (
-                      <label key={type} className="flex items-center">
-                        <input
-                          type="checkbox"
-                          value={type}
-                          checked={formData.skinType.includes(type)}
-                          onChange={handleSkinTypeChange}
-                          className="mr-2"
-                        />
-                        {type}
-                      </label>
-                    )
-                  )}
-                </div>
-                <button
-                  onClick={() =>
-                    setFormData((prev) => ({ ...prev, skinType: [] }))
-                  }
-                  className="mt-2 px-4 py-2 bg-rose-300 text-white rounded"
-                >
-                  Clear Selection
-                </button>
-              </>
-            ) : (
-              <p className="text-gray-800">{formData.skinType.join(", ")}</p>
-            )}
-          </div>
+          <ProfileField label="First name" name="firstName" value={formData.firstName} onChange={handleInputChange} isEditing={isEditing} />
+          <ProfileField label="Last name" name="lastName" value={formData.lastName} onChange={handleInputChange} isEditing={isEditing} />
+          <ProfileField label="Email" name="email" value={formData.email} onChange={handleInputChange} isEditing={isEditing} />
+          <ProfileField label="Phone Number" name="phoneNumber" value={formData.phoneNumber} onChange={handleInputChange} isEditing={isEditing} error={errors.phoneNumber} />
+          <ProfileField label="Address" name="address" value={formData.address} onChange={handleInputChange} isEditing={isEditing} />
+        </div>
+        <div className="bg-white p-6 shadow-lg rounded-lg">
+          <h2 className="text-xl font-semibold mb-4">Order History</h2>
+          {orders.length === 0 ? (
+            <p className="text-gray-500">No orders found.</p>
+          ) : (
+            <table className="w-full border-collapse border border-rose-300">
+              <thead>
+                <tr className="bg-rose-300 text-white">
+                  <th className="border p-2">Order ID</th>
+                  <th className="border p-2">Date</th>
+                  <th className="border p-2">Total</th>
+                  <th className="border p-2">Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                {orders.map((order) => (
+                  <tr key={order.id} className="text-center">
+                    <td className="border p-2">{order.id}</td>
+                    <td className="border p-2">{new Date(order.date).toLocaleDateString()}</td>
+                    <td className="border p-2">${order.total}</td>
+                    <td className="border p-2">{order.status}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
         </div>
       </main>
     </div>
@@ -231,28 +136,13 @@ const CustomerProfile = () => {
 
 const ProfileField = ({ label, name, value, onChange, isEditing, error }) => (
   <div className="border-b py-3">
-    <p className="text-gray-500">{label}</p>
+    <p className="text-gray-100">{label}</p>
     {isEditing ? (
-      <input
-        type="text"
-        name={name}
-        value={value}
-        onChange={onChange}
-        className="w-full p-1 border border-gray-300 rounded mt-1"
-      />
+      <input type="text" name={name} value={value} onChange={onChange} className="w-full p-1 border border-gray-300 rounded mt-1 text-gray-900" />
     ) : (
-      <p className="text-gray-800">{value}</p>
+      <p className="text-white">{value}</p>
     )}
     {error && <p className="text-red-500 text-sm">{error}</p>}
-  </div>
-);
-const StatCard = ({ icon, label, value }) => (
-  <div className="bg-white p-4 shadow-md rounded-lg flex items-center">
-    <div className="text-2xl text-rose-400 mr-3">{icon}</div>
-    <div>
-      <p className="text-gray-500">{label}</p>
-      <p className="text-lg font-semibold">{value}</p>
-    </div>
   </div>
 );
 
