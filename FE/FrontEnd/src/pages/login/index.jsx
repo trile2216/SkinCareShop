@@ -1,15 +1,17 @@
 import { useState } from "react";
 import { FaEye, FaEyeSlash, FaLock, FaUser } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
-import api from "../../config/axios";
-import { toast } from "react-toastify";
+// import api from "../../config/axios";
+// import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 
-import { useDispatch } from "react-redux";
-import { loginSuccess } from "../../context/UserSlice";
+// import { useDispatch } from "react-redux";
+// import { loginSuccess } from "../../context/UserSlice";
+
+import useAuth from "../../context/useAuth";  
 
 const LoginPage = () => {
-  const dispatch = useDispatch();
+  const { login } = useAuth();
 
   const [formData, setFormData] = useState({
     username: "",
@@ -45,28 +47,28 @@ const LoginPage = () => {
     e.preventDefault();
     if (validateForm()) {
       setIsLoading(true);
+      login(formData, setIsLoading, setErrors);
+      // try {
+      //   const response = await api.post("/auth/login", formData);
+      //   const { token, role, customerId } = response.data.data;
 
-      try {
-        const response = await api.post("/auth/login", formData);
-        const { token, role, customerId } = response.data.data;
+      //   dispatch(loginSuccess({ customerId, token, role })); // Cập nhật Redux Store
 
-        dispatch(loginSuccess({ customerId, token, role })); // Cập nhật Redux Store
+      //   localStorage.setItem("token", token);
+      //   localStorage.setItem("role", role);
+      //   if (customerId) localStorage.setItem("customerId", customerId);
+      //   toast.success("Successfully login!");
 
-        localStorage.setItem("token", token);
-        localStorage.setItem("role", role);
-        if (customerId) localStorage.setItem("customerId", customerId);
-        toast.success("Successfully login!");
-
-        if (role === "Admin") {
-          navigate("/dashboard");
-        } else if (role === "Customer") {
-          navigate("/");
-        }
-      } catch (err) {
-        toast.error(err.response.data);
-      } finally {
-        setIsLoading(false);
-      }
+      //   if (role === "Admin") {
+      //     navigate("/dashboard");
+      //   } else if (role === "Customer") {
+      //     navigate("/");
+      //   }
+      // } catch (err) {
+      //   toast.error(err.response.data);
+      // } finally {
+      //   setIsLoading(false);
+      // }
     }
   };
 
