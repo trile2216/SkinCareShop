@@ -51,6 +51,10 @@ const router = createBrowserRouter([
     path: "/sale",
     element: <Sale />,
   },
+  {
+    path: "/customerProfile",
+    element: <CustomerProfile />,
+  },
 
   {
     path: "/checkout",
