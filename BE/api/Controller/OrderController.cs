@@ -20,10 +20,13 @@ namespace api.Controller
 
         private readonly IOrderItemRepository _orderItemRepo;
 
-        public OrderController(IOrderRepository orderRepo, IOrderItemRepository orderItemRepo)
+        private readonly IProductRepository _productRepo;
+
+        public OrderController(IOrderRepository orderRepo, IOrderItemRepository orderItemRepo, IProductRepository productRepo)
         {
             _orderRepo = orderRepo;
             _orderItemRepo = orderItemRepo;
+            _productRepo = productRepo;
         }
 
         [HttpGet]
@@ -73,8 +76,8 @@ namespace api.Controller
         }
 
         [HttpPut]
-        [Route("{orderId:int}")]
-        public async Task<IActionResult> UpdateOrderAsync([FromRoute] int orderId, [FromBody] int orderStatus)
+        [Route("{orderId:int}&{orderStatus:int}")]
+        public async Task<IActionResult> UpdateOrderAsync([FromRoute] int orderId, [FromRoute] int orderStatus)
         {
             if (!ModelState.IsValid)
             {
@@ -88,9 +91,27 @@ namespace api.Controller
                 return NotFound();
             }
 
+            if (orderStatus == OrderStatus.Cancelled.GetHashCode())
+            {
+                var orderItems = await _orderItemRepo.GetOrderItemsByOrderIdAsync(orderId);
+                foreach (var orderItem in orderItems)
+                {
+                    foreach (var item in order.OrderItems)
+                    {
+                        var product = await _productRepo.GetProductByIdAsync(item.ProductId);
+                        if (product != null)
+                        {
+                            product.Stock += item.Quantity;
+                            await _productRepo.UpdateProductAsync(product.Id, product);
+                        }
+                        await _orderItemRepo.DeleteOrderItemByIdAsync(item.Id);
+                    }
+                }
+            }
+
             await _orderRepo.UpdateOrderStatusAsync(orderId, orderStatus);
 
-            return NoContent();
+            return Ok(order.ToOrderDTO());
         }
 
         [HttpGet]
