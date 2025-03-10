@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace api.Controller
 {
+    [ApiController]
+    [Route("api/payment")]
     public class PaymentController : ControllerBase
     {
 
