@@ -7,6 +7,7 @@ import { useCart } from "../context/CartContext";
 import { logout } from "../context/UserSlice";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import useAuth from "../context/useAuth";
 
 const Header = () => {
   const [isCartOpen, setIsCartOpen] = useState(false);
@@ -19,10 +20,12 @@ const Header = () => {
   const dispatch = useDispatch();
   const token = localStorage.getItem("token");
   const isLoggedIn = !!token;
+  const { logoutUser } = useAuth();
 
   const handleLogout = () => {
-    dispatch(logout());
+    logoutUser();
     setShowLogoutConfirm(false);
+
     toast.success("Log out success!", {
       position: "top-right",
       autoClose: 3000,
@@ -30,7 +33,7 @@ const Header = () => {
 
     setTimeout(() => {
       navigate("/");
-    }, 1500);
+    }, 0);
   };
 
   const categories = [

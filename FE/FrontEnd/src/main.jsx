@@ -13,18 +13,21 @@ import ProductDetail from "./pages/productDetail/productDetail.jsx";
 import CheckOutDetail from "./pages/checkout/CheckOutDetails.jsx";
 import { Provider } from "react-redux";
 import { store } from "./context/store.jsx";
+import CustomerProfile from "./pages/customerProfile/index.jsx";
 import { CartProvider } from "./context/CartContext.jsx";
 import Sale from "./pages/sale/sale.jsx";
 import AdminLayout from "./layouts/adminLayout.jsx";
 import ManageProduct from "./pages/productManament/manage-product.jsx";
 import OrderManagement from "./pages/orderManagement/index.jsx";
+import ProtectedRoute from "../src/context/ProtectedRoute.jsx";
 import Blog from "./pages/blog/Blog.jsx";
-
 // document.getElementById('root')
 // 1. Tìm tới root
 // 2. Lấy code ở trong App gắn vào root
 
+
 const router = createBrowserRouter([
+  // All
   {
     path: "/login",
     element: <LoginPage />,
@@ -38,46 +41,67 @@ const router = createBrowserRouter([
     element: <HomePage />,
   },
   {
-    path: "/skinquiz",
-    element: <SkinQuiz />,
+    path: "/sale",
+    element: <Sale />,
   },
   {
     path: "/productlist",
     element: <ProductList />,
   },
   {
-    path: "/sale",
-    element: <Sale />,
+    path: "/product/:id",
+    element: <ProductDetail />,
   },
   {
     path: "/blog",
     element: <Blog />,
   },
+
+  //Customer
+  {
+    path: "/skinquiz",
+    element: (
+      <ProtectedRoute allowedRoles={["Customer"]}>
+        <SkinQuiz />
+      </ProtectedRoute>
+    ),
+  },
   {
     path: "/checkout",
-    element: <Checkout />,
-  },
-
-  {
-    path: "/product/:id",
-    element: <ProductDetail />,
+    element: (
+      <ProtectedRoute allowedRoles={["Customer"]}>
+        <Checkout />
+      </ProtectedRoute>
+    ),
   },
   {
     path: "/checkoutDetail",
-    element: <CheckOutDetail />,
+    element: (
+      <ProtectedRoute allowedRoles={["Customer"]}>
+        <CheckOutDetail />
+      </ProtectedRoute>
+    ),
   },
+    {
+      path: "/customerProfile",
+      element: (
+        <ProtectedRoute allowedRoles={["Customer"]}>
+          <CustomerProfile />
+        </ProtectedRoute>
+      ),
+    },
+
+  //Admin
   {
     path: "/dashboard",
-    element: <AdminLayout />,
+    element: (
+      <ProtectedRoute allowedRoles={["Admin"]}>
+        <AdminLayout />
+      </ProtectedRoute>
+    ),
     children: [
-      {
-        path: "/dashboard/product",
-        element: <ManageProduct />,
-      },
-      {
-        path: "/dashboard/order",
-        element: <OrderManagement />,
-      },
+      { path: "product", element: <ManageProduct /> },
+      { path: "order", element: <OrderManagement /> },
     ],
   },
 ]);
