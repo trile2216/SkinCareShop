@@ -21,7 +21,7 @@ const CheckOutDetails = () => {
 
   const [showAllItems, setShowAllItems] = useState(false);
   const [error, setError] = useState("");
-  const { cartItems, getTotalPrice } = useCart();
+  const { cartItems, getTotalPrice, clearCart } = useCart();
   const navigate = useNavigate();
   const [isPlaceOrder, setIsPlaceOrder] = useState(false);
 
@@ -174,7 +174,10 @@ const CheckOutDetails = () => {
           }
         } else if (formData.paymentMethod === "COD") {
           toast.success("Order placed successfully!");
+          // Clear cart
+          clearCart();
           setIsPlaceOrder(true);
+
         }
       } catch (error) {
         toast.error("Failed to place order. Please try again.");
