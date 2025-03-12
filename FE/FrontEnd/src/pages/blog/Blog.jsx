@@ -99,7 +99,9 @@ const Blog = () => {
                             <div className="p-5">
                                 <h3 className="text-xl font-bold mb-2">{post.title}</h3>
                                 <p className="text-gray-600 mb-4">{post.excerpt}</p>
-                                <button className="mt-4 text-white bg-rose-500 px-4 py-2 rounded-lg hover:bg-rose-400 transition">
+                                <button className="mt-4 text-white bg-rose-500 px-4 py-2 rounded-lg hover:bg-rose-400 transition"
+                                    onClick={() => window.open(post.link, '_blank')}
+                                >
                                     Read more
                                 </button>
                             </div>
@@ -112,24 +114,22 @@ const Blog = () => {
 
             {/* Hiển thị Modal bài viết */}
             {selectedBlog && (
-                <div className="fixed inset-0 flex items-center justify-center bg-rose-100 bg-opacity-50 backdrop-blur-md">
-                    <div className="bg-white p-6 rounded-lg shadow-lg max-w-lg w-full relative">
-                        <button
-                            className="absolute top-3 right-4 text-gray-500 hover:text-black text-2xl"
-                            onClick={() => setSelectedBlog(null)}
-                        >
-                            &times;
-                        </button>
-                        <h2 className="text-2xl font-bold mb-4">{selectedBlog.title}</h2>
-                        <img
-                            src={selectedBlog.image}
-                            alt={selectedBlog.title}
-                            className="w-full h-300px object-cover mb-4 rounded-md"
-                        />
-                        <p className="text-gray-700 leading-relaxed">
-                            {selectedBlog.content}
-                        </p>
-                    </div>
+                <div className="bg-white p-6 rounded-lg shadow-lg max-w-lg w-full relative">
+                    <button
+                        className="absolute top-3 right-4 text-gray-500 hover:text-black text-2xl"
+                        onClick={() => setSelectedBlog(null)}
+                    >
+                        &times;
+                    </button>
+                    <h2 className="text-2xl font-bold mb-4">{selectedBlog.title}</h2>
+                    <img
+                        src={selectedBlog.image}
+                        alt={selectedBlog.title}
+                        className="w-full h-300px object-cover mb-4 rounded-md"
+                    />
+                    <p className="text-gray-700 leading-relaxed">
+                        {selectedBlog.content}
+                    </p>
                 </div>
             )}
             <Footer />
