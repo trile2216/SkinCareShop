@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 using api.DTOs.SkinType;
-using api.Enum;
+using api.Constant;
 
 namespace api.DTOs.Products
 {

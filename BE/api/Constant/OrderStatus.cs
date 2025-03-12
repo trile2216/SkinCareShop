@@ -1,4 +1,4 @@
-namespace api.Enum
+namespace api.Constant
 {
     public enum OrderStatus
     {
