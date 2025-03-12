@@ -121,7 +121,7 @@ const Header = () => {
             <div className="relative">
               <button
                 onClick={() => setIsCartOpen(!isCartOpen)}
-                className="text-gray-600 hover:text-teal-900 relative"
+                className="text-gray-600 hover:text-rose-900 relative"
               >
                 <FiShoppingCart size={24} />
                 <span className="absolute -top-2 -right-2 bg-rose-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs">

@@ -1,16 +1,46 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import Select from "react-select";
 import blog from "./DataBlog";
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
 
 const Blog = () => {
-    const [selectedBlog, setSelectedBlog] = useState(null);
     const [selectedSkinType, setSelectedSkinType] = useState("All");
     const [selectedCategory, setSelectedCategory] = useState("All");
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 6;
 
-    // Lọc bài viết theo loại da và danh mục
+    const skinTypeOptions = [
+        { value: "All", label: "All Skin Types" },
+        { value: "OSPW", label: "OSPW" },
+        { value: "OSPT", label: "OSPT" },
+        { value: "OSNW", label: "OSNW" },
+        { value: "OSNT", label: "OSNT" },
+        { value: "ORPW", label: "ORPW" },
+        { value: "ORPT", label: "ORPT" },
+        { value: "ORNW", label: "ORNW" },
+        { value: "ORNT", label: "ORNT" },
+        { value: "DSPW", label: "DSPW" },
+        { value: "DSPT", label: "DSPT" },
+        { value: "DSNW", label: "DSNW" },
+        { value: "DSNT", label: "DSNT" },
+        { value: "DRPW", label: "DRPW" },
+        { value: "DRPT", label: "DRPT" },
+        { value: "DRNW", label: "DRNW" },
+        { value: "DRNT", label: "DRNT" },
+    ];
+
+    const categoryOptions = [
+        { value: "All", label: "All Products" },
+        { value: "Cleanser", label: "Cleanser" },
+        { value: "Facial Cleanser", label: "Facial Cleanser" },
+        { value: "Toner", label: "Toner" },
+        { value: "Serum", label: "Serum" },
+        { value: "Moisturizer", label: "Moisturizer" },
+        { value: "Sunscreen", label: "Sunscreen" },
+    ];
+
+    // Lọc bài viết
     const filteredBlogs = blog.filter(
         (blog) =>
             (selectedSkinType === "All" || blog.skinType === selectedSkinType) &&
@@ -24,72 +54,37 @@ const Blog = () => {
         currentPage * itemsPerPage
     );
 
-    // Xử lý hiệu ứng ẩn/hiện modal
-    useEffect(() => {
-        if (selectedBlog) {
-            document.body.classList.add("overflow-hidden");
-        } else {
-            document.body.classList.remove("overflow-hidden");
-        }
-    }, [selectedBlog]);
-
     return (
         <>
             <Header />
-            <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-6">
+            <div className="flex flex-col items-center min-h-screen bg-gray-100 p-6">
                 <h2 className="text-3xl font-bold text-center text-rose-500 mb-6">
                     New blog
                 </h2>
 
-
-                {/* Bộ lọc */}
-                <div className="text-1xl text-center text-black mb-6">
-                    <select
-                        value={selectedSkinType}
-                        onChange={(e) => setSelectedSkinType(e.target.value)}
-                        className="px-3 py-2 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500"
-                    >
-                        <option value="All">All Skin Types</option>
-                        <option value="OSPW">OSPW</option>
-                        <option value="OSPT">OSPT</option>
-                        <option value="OSNW">OSNW</option>
-                        <option value="OSNT">OSNT</option>
-                        <option value="ORPW">ORPW</option>
-                        <option value="ORPT">ORPT</option>
-                        <option value="ORNW">ORNW</option>
-                        <option value="ORNT">ORNT</option>
-                        <option value="DSPW">DSPW</option>
-                        <option value="DSPT">DSPT</option>
-                        <option value="DSNW">DSNW</option>
-                        <option value="DSNT">DSNT</option>
-                        <option value="DRPW">DRPW</option>
-                        <option value="DRPT">DRPT</option>
-                        <option value="DRNW">DRNW</option>
-                        <option value="DRNT">DRNT</option>
-                    </select>
-                    <select
-                        value={selectedCategory}
-                        onChange={(e) => setSelectedCategory(e.target.value)}
-                        className="px-3 py-2 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500"
-                    >
-                        <option value="All">All Products</option>
-                        <option value="Cleanser">Cleanser</option>
-                        <option value="Facial Cleanser">Facial Cleanser</option>
-                        <option value="Toner">Toner</option>
-                        <option value="Serum">Serum</option>
-                        <option value="Moisturizer">Moisturizer</option>
-                        <option value="Sunscreen">Sunscreen</option>
-                    </select>
+                {/* Dropdown bộ lọc */}
+                <div className="text-center mb-6 flex flex-col sm:flex-row gap-4 justify-center items-center">
+                    <Select
+                        options={skinTypeOptions}
+                        defaultValue={skinTypeOptions[0]}
+                        onChange={(option) => setSelectedSkinType(option.value)}
+                        className="w-60"
+                    />
+                    <Select
+                        options={categoryOptions}
+                        defaultValue={categoryOptions[0]}
+                        onChange={(option) => setSelectedCategory(option.value)}
+                        className="w-60"
+                    />
                 </div>
 
-
-                {/* Hiển thị danh sách bài viết */}
+                {/* Hiển thị bài viết */}
                 <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl">
                     {paginatedBlogs.map((post) => (
                         <div
                             key={post.id}
                             className="bg-white shadow-lg rounded-lg overflow-hidden transform transition duration-300 hover:scale-105 cursor-pointer"
-                            onClick={() => setSelectedBlog(post)}
+                            onClick={() => window.open(post.link, "_blank")}
                         >
                             <img
                                 src={post.image}
@@ -99,8 +94,9 @@ const Blog = () => {
                             <div className="p-5">
                                 <h3 className="text-xl font-bold mb-2">{post.title}</h3>
                                 <p className="text-gray-600 mb-4">{post.excerpt}</p>
-                                <button className="mt-4 text-white bg-rose-500 px-4 py-2 rounded-lg hover:bg-rose-400 transition"
-                                    onClick={() => window.open(post.link, '_blank')}
+                                <button
+                                    className="mt-4 text-white bg-rose-500 px-4 py-2 rounded-lg hover:bg-rose-400 transition"
+                                    onClick={() => window.open(post.link, "_blank")}
                                 >
                                     Read more
                                 </button>
@@ -109,32 +105,28 @@ const Blog = () => {
                     ))}
                 </div>
 
-
+                {/* Phân trang */}
+                {totalPages > 1 && (
+                    <div className="mt-6 flex justify-center items-center space-x-2">
+                        {Array.from({ length: totalPages }).map((_, index) => (
+                            <button
+                                key={index}
+                                className={`px-3 py-1 rounded ${
+                                    currentPage === index + 1
+                                        ? "bg-rose-500 text-white"
+                                        : "bg-gray-300 text-black"
+                                }`}
+                                onClick={() => setCurrentPage(index + 1)}
+                            >
+                                {index + 1}
+                            </button>
+                        ))}
+                    </div>
+                )}
             </div>
-
-            {/* Hiển thị Modal bài viết */}
-            {selectedBlog && (
-                <div className="bg-white p-6 rounded-lg shadow-lg max-w-lg w-full relative">
-                    <button
-                        className="absolute top-3 right-4 text-gray-500 hover:text-black text-2xl"
-                        onClick={() => setSelectedBlog(null)}
-                    >
-                        &times;
-                    </button>
-                    <h2 className="text-2xl font-bold mb-4">{selectedBlog.title}</h2>
-                    <img
-                        src={selectedBlog.image}
-                        alt={selectedBlog.title}
-                        className="w-full h-300px object-cover mb-4 rounded-md"
-                    />
-                    <p className="text-gray-700 leading-relaxed">
-                        {selectedBlog.content}
-                    </p>
-                </div>
-            )}
             <Footer />
         </>
-    );
+    ); 
 };
 
 export default Blog;
