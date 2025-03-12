@@ -13,7 +13,7 @@ const Quiz = () => {
   const [answers, setAnswers] = useState({});
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState(null);
-  const customerId = 1; // Lấy từ context hoặc redux store
+  const [recommendations, setRecommendations] = useState(null);
 
   useEffect(() => {
     fetchActiveQuiz();
