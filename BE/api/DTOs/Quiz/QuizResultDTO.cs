@@ -7,7 +7,7 @@ namespace api.DTOs.Quiz
 {
     public class QuizResultDTO
     {
-        public int CustomerId { get; set; }
+        public int ResultId { get; set; }
         public int SkinTypeId { get; set; }
     }
 }
