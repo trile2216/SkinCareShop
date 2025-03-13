@@ -21,8 +21,7 @@ import OrderManagement from "./pages/orderManagement/index.jsx";
 import ProtectedRoute from "../src/context/ProtectedRoute.jsx";
 import Blog from "./pages/blog/Blog.jsx";
 import QuizManagement from "./pages/quizManagement/QuizManagement.jsx";
-import CustomerProfile from "./pages/customerProfile/CustomerProfile.jsx";
-import OrderHistory from "./pages/orderHistory/orderHistory.jsx";
+import CustomerProfile from "./page/customerProfile/CustomerProfile.jsx";
 // document.getElementById('root')
 // 1. Tìm tới root
 // 2. Lấy code ở trong App gắn vào root
@@ -85,15 +84,13 @@ const router = createBrowserRouter([
   },
 
   {
-    path: "/customerProfile",
+    path:"/customerProfile",
     element: (
       <ProtectedRoute allowedRoles={["Customer"]}>
         <CustomerProfile />
       </ProtectedRoute>
     ),
   },
-
-
 
 
   //Admin

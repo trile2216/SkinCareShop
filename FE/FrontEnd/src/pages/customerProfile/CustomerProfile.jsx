@@ -93,10 +93,8 @@ const CustomerProfile = () => {
         return;
       }
 
-      // Gửi dữ liệu cập nhật lên API
       await axios.put(`http://localhost:5286/api/customer/${customerId}`, formData);
 
-      // Cập nhật lại dữ liệu hiển thị sau khi chỉnh sửa
       setCustomerData((prevData) => ({
         ...prevData,
         ...formData,
