@@ -45,6 +45,7 @@ namespace api.Mappers
         {
             return new SkinTypeDTO
             {
+                Id = skinType.Id,
                 Name = skinType.Name,
                 Symbol = skinType.Symbol,
                 Characteristics = skinType.Characteristics,
