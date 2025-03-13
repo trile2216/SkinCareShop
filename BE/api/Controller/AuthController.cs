@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using api.Data;
 using api.DTOs;
 using api.DTOs.Auth;
-using api.Enum;
+using api.Constant;
 using api.Interface;
 using api.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -29,18 +29,22 @@ namespace api.Controller
 
         private readonly IAccountRepository _accountRepo;
 
+        private readonly ICartService _cartService;
+
         public AuthController(
             ApplicationDbContext context,
             ITokenService tokenService,
             SignInManager<ApplicationUser> signInManager,
             UserManager<ApplicationUser> userManager,
-            IAccountRepository accountRepo)
+            IAccountRepository accountRepo,
+            ICartService cartService)
         {
             _context = context;
             _tokenService = tokenService;
             _signInManager = signInManager;
             _userManager = userManager;
             _accountRepo = accountRepo;
+            _cartService = cartService;
         }
 
         [HttpPost]
@@ -151,6 +155,8 @@ namespace api.Controller
             try
             {
                 await _signInManager.SignOutAsync();
+                _cartService.ClearCart();
+
                 return Ok("Logout successful");
             }
             catch (Exception e)

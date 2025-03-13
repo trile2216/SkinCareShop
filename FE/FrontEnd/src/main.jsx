@@ -21,10 +21,10 @@ import ManageProduct from "./pages/productManament/manage-product.jsx";
 import OrderManagement from "./pages/orderManagement/index.jsx";
 import ProtectedRoute from "../src/context/ProtectedRoute.jsx";
 import Blog from "./pages/blog/Blog.jsx";
+import QuizManagement from "./pages/quizManagement/QuizManagement.jsx";
 // document.getElementById('root')
 // 1. Tìm tới root
 // 2. Lấy code ở trong App gắn vào root
-
 
 const router = createBrowserRouter([
   // All
@@ -82,14 +82,14 @@ const router = createBrowserRouter([
       </ProtectedRoute>
     ),
   },
-    {
-      path: "/customerProfile",
-      element: (
-        <ProtectedRoute allowedRoles={["Customer"]}>
-          <CustomerProfile />
-        </ProtectedRoute>
-      ),
-    },
+  {
+    path: "/customerProfile",
+    element: (
+      <ProtectedRoute allowedRoles={["Customer"]}>
+        <CustomerProfile />
+      </ProtectedRoute>
+    ),
+  },
 
   //Admin
   {
@@ -102,6 +102,7 @@ const router = createBrowserRouter([
     children: [
       { path: "product", element: <ManageProduct /> },
       { path: "order", element: <OrderManagement /> },
+      { path: "quizManagement", element: <QuizManagement /> },
     ],
   },
 ]);

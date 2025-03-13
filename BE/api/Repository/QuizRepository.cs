@@ -35,6 +35,14 @@ namespace api.Repository
                 .ToListAsync();
         }
 
+        public async Task<List<MainQuiz>> GetMainQuizzesAsync()
+        {
+            return await _context.MainQuizzes
+                .Include(m => m.SkinQuizzes)
+                    .ThenInclude(s => s.Questions)
+                    .ThenInclude(q => q.Answers)
+                .ToListAsync();
+        }
         public async Task<CustomerTestResult?> GetLatestCustomerResultAsync(int customerId)
         {
             return await _context.CustomerTestResults

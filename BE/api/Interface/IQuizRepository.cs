@@ -12,6 +12,8 @@ namespace api.Interface
 
         Task<List<MainQuiz>> GetActiveMainQuizzesAsync();
 
+        Task<List<MainQuiz>> GetMainQuizzesAsync();
+
         Task<MainQuiz> CreateMainQuizAsync(MainQuiz quiz);
 
         Task<MainQuiz?> UpdateMainQuizAsync(int id, MainQuiz quiz);

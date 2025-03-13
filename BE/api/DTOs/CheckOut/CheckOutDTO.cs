@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 using api.DTOs.Cart;
-using api.Enum;
+using api.Constant;
 using api.Models;
 
 namespace api.DTOs.CheckOut

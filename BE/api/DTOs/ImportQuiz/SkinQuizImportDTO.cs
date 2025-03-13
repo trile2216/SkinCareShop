@@ -4,12 +4,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using api.Constant;
 
-namespace api.DTOs.Quiz
+namespace api.DTOs.ImportQuiz
 {
-    public class QuizAnswerDTO
+    public class SkinQuizImportDTO
     {
-        public int SkinQuizId { get; set; }
         public SkinElement SkinElement { get; set; }
-        public List<CustomerAnswerDTO> Answers { get; set; }
+        public List<QuestionImportDTO> Questions { get; set; }
     }
 }

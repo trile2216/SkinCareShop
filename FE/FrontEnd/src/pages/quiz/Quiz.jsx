@@ -4,7 +4,7 @@ import { message, Spin, Card, Image } from "antd";
 import { quizService } from "../../services/quizService";
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 
 const Quiz = () => {
   const [step, setStep] = useState(0);
@@ -34,12 +34,12 @@ const Quiz = () => {
 
   const handleAnswer = (questionId, answerId) => {
     const currentSkinQuiz = mainQuiz.skinQuizzes[currentSkinQuizIndex];
-    setAnswers(prev => ({
+    setAnswers((prev) => ({
       ...prev,
       [currentSkinQuiz.id]: {
         ...prev[currentSkinQuiz.id],
-        [questionId]: answerId
-      }
+        [questionId]: answerId,
+      },
     }));
   };
 
@@ -53,24 +53,30 @@ const Quiz = () => {
       setLoading(true);
 
       // Format answers theo cấu trúc BE yêu cầu
-      const customerAnswers = Object.entries(answers).map(([skinQuizId, questionAnswers]) => ({
-        skinQuizId: parseInt(skinQuizId),
-        skinElement: mainQuiz.skinQuizzes.find(sq => sq.id === parseInt(skinQuizId)).skinElement,
-        answers: Object.entries(questionAnswers).map(([questionId, answerId]) => ({
-          questionId: parseInt(questionId),
-          answerId: parseInt(answerId)
-        }))
-      }));
+      const customerAnswers = Object.entries(answers).map(
+        ([skinQuizId, questionAnswers]) => ({
+          skinQuizId: parseInt(skinQuizId),
+          skinElement: mainQuiz.skinQuizzes.find(
+            (sq) => sq.id === parseInt(skinQuizId)
+          ).skinElement,
+          answers: Object.entries(questionAnswers).map(
+            ([questionId, answerId]) => ({
+              questionId: parseInt(questionId),
+              answerId: parseInt(answerId),
+            })
+          ),
+        })
+      );
 
       const submission = {
-        mainQuizId: mainQuiz.id,
+        mainQuizId: mainQuiz?.id,
         customerId: customerId, // Sử dụng customerId từ localStorage
-        customerAnswers: customerAnswers
+        customerAnswers: customerAnswers,
       };
 
       const result = await quizService.submitQuiz(submission);
       setResult(result);
-      setStep(mainQuiz.skinQuizzes.length + 1);
+      setStep(mainQuiz?.skinQuizzes?.length + 1);
 
       // Sau khi có kết quả, lấy thêm thông tin chi tiết về kết quả
       const detailedResult = await quizService.getCustomerResult(customerId);
@@ -85,8 +91,8 @@ const Quiz = () => {
 
   const handleNext = () => {
     const currentQuestions = getCurrentQuestions();
-    if (currentSkinQuizIndex < mainQuiz.skinQuizzes.length - 1) {
-      setCurrentSkinQuizIndex(prev => prev + 1);
+    if (currentSkinQuizIndex < mainQuiz?.skinQuizzes?.length - 1) {
+      setCurrentSkinQuizIndex((prev) => prev + 1);
     } else {
       submitQuiz();
     }
@@ -97,9 +103,9 @@ const Quiz = () => {
       <h1 className="text-3xl font-bold mb-6 text-purple-800">
         Discover Your Skin Type
       </h1>
-      <p className="text-lg mb-8 text-gray-600">
+      {/*<p className="text-lg mb-8 text-gray-600">
         Welcome {user?.username}! Take our personalized skin quiz to find your perfect skincare routine
-      </p>
+      </p>*/}
       <button
         onClick={() => setStep(1)}
         className="bg-purple-600 text-white px-8 py-3 rounded-full hover:bg-purple-700 transition-colors flex items-center justify-center gap-2 mx-auto"
@@ -124,11 +130,16 @@ const Quiz = () => {
           <div className="h-2 w-full bg-gray-200 rounded-full">
             <div
               className="h-2 bg-purple-600 rounded-full transition-all"
-              style={{ width: `${((currentSkinQuizIndex + 1) / mainQuiz.skinQuizzes.length) * 100}%` }}
+              style={{
+                width: `${
+                  ((currentSkinQuizIndex + 1) / mainQuiz?.skinQuizzes?.length) *
+                  100
+                }%`,
+              }}
             />
           </div>
           <div className="text-right text-sm text-gray-500 mt-2">
-            {currentSkinQuizIndex + 1}/{mainQuiz.skinQuizzes.length}
+            {currentSkinQuizIndex + 1}/{mainQuiz?.skinQuizzes?.length}
           </div>
         </div>
 
@@ -144,16 +155,19 @@ const Quiz = () => {
                 {question.answers.map((answer) => (
                   <label
                     key={answer.id}
-                    className={`block p-4 rounded-lg border-2 cursor-pointer transition-all ${answers[currentSkinQuiz.id]?.[question.id] === answer.id
-                      ? "border-purple-600 bg-purple-50"
-                      : "border-gray-200 hover:border-purple-200"
-                      }`}
+                    className={`block p-4 rounded-lg border-2 cursor-pointer transition-all ${
+                      answers[currentSkinQuiz.id]?.[question.id] === answer.id
+                        ? "border-purple-600 bg-purple-50"
+                        : "border-gray-200 hover:border-purple-200"
+                    }`}
                   >
                     <input
                       type="radio"
                       name={`question-${question.id}`}
                       value={answer.id}
-                      checked={answers[currentSkinQuiz.id]?.[question.id] === answer.id}
+                      checked={
+                        answers[currentSkinQuiz.id]?.[question.id] === answer.id
+                      }
                       onChange={() => handleAnswer(question.id, answer.id)}
                       className="hidden"
                     />
@@ -166,7 +180,7 @@ const Quiz = () => {
 
           <div className="mt-8 flex justify-between">
             <button
-              onClick={() => setCurrentSkinQuizIndex(prev => prev - 1)}
+              onClick={() => setCurrentSkinQuizIndex((prev) => prev - 1)}
               className="px-6 py-2 text-purple-600 hover:bg-purple-50 rounded-full"
               disabled={currentSkinQuizIndex === 0}
             >
@@ -177,7 +191,9 @@ const Quiz = () => {
               className="px-6 py-2 bg-purple-600 text-white rounded-full disabled:opacity-50"
               disabled={!answers[currentSkinQuiz.id]}
             >
-              {currentSkinQuizIndex === mainQuiz.skinQuizzes.length - 1 ? "See Results" : "Next"}
+              {currentSkinQuizIndex === mainQuiz?.skinQuizzes?.length - 1
+                ? "See Results"
+                : "Next"}
             </button>
           </div>
         </Card>
@@ -293,8 +309,8 @@ const Quiz = () => {
       <Header />
       <div className="min-h-screen bg-purple-50 py-12">
         {step === 0 && renderWelcome()}
-        {step > 0 && step <= mainQuiz?.skinQuizzes.length && renderQuestion()}
-        {step > (mainQuiz?.skinQuizzes.length || 0) && renderResult()}
+        {step > 0 && step <= mainQuiz?.skinQuizzes?.length && renderQuestion()}
+        {step > (mainQuiz?.skinQuizzes?.length || 0) && renderResult()}
       </div>
       <Footer />
     </>

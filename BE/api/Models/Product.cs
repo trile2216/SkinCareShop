@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using api.Enum;
+using api.Constant;
 
 namespace api.Models;
 

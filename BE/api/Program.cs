@@ -8,6 +8,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using OfficeOpenXml;
+
+ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
 
 var builder = WebApplication.CreateBuilder(args);
 var corsName = "AllowAll";
@@ -107,11 +110,12 @@ builder.Services.AddSession(options =>
 
 builder.Services.AddCors(p => p.AddPolicy(name: corsName, policy =>
 {
-    policy.WithOrigins("http://localhost:5177")
+    policy.WithOrigins("http://localhost:5173")
         .AllowCredentials()
         .AllowAnyMethod()
         .AllowAnyHeader();
 }));
+
 
 builder.Services.AddControllers();
 builder.Services.AddScoped<ITokenService, TokenService>();
@@ -132,6 +136,10 @@ builder.Services.AddScoped<ISkinCareStepRepository, SkinCareStepRepository>();
 builder.Services.AddScoped<ISkinCareRoutineRepository, SkinCareRoutineRepository>();
 builder.Services.AddScoped<IQuizRepository, QuizRepository>();
 builder.Services.AddScoped<IQuizService, QuizService>();
+builder.Services.AddScoped<IQuizImportService, QuizImportService>();
+
+
+
 
 var app = builder.Build();
 
