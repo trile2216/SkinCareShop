@@ -174,16 +174,19 @@ const CheckOutDetails = () => {
           }
         } else if (formData.paymentMethod === "COD") {
           toast.success("Order placed successfully!");
-          // Clear cart
-          clearCart();
           setIsPlaceOrder(true);
-
         }
       } catch (error) {
         toast.error("Failed to place order. Please try again.");
         console.error("Order submission error:", error);
       }
     }
+  };
+
+  //Back to home -> Clear cart 
+  const handleBackToHome = () => {
+    clearCart(); 
+    navigate("/"); 
   };
 
   return (
@@ -648,12 +651,12 @@ const CheckOutDetails = () => {
 
           {/* Back to Home Button */}
           <div className="text-center mt-6">
-            <Link
-              to="/"
+            <button
+              onClick={handleBackToHome}
               className="bg-rose-500 text-white py-2 px-6 rounded-lg hover:bg-rose-600"
             >
               Back to Home
-            </Link>
+            </button>
           </div>
         </div>
       )}
