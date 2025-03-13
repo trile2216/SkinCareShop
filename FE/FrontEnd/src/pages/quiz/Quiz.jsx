@@ -23,7 +23,15 @@ const Quiz = () => {
     try {
       setLoading(true);
       const response = await quizService.getActiveQuiz();
-      setMainQuiz(response);
+      console.log("API Response:", response);
+      console.log("Response Length:", response.length);
+
+      if (Array.isArray(response) && response.length > 0) {
+        setMainQuiz(response[0]); // Chọn phần tử đầu tiên của mảng
+      } else {
+        console.error("No data in response");
+        message.error("No data received from API");
+      }
     } catch (error) {
       message.error("Failed to fetch quiz questions");
       console.error("Error:", error);
@@ -67,6 +75,9 @@ const Quiz = () => {
           ),
         })
       );
+      const customerId = parseInt(localStorage.getItem("customerId"));
+      console.log("Customer ID:", customerId);
+      // try {
 
       const submission = {
         mainQuizId: mainQuiz?.id,
@@ -79,7 +90,9 @@ const Quiz = () => {
       setStep(mainQuiz?.skinQuizzes?.length + 1);
 
       // Sau khi có kết quả, lấy thêm thông tin chi tiết về kết quả
-      const detailedResult = await quizService.getCustomerResult(customerId);
+      const detailedResult = await quizService.getCustomerResult(
+        localStorage.getItem("customerId")
+      );
       setResult(detailedResult);
     } catch (error) {
       message.error("Failed to submit quiz");
