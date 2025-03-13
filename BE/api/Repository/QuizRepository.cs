@@ -47,6 +47,7 @@ namespace api.Repository
         {
             return await _context.CustomerTestResults
                 .Where(r => r.CustomerId == customerId && r.IsLastest)
+                .Include(r => r.SkinType)
                 .FirstOrDefaultAsync();
         }
 
