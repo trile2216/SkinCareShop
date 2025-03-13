@@ -32,12 +32,9 @@ export const orderService = {
             throw error;
         }
     },
-
-
-
     updateOrderStatus: async (orderId, orderStatus) => {
 
-        const response = await api.put(`/order/changestatus/${orderId}?orderStatus=${orderStatus}`);
+        const response = await api.put(`/order/changestatus/${orderId}&${orderStatus}`);
         return response.data;
     },
 }; 
