@@ -53,6 +53,8 @@ namespace api.Mappers
             {
                 ResultId = customerTestResult.Id,
                 SkinTypeId = customerTestResult.SkinTypeId,
+                Symbol = customerTestResult.SkinType.Symbol,
+                Characteristics = customerTestResult.SkinType.Characteristics
             };
         }
     }

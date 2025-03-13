@@ -9,5 +9,9 @@ namespace api.DTOs.Quiz
     {
         public int ResultId { get; set; }
         public int SkinTypeId { get; set; }
+
+        public string? Symbol { get; set; }
+
+        public string? Characteristics { get; set; }
     }
 }
