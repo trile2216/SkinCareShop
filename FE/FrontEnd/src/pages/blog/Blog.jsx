@@ -1,6 +1,6 @@
 import { useState } from "react";
 import Select from "react-select";
-import blog from "./DataBlog";
+import blog from "../blog/DataBlog";
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
 
@@ -111,11 +111,10 @@ const Blog = () => {
                         {Array.from({ length: totalPages }).map((_, index) => (
                             <button
                                 key={index}
-                                className={`px-3 py-1 rounded ${
-                                    currentPage === index + 1
-                                        ? "bg-rose-500 text-white"
-                                        : "bg-gray-300 text-black"
-                                }`}
+                                className={`px-3 py-1 rounded ${currentPage === index + 1
+                                    ? "bg-rose-500 text-white"
+                                    : "bg-gray-300 text-black"
+                                    }`}
                                 onClick={() => setCurrentPage(index + 1)}
                             >
                                 {index + 1}
@@ -126,7 +125,7 @@ const Blog = () => {
             </div>
             <Footer />
         </>
-    ); 
+    );
 };
 
 export default Blog;
