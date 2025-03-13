@@ -9,3 +9,11 @@ export const getSkinTypes = async () => {
     toast.error(error.response.data);
   }
 };
+export const getSkinTypesById = async () => {
+  try {
+    const response = await api.get(`/skintype/${id}`);
+    return response.data;
+  } catch (error) {
+    toast.error(error.response.data);
+  }
+};

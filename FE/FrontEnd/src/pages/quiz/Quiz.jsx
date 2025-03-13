@@ -144,10 +144,9 @@ const Quiz = () => {
             <div
               className="h-2 bg-purple-600 rounded-full transition-all"
               style={{
-                width: `${
-                  ((currentSkinQuizIndex + 1) / mainQuiz?.skinQuizzes?.length) *
+                width: `${((currentSkinQuizIndex + 1) / mainQuiz?.skinQuizzes?.length) *
                   100
-                }%`,
+                  }%`,
               }}
             />
           </div>
@@ -168,11 +167,10 @@ const Quiz = () => {
                 {question.answers.map((answer) => (
                   <label
                     key={answer.id}
-                    className={`block p-4 rounded-lg border-2 cursor-pointer transition-all ${
-                      answers[currentSkinQuiz.id]?.[question.id] === answer.id
+                    className={`block p-4 rounded-lg border-2 cursor-pointer transition-all ${answers[currentSkinQuiz.id]?.[question.id] === answer.id
                         ? "border-purple-600 bg-purple-50"
                         : "border-gray-200 hover:border-purple-200"
-                    }`}
+                      }`}
                   >
                     <input
                       type="radio"
@@ -273,14 +271,7 @@ const Quiz = () => {
             <p className="text-gray-600 max-w-2xl mx-auto mb-8">
               {result.description}
             </p>
-            <div className="flex gap-4 justify-center">
-              <button className="flex items-center gap-2 px-6 py-3 bg-purple-600 text-white rounded-full hover:bg-purple-700">
-                <FaSave /> Save Results
-              </button>
-              <button className="flex items-center gap-2 px-6 py-3 border-2 border-purple-600 text-purple-600 rounded-full hover:bg-purple-50">
-                <FaShare /> Share Results
-              </button>
-            </div>
+
           </div>
 
           {/* Recommended Routine */}
