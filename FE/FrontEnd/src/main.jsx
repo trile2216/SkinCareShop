@@ -13,7 +13,6 @@ import ProductDetail from "./pages/productDetail/productDetail.jsx";
 import CheckOutDetail from "./pages/checkout/CheckOutDetails.jsx";
 import { Provider } from "react-redux";
 import { store } from "./context/store.jsx";
-import CustomerProfile from "./pages/customerProfile/index.jsx";
 import { CartProvider } from "./context/CartContext.jsx";
 import Sale from "./pages/sale/sale.jsx";
 import AdminLayout from "./layouts/adminLayout.jsx";
@@ -22,6 +21,8 @@ import OrderManagement from "./pages/orderManagement/index.jsx";
 import ProtectedRoute from "../src/context/ProtectedRoute.jsx";
 import Blog from "./pages/blog/Blog.jsx";
 import QuizManagement from "./pages/quizManagement/QuizManagement.jsx";
+import CustomerProfile from "./pages/customerProfile/CustomerProfile.jsx";
+import OrderHistory from "./pages/orderHistory/orderHistory.jsx";
 // document.getElementById('root')
 // 1. Tìm tới root
 // 2. Lấy code ở trong App gắn vào root
@@ -82,6 +83,7 @@ const router = createBrowserRouter([
       </ProtectedRoute>
     ),
   },
+
   {
     path: "/customerProfile",
     element: (
@@ -90,6 +92,9 @@ const router = createBrowserRouter([
       </ProtectedRoute>
     ),
   },
+
+
+
 
   //Admin
   {
