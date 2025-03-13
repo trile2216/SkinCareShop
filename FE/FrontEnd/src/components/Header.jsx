@@ -2,9 +2,8 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FiSearch, FiShoppingCart, FiUser } from "react-icons/fi";
 import Cart from "./Cart";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch} from "react-redux";
 import { useCart } from "../context/CartContext";
-import { logout } from "../context/UserSlice";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import useAuth from "../context/useAuth";
@@ -89,6 +88,12 @@ const Header = () => {
                         className="block px-4 py-2 hover:bg-rose-300"
                       >
                         Profile
+                      </Link>
+                      <Link
+                        to="/orderHistory"
+                        className="block px-4 py-2 hover:bg-rose-300"
+                      >
+                        Orders
                       </Link>
                       <button
                         onClick={() => setShowLogoutConfirm(true)}
