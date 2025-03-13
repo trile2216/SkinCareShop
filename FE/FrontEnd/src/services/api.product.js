@@ -30,12 +30,24 @@ export const updateProduct = async ({ id, product }) => {
 
 export const deleteProduct = async (id) => {
   try {
-    const response = await api.delete(`/product/${id}`,id);
+    const response = await api.delete(`/product/${id}`, id);
     return response.data;
   } catch (error) {
     toast.error(error.response.data);
     return null;
   }
 };
+
+export const getRecommendedProducts = async (skinTypeId, categoryId) => {
+  try {
+    const response = await api.get(`/product/recommendation/${skinTypeId}&${categoryId}`);
+    return response.data;
+  } catch (error) {
+    toast.error(error.response.data);
+    throw error;
+  }
+};
+
+
 
 

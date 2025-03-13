@@ -1,16 +1,19 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { Spin, Card, Image } from "antd";
+import { Spin, Card } from "antd";
 import { quizService } from "../../services/quizService";
 import { getRoutineBySkinTypeId } from "../../services/api.routine";
+import { getRecommendedProducts } from "../../services/api.product";
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
+import ProductCard from "../productlist/ProductCard";
 
 const Result = () => {
   const { resultId } = useParams();
   const [loading, setLoading] = useState(true);
   const [result, setResult] = useState(null);
-  const [recommendations, setRecommendations] = useState(null);
+  const [routines, setRoutines] = useState([]);
+  const [recommendedProducts, setRecommendedProducts] = useState({});
 
   useEffect(() => {
     fetchResult();
@@ -24,44 +27,36 @@ const Result = () => {
       );
       setResult(detailedResult);
 
-      // Fetch recommendations
-      const recommendationsData = await getRoutineBySkinTypeId(detailedResult.skinTypeId);
-      console.log(recommendationsData);
-      setRecommendations(recommendationsData);
+      // Fetch routines
+      const routinesData = await getRoutineBySkinTypeId(detailedResult.skinTypeId);
+      setRoutines(routinesData);
+
+      // Fetch recommended products for each routine step
+      const productsMap = {};
+      for (const routine of routinesData) {
+        for (const step of routine.steps) {
+          try {
+            const products = await getRecommendedProducts(detailedResult.skinTypeId, step.categoryId);
+            // Filter products with recommendedLevel = 3
+            const highlyRecommended = products.filter(product =>
+              product.productSkinTypes.some(pst =>
+                pst.skinTypeId === detailedResult.skinTypeId && pst.recommentedLevel === 3
+              )
+            );
+            productsMap[step.id] = highlyRecommended;
+          } catch (error) {
+            console.error(`Error fetching products for step ${step.id}:`, error);
+            productsMap[step.id] = [];
+          }
+        }
+      }
+      setRecommendedProducts(productsMap);
     } catch (error) {
       console.error("Error fetching result:", error);
     } finally {
       setLoading(false);
     }
   };
-
-  const ProductCard = ({ product }) => (
-    <Card
-      hoverable
-      className="h-full max-w-[250px]"
-      bodyStyle={{ padding: "12px" }}
-      cover={
-        <Image
-          alt={product.name}
-          src={product.image}
-          className="object-cover h-32"
-          style={{ borderRadius: "8px 8px 0 0" }}
-        />
-      }
-    >
-      <Card.Meta
-        title={<span className="text-sm font-medium">{product.name}</span>}
-        description={
-          <div className="text-xs">
-            <p className="text-gray-600 mb-1 line-clamp-2">
-              {product.description}
-            </p>
-            <p className="text-purple-600 font-semibold">${product.price}</p>
-          </div>
-        }
-      />
-    </Card>
-  );
 
   const RoutineCard = ({ routine }) => (
     <Card className="h-full shadow-md hover:shadow-lg transition-shadow">
@@ -70,16 +65,30 @@ const Result = () => {
         <p className="text-gray-600">{routine.description}</p>
       </div>
 
-      <div className="space-y-4">
+      <div className="space-y-6">
         {routine.steps
           .sort((a, b) => a.stepOrder - b.stepOrder)
           .map((step) => (
-            <div key={step.id} className="border-b pb-3 last:border-b-0">
-              <div className="flex items-center gap-2">
+            <div key={step.id} className="border-b pb-4 last:border-b-0">
+              <div className="flex items-center gap-2 mb-3">
                 <span className="text-purple-600 font-semibold">Step {step.stepOrder}:</span>
                 <h5 className="font-medium">{step.name}</h5>
               </div>
-              <p className="text-gray-600 text-sm mt-1">{step.description}</p>
+              <p className="text-gray-600 text-sm mb-3">{step.description}</p>
+
+              {/* Recommended Products for this step */}
+              {recommendedProducts[step.id]?.length > 0 && (
+                <div className="mt-3">
+                  <h6 className="text-sm font-semibold mb-2">Recommended Products:</h6>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    {recommendedProducts[step.id].map((product) => (
+                      <div key={product.id} className="transform transition hover:scale-105">
+                        <ProductCard product={product} />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           ))}
       </div>
@@ -111,35 +120,19 @@ const Result = () => {
               </p>
             </div>
 
-            {/* Recommended Routine */}
-            {recommendations && recommendations.length > 0 && (
+            {/* Recommended Routines with Products */}
+            {routines.length > 0 && (
               <div className="mb-12">
                 <h3 className="text-xl font-semibold mb-6">
                   Your Personalized Skincare Routine
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {recommendations.map((routine) => (
+                  {routines.map((routine) => (
                     <RoutineCard key={routine.id} routine={routine} />
                   ))}
                 </div>
               </div>
             )}
-
-
-            {/* {recommendations?.products && (
-              <div>
-                <h3 className="text-xl font-semibold mb-6">
-                  Recommended Products for Your Skin Type
-                </h3>
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-                  {recommendations.products.map((product, index) => (
-                    <div key={index} className="flex justify-center">
-                      <ProductCard product={product} />
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )} */}
           </div>
         </div>
       </div>
