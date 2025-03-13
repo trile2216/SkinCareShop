@@ -22,6 +22,7 @@ import OrderManagement from "./pages/orderManagement/index.jsx";
 import ProtectedRoute from "../src/context/ProtectedRoute.jsx";
 import Blog from "./pages/blog/Blog.jsx";
 import QuizManagement from "./pages/quizManagement/QuizManagement.jsx";
+import Result from "./pages/quiz/Result.jsx";
 // document.getElementById('root')
 // 1. Tìm tới root
 // 2. Lấy code ở trong App gắn vào root
@@ -63,6 +64,14 @@ const router = createBrowserRouter([
     element: (
       <ProtectedRoute allowedRoles={["Customer"]}>
         <SkinQuiz />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: "/result",
+    element: (
+      <ProtectedRoute allowedRoles={["Customer"]}>
+        <Result />
       </ProtectedRoute>
     ),
   },
