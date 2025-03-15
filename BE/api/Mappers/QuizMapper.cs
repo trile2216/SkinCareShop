@@ -24,7 +24,7 @@ namespace api.Mappers
             {
                 Id = quiz.Id,
                 SkinElement = quiz.SkinElement.ToString(),
-                Questions = quiz.Questions.Select(q => ToQuestionDTO(q)).ToList()
+                Questions = quiz.Questions.Select(q => q.ToQuestionDTO()).ToList()
             };
         }
 

@@ -25,14 +25,15 @@ namespace api.Repository
             return quiz;
         }
 
-        public async Task<List<MainQuiz>> GetActiveMainQuizzesAsync()
+        public async Task<MainQuiz?> GetActiveMainQuizAsync()
         {
             return await _context.MainQuizzes
                 .Where(m => m.IsActive)
                 .Include(m => m.SkinQuizzes)
                     .ThenInclude(s => s.Questions)
                     .ThenInclude(q => q.Answers)
-                .ToListAsync();
+                .AsSplitQuery()
+                .FirstOrDefaultAsync();
         }
 
         public async Task<List<MainQuiz>> GetMainQuizzesAsync()
@@ -41,6 +42,7 @@ namespace api.Repository
                 .Include(m => m.SkinQuizzes)
                     .ThenInclude(s => s.Questions)
                     .ThenInclude(q => q.Answers)
+                .AsSplitQuery()
                 .ToListAsync();
         }
         public async Task<CustomerTestResult?> GetLatestCustomerResultAsync(int customerId)
@@ -57,6 +59,7 @@ namespace api.Repository
                 .Include(mq => mq.SkinQuizzes)
                     .ThenInclude(q => q.Questions)
                     .ThenInclude(s => s.Answers)
+                .AsSplitQuery()
                 .FirstOrDefaultAsync(mq => mq.Id == id);
         }
 
@@ -65,6 +68,7 @@ namespace api.Repository
             return await _context.SkinQuizzes
                    .Include(s => s.Questions)
                        .ThenInclude(q => q.Answers)
+                    .AsSplitQuery()
                    .FirstOrDefaultAsync(s => s.Id == id);
         }
 
@@ -74,6 +78,7 @@ namespace api.Repository
                         .Where(s => s.MainQuizId == mainQuizId)
                         .Include(s => s.Questions)
                             .ThenInclude(q => q.Answers)
+                        .AsSplitQuery()
                         .ToListAsync();
         }
 
@@ -84,7 +89,7 @@ namespace api.Repository
             return result;
         }
 
-        public async Task<MainQuiz?> UpdateMainQuizAsync(int id, MainQuiz quiz)
+        public async Task<MainQuiz?> SetActiveAsync(int id, bool isActive)
         {
             var existingQuiz = await GetMainQuizByIdAsync(id);
             if (existingQuiz == null)
@@ -92,7 +97,18 @@ namespace api.Repository
                 return null;
             }
 
-            existingQuiz.IsActive = quiz.IsActive;
+            if (isActive)
+            {
+                var activeQuizzes = await _context.MainQuizzes
+                    .Where(q => q.IsActive && q.Id != id)
+                    .ToListAsync();
+                foreach (var quiz in activeQuizzes)
+                {
+                    quiz.IsActive = false;
+                }
+            }
+
+            existingQuiz.IsActive = isActive;
 
             await _context.SaveChangesAsync();
             return existingQuiz;

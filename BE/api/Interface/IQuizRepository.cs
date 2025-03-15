@@ -10,13 +10,13 @@ namespace api.Interface
     {
         Task<MainQuiz?> GetMainQuizByIdAsync(int id);
 
-        Task<List<MainQuiz>> GetActiveMainQuizzesAsync();
+        Task<MainQuiz?> GetActiveMainQuizAsync();
 
         Task<List<MainQuiz>> GetMainQuizzesAsync();
 
         Task<MainQuiz> CreateMainQuizAsync(MainQuiz quiz);
 
-        Task<MainQuiz?> UpdateMainQuizAsync(int id, MainQuiz quiz);
+        Task<MainQuiz?> SetActiveAsync(int id, bool isActive);
 
         Task<SkinQuiz?> GetSkinQuizByIdAsync(int id);
 

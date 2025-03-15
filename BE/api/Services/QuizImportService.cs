@@ -174,7 +174,7 @@ namespace api.Services
                     var skinQuiz = new SkinQuiz
                     {
                         MainQuizId = mainQuiz.Id,
-                        SkinElement = skinQuizDto.SkinElement.GetHashCode(),
+                        SkinElement = skinQuizDto.SkinElement,
                     };
 
                     _context.SkinQuizzes.Add(skinQuiz);

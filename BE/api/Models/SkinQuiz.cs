@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using api.Constant;
 
 namespace api.Models;
 
@@ -9,7 +10,7 @@ public partial class SkinQuiz
 
     public int MainQuizId { get; set; }
 
-    public int SkinElement { get; set; }
+    public SkinElement SkinElement { get; set; }
 
     public virtual MainQuiz MainQuiz { get; set; } = null!;
 

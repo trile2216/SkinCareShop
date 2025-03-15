@@ -7,6 +7,7 @@ using api.DTOs.Quiz;
 using api.Interface;
 using api.Mappers;
 using api.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace api.Controller
@@ -40,17 +41,17 @@ namespace api.Controller
 
         [HttpGet]
         [Route("active")]
-        public async Task<IActionResult> GetActiveQuizzes()
+        public async Task<IActionResult> GetActiveQuiz()
         {
-            var quizzes = await _quizRepo.GetActiveMainQuizzesAsync();
+            var quiz = await _quizRepo.GetActiveMainQuizAsync();
 
-            if (quizzes.Count == 0)
+            if (quiz == null)
             {
                 return NotFound("No active quizzes found");
             }
 
-            var quizDTOs = quizzes.Select(q => q.ToMainQuizDTO()).ToList();
-            return Ok(quizDTOs);
+            var quizDTO = quiz.ToMainQuizDTO();
+            return Ok(quizDTO);
         }
 
         [HttpGet]
@@ -138,6 +139,7 @@ namespace api.Controller
 
         [HttpPost]
         [Route("import/excel")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> ImportQuizFromExcel(IFormFile file)
         {
             try
@@ -167,7 +169,11 @@ namespace api.Controller
                 // Thực hiện import vào database
                 var recordsCreated = await _quizImportService.ImportQuizAsync(importData);
 
-                return Ok(new { message = $"Import thành công {recordsCreated} bản ghi" });
+                return Ok(new
+                {
+                    message = $"Import thành công",
+                    data = recordsCreated
+                });
             }
             catch (Exception ex)
             {
@@ -178,6 +184,7 @@ namespace api.Controller
 
         [HttpPost]
         [Route("import/csv")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> ImportQuizFromCsv(IFormFile file)
         {
             try
@@ -206,12 +213,54 @@ namespace api.Controller
                 // Thực hiện import vào database
                 var recordsCreated = await _quizImportService.ImportQuizAsync(importData);
 
-                return Ok(new { message = $"Import thành công {recordsCreated} bản ghi" });
+                return Ok(new
+                {
+                    message = $"Import thành công",
+                    data = recordsCreated
+                });
             }
             catch (Exception ex)
             {
                 return StatusCode(500, new { error = $"Lỗi khi import quiz: {ex.Message}" });
             }
         }
+
+        [HttpPut]
+        [Route("change-status/{quizId:int}")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> ChangeQuizStatus([FromRoute] int quizId, [FromBody] bool isActive)
+        {
+            try
+            {
+                var quiz = await _quizRepo.SetActiveAsync(quizId, isActive);
+                if (quiz == null)
+                {
+                    return NotFound("Quiz not found");
+                }
+
+                if (isActive)
+                {
+                    return Ok(new
+                    {
+                        message = "Quiz status updated successfully. All other quizzes have been deactivated.",
+                        quiz = quiz.ToMainQuizDTO()
+                    });
+                }
+                else
+                {
+                    return Ok(new
+                    {
+                        message = "Quiz has been deactivated.",
+                        quiz = quiz.ToMainQuizDTO()
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { error = $"Error updating quiz status: {ex.Message}" });
+            }
+        }
+
+
     }
 }
