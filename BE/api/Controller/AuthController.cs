@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace api.Controller
 {
@@ -114,7 +115,6 @@ namespace api.Controller
 
                 var user = await _userManager.Users
                     .Include(u => u.Account)
-                    .Include(u => u.Account.Customer)
                     .FirstOrDefaultAsync(x => x.UserName == loginDTO.UserName);
 
                 if (user == null)
@@ -165,6 +165,37 @@ namespace api.Controller
             }
         }
 
+        [HttpPost]
+        [Route("change-password")]
+        [Authorize]
+        public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordDTO changePasswordDTO)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
 
+            var userName = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (userName == null)
+            {
+                return Unauthorized("Invalid user");
+            }
+
+            var user = await _userManager.FindByNameAsync(userName);
+            if (user == null)
+            {
+                return NotFound("User not found");
+            }
+
+            var result = await _userManager.ChangePasswordAsync(user, changePasswordDTO.CurrentPassword, changePasswordDTO.NewPassword);
+
+            if (!result.Succeeded)
+            {
+                return BadRequest(result.Errors);
+            }
+
+            return Ok("Password changed successfully");
+        }
     }
 }
