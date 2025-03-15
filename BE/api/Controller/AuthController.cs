@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
+using System.Net;
 
 namespace api.Controller
 {
@@ -32,13 +33,20 @@ namespace api.Controller
 
         private readonly ICartService _cartService;
 
+        private readonly IEmailService _emailService;
+
+        private readonly IConfiguration _configuration;
+
+
         public AuthController(
             ApplicationDbContext context,
             ITokenService tokenService,
             SignInManager<ApplicationUser> signInManager,
             UserManager<ApplicationUser> userManager,
             IAccountRepository accountRepo,
-            ICartService cartService)
+            ICartService cartService,
+            IEmailService emailService,
+            IConfiguration configuration)
         {
             _context = context;
             _tokenService = tokenService;
@@ -46,6 +54,8 @@ namespace api.Controller
             _userManager = userManager;
             _accountRepo = accountRepo;
             _cartService = cartService;
+            _emailService = emailService;
+            _configuration = configuration;
         }
 
         [HttpPost]
@@ -196,6 +206,102 @@ namespace api.Controller
             }
 
             return Ok("Password changed successfully");
+        }
+
+        [HttpPost]
+        [Route("forgot-password")]
+        public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordDTO forgotPasswordDTO)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
+
+                // Tìm người dùng bằng email
+                var customer = await _context.Customers
+                    .Include(c => c.Account)
+                    .ThenInclude(a => a.IdentityUser)
+                    .FirstOrDefaultAsync(c => c.Email == forgotPasswordDTO.Email);
+
+                if (customer == null || customer.Account == null || customer.Account.IdentityUser == null)
+                {
+                    // Không báo lỗi chi tiết để bảo vệ thông tin
+                    return Ok("Nếu email tồn tại, bạn sẽ nhận được hướng dẫn đặt lại mật khẩu");
+                }
+
+                var user = customer.Account.IdentityUser;
+
+                // Tạo token đặt lại mật khẩu
+                var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+
+                // Tạo URL đặt lại mật khẩu
+                var frontendUrl = _configuration["FrontendUrl"]; // Cấu hình URL của frontend trong appsettings.json
+                var resetUrl = $"{frontendUrl}/reset-password?email={WebUtility.UrlEncode(forgotPasswordDTO.Email)}&token={WebUtility.UrlEncode(token)}";
+
+                // Tạo nội dung email
+                var message = $@"
+                    <h3>Đặt lại mật khẩu</h3>
+                    <p>Vui lòng nhấp vào liên kết dưới đây để đặt lại mật khẩu của bạn:</p>
+                    <p><a href='{resetUrl}'>Đặt lại mật khẩu</a></p>
+                    <p>Liên kết này sẽ hết hạn sau 3 giờ.</p>
+                    <p>Nếu bạn không yêu cầu đặt lại mật khẩu, vui lòng bỏ qua email này.</p>
+                ";
+
+                // Gửi email
+                await _emailService.SendEmailAsync(forgotPasswordDTO.Email, "Đặt lại mật khẩu", message);
+
+                return Ok("Nếu email tồn tại, bạn sẽ nhận được hướng dẫn đặt lại mật khẩu");
+            }
+            catch (Exception e)
+            {
+                return StatusCode(500, e);
+            }
+        }
+
+        [HttpPost]
+        [Route("reset-password")]
+        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDTO resetPasswordDTO)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
+
+                // Tìm người dùng bằng email
+                var customer = await _context.Customers
+                    .Include(c => c.Account)
+                    .ThenInclude(a => a.IdentityUser)
+                    .FirstOrDefaultAsync(c => c.Email == resetPasswordDTO.Email);
+
+                if (customer == null || customer.Account == null)
+                {
+                    return BadRequest("Email không hợp lệ");
+                }
+
+                var user = customer.Account.IdentityUser;
+
+                // Đặt lại mật khẩu
+                var result = await _userManager.ResetPasswordAsync(user, resetPasswordDTO.Token, resetPasswordDTO.NewPassword);
+
+                if (!result.Succeeded)
+                {
+                    return BadRequest(result.Errors);
+                }
+
+                customer.Account.Password = resetPasswordDTO.NewPassword;
+
+                await _context.SaveChangesAsync();
+
+                return Ok("Mật khẩu đã được đặt lại thành công");
+            }
+            catch (Exception e)
+            {
+                return StatusCode(500, e);
+            }
         }
     }
 }
