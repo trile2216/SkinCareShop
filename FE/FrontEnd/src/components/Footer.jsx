@@ -68,58 +68,40 @@ const Footer = () => {
             <h3 className="text-lg font-semibold mb-4">Quick Links</h3>
             <ul className="space-y-2">
               <li>
-                <a href="#" className="text-gray-600 hover:text-rose-500">
-                  New Arrivals
+                <a href="/productlist" className="text-gray-600 hover:text-rose-500">
+                  Product
                 </a>
               </li>
               <li>
-                <a href="#" className="text-gray-600 hover:text-rose-500">
-                  Best Sellers
+                <a href="/sale" className="text-gray-600 hover:text-rose-500">
+                  Sale  
                 </a>
               </li>
               <li>
-                <a href="#" className="text-gray-600 hover:text-rose-500">
-                  Special Offers
+                <a href="/blog" className="text-gray-600 hover:text-rose-500">
+                  Blog  
                 </a>
               </li>
               <li>
-                <a href="#" className="text-gray-600 hover:text-rose-500">
-                  Gift Cards
+                <a href="/skinquiz" className="text-gray-600 hover:text-rose-500">
+                  Quiz Skin Type
                 </a>
               </li>
             </ul>
           </div>
 
+          {/* Google Maps */}
           <div>
-            <h3 className="text-lg font-semibold mb-4">Newsletter</h3>
-            <div className="mb-4">
-              <p className="text-gray-600 mb-2">
-                Subscribe for exclusive offers and updates
-              </p>
-              <div className="flex">
-                <input
-                  type="email"
-                  placeholder="Enter your email"
-                  className="flex-1 px-4 py-2 border border-gray-200 rounded-l-lg focus:outline-none focus:border-teal-950"
-                />
-                <button className="px-6 py-2 bg-rose-500 text-white rounded-r-lg hover:bg-rose-600">
-                  <FiMail size={20} />
-                </button>
-              </div>
-            </div>
-            <div className="flex space-x-4">
-              <a href="#" className="text-gray-400 hover:text-rose-500">
-                <FaFacebookF size={20} />
-              </a>
-              <a href="#" className="text-gray-400 hover:text-rose-500">
-                <FaTwitter size={20} />
-              </a>
-              <a href="#" className="text-gray-400 hover:text-rose-500">
-                <FaInstagram size={20} />
-              </a>
-              <a href="#" className="text-gray-400 hover:text-rose-500">
-                <FaLinkedinIn size={20} />
-              </a>
+            <div className="w-full h-50 rounded-lg overflow-hidden shadow-md">
+              <iframe
+                src={`https://www.google.com/maps?q=10.87522862760165, 106.8005141278462&output=embed`}
+                width="100%"
+                height="100%"
+                style={{ border: 0 }}
+                allowFullScreen=""
+                loading="lazy"
+                title="Google Maps"
+              ></iframe>
             </div>
           </div>
         </div>

@@ -12,6 +12,7 @@ const ProductList = () => {
     priceRange: [0, 50],
     category: "",
     brand: "",
+    skinType: "",
     onSaleOnly: false,
   });
   const [sortBy, setSortBy] = useState("default");
@@ -19,19 +20,37 @@ const ProductList = () => {
   const [error, setError] = useState(null);
   const [categories, setCategories] = useState([]);
   const [brands, setBrands] = useState([]);
+  const [skinTypes, setSkinTypes] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
-      const [productsRes, categoriesRes, brandsRes] = await Promise.all([
-        api.get("/product"),
-        api.get("/category"),
-        api.get("/brand"),
-      ]);
-      setProducts(productsRes.data);
-      setCategories(categoriesRes.data);
-      setBrands(brandsRes.data);
-      setError(null);
+      try {
+        const [productsRes, categoriesRes, brandsRes, skinTypesRes] =
+          await Promise.all([
+            api.get("/product"),
+            api.get("/category"),
+            api.get("/brand"),
+            api.get("/skintype"),
+          ]);
+
+        const validProducts = productsRes.data?.filter((p) => p) || [];
+        const validCategories = categoriesRes.data?.filter((c) => c) || [];
+        const validBrands = brandsRes.data?.filter((b) => b && b.id) || [];
+        const validSkinTypes =
+          skinTypesRes.data?.filter((s) => s && s.id) || [];
+
+        setProducts(validProducts);
+        setCategories(validCategories);
+        setBrands(validBrands);
+        setSkinTypes(validSkinTypes);
+        setError(null);
+      } catch (error) {
+        setError("Failed to fetch data");
+        console.error("Error fetching data:", error);
+      } finally {
+        setLoading(false);
+      }
     };
 
     fetchData();
@@ -39,22 +58,55 @@ const ProductList = () => {
 
   const filteredAndSortedProducts = useMemo(() => {
     let result = products.filter((product) => {
+      const brandMatch =
+        !filters.brand || product.brandId === parseInt(filters.brand);
+      const categoryMatch =
+        !filters.category || product.categoryId === parseInt(filters.category);
+
+      // Sửa lại logic kiểm tra skinType và recommentedLevel
+      const skinTypeMatch =
+        !filters.skinType ||
+        (product.productSkinTypes &&
+          product.productSkinTypes.some((pst) => {
+            // Kiểm tra nếu skinTypeId khớp và recommentedLevel >= 4
+            return (
+              parseInt(pst.skinTypeId) === parseInt(filters.skinType) &&
+              pst.recommentedLevel >= 3
+            );
+          }));
+
       return (
         product.price >= filters.priceRange[0] &&
         product.price <= filters.priceRange[1] &&
-        (!filters.category ||
-          product.categoryId === parseInt(filters.category)) &&
-        (!filters.brand || product.brandId === parseInt(filters.brandName)) &&
+        categoryMatch &&
+        brandMatch &&
+        skinTypeMatch &&
         (!filters.onSaleOnly || product.sale > 0) &&
         product.status === true
       );
     });
 
+    // Sửa lại phần sort
     switch (sortBy) {
       case "priceLowToHigh":
         return result.sort((a, b) => a.price - b.price);
       case "priceHighToLow":
         return result.sort((a, b) => b.price - a.price);
+      case "recommentedLevel":
+        return result.sort((a, b) => {
+          // Lấy recommentedLevel cho sản phẩm với skinType đã chọn
+          const getrecommentedLevel = (product) => {
+            if (!product.productSkinTypes || !filters.skinType) return 0;
+            const skinType = product.productSkinTypes.find(
+              (pst) => parseInt(pst.skinTypeId) === parseInt(filters.skinType)
+            );
+            return skinType ? skinType.recommentedLevel || 0 : 0;
+          };
+
+          const aLevel = getrecommentedLevel(a);
+          const bLevel = getrecommentedLevel(b);
+          return bLevel - aLevel; // Sort từ cao xuống thấp
+        });
       default:
         return result;
     }
@@ -64,7 +116,77 @@ const ProductList = () => {
     setFilters((prev) => ({ ...prev, [filterName]: value }));
   };
 
-  if (error) return <div>{error}</div>;
+  const renderBrandsSelect = () => (
+    <div className="mb-6">
+      <h3 className="font-medium mb-2">Brands</h3>
+      <select
+        value={filters.brand}
+        onChange={(e) => handleFilterChange("brand", e.target.value)}
+        className="w-full p-2 border rounded"
+      >
+        <option value="">All Brands</option>
+        {brands &&
+          brands.length > 0 &&
+          brands.map((brand) =>
+            brand && brand.id ? (
+              <option key={brand.id} value={brand.id.toString()}>
+                {brand.name}
+              </option>
+            ) : null
+          )}
+      </select>
+    </div>
+  );
+
+  const renderSkinTypesSelect = () => (
+    <div className="mb-6">
+      <h3 className="font-medium mb-2">Skin Type</h3>
+      <select
+        value={filters.skinType}
+        onChange={(e) => handleFilterChange("skinType", e.target.value)}
+        className="w-full p-2 border rounded"
+      >
+        <option value="">All Skin Types</option>
+        {skinTypes.map((skinType) => (
+          <option key={skinType.id} value={skinType.id}>
+            {skinType.symbol}
+          </option>
+        ))}
+      </select>
+    </div>
+  );
+
+  const renderSortSelect = () => (
+    <div className="mb-6">
+      <h3 className="font-medium mb-2">Sort By</h3>
+      <select
+        value={sortBy}
+        onChange={(e) => setSortBy(e.target.value)}
+        className="w-full p-2 border rounded"
+      >
+        <option value="default">Default Sorting</option>
+        <option value="priceLowToHigh">Price: Low to High</option>
+        <option value="priceHighToLow">Price: High to Low</option>
+        {filters.skinType && (
+          <option value="recommentedLevel">Best Recommended</option>
+        )}
+      </select>
+    </div>
+  );
+
+  if (loading)
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-purple-500"></div>
+      </div>
+    );
+
+  if (error)
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-red-500">{error}</div>
+      </div>
+    );
 
   return (
     <>
@@ -74,18 +196,7 @@ const ProductList = () => {
           <div className="w-full md:w-1/4 bg-white p-6 rounded-lg shadow-md h-fit">
             <h2 className="text-xl font-semibold mb-6">Filters</h2>
 
-            <div className="mb-6">
-              <h3 className="font-medium mb-2">Sort By</h3>
-              <select
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value)}
-                className="w-full p-2 border rounded"
-              >
-                <option value="default">Default Sorting</option>
-                <option value="priceLowToHigh">Price: Low to High</option>
-                <option value="priceHighToLow">Price: High to Low</option>
-              </select>
-            </div>
+            {renderSortSelect()}
 
             <div className="mb-6">
               <h3 className="font-medium mb-2">Price Range</h3>
@@ -119,35 +230,8 @@ const ProductList = () => {
               </select>
             </div>
 
-            <div className="mb-6">
-              <h3 className="font-medium mb-2">Brands</h3>
-              <select
-                value={filters.brand}
-                onChange={(e) => handleFilterChange("brand", e.target.value)}
-                className="w-full p-2 border rounded"
-              >
-                <option value="">All Brands</option>
-                {brands.map((brand) => (
-                  <option key={brand.id} value={brand.id}>
-                    {brand.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div className="mb-6">
-              <label className="flex items-center space-x-2">
-                <input
-                  type="checkbox"
-                  checked={filters.onSaleOnly}
-                  onChange={(e) =>
-                    handleFilterChange("onSaleOnly", e.target.checked)
-                  }
-                  className="rounded"
-                />
-                <span>On Sale</span>
-              </label>
-            </div>
+            {renderBrandsSelect()}
+            {renderSkinTypesSelect()}
           </div>
 
           <div className="w-full md:w-3/4">

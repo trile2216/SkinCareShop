@@ -12,12 +12,12 @@ export const getRoutineBySkinTypeId = async (skinTypeId) => {
   }
 };
 
-export const getRecommendedProducts = async (skinTypeId) => {
+export const getRecommendedProducts = async (skinTypeId, categoryId) => {
   try {
-    const response = await api.get(`/product/recommended/${skinTypeId}`);
+    const response = await api.get(`/product/recommendation/${skinTypeId}&${categoryId}`);
     return response.data;
   } catch (error) {
-    console.error('Error fetching recommended products:', error);
+    toast.error(error.response.data);
     throw error;
   }
 };

@@ -169,7 +169,7 @@ const OrderManagement = () => {
                   columns={[
                     {
                       title: "Product",
-                      dataIndex: "productId",
+                      dataIndex: "productName",
                     },
                     {
                       title: "Quantity",

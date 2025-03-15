@@ -51,8 +51,10 @@ namespace api.Mappers
         {
             return new QuizResultDTO
             {
-                CustomerId = customerTestResult.Id,
+                ResultId = customerTestResult.Id,
                 SkinTypeId = customerTestResult.SkinTypeId,
+                Symbol = customerTestResult.SkinType.Symbol,
+                Characteristics = customerTestResult.SkinType.Characteristics
             };
         }
     }

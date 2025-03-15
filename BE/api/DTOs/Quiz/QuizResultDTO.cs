@@ -7,7 +7,11 @@ namespace api.DTOs.Quiz
 {
     public class QuizResultDTO
     {
-        public int CustomerId { get; set; }
+        public int ResultId { get; set; }
         public int SkinTypeId { get; set; }
+
+        public string? Symbol { get; set; }
+
+        public string? Characteristics { get; set; }
     }
 }
