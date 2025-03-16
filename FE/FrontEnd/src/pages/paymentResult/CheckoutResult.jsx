@@ -42,7 +42,7 @@ const CheckoutResult = () => {
       return;
     }
 
-    // Gửi thông tin cập nhật đến backend
+    // Gửi thông tin cập nhật đến be
     try {
       const updateData = {
         orderId: orderId,
