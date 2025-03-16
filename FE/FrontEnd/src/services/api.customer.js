@@ -26,3 +26,15 @@ export const updateCustomer = async ({ id, customer }) => {
         toast.error(error.response?.data || "Failed to update customer");
     }
 };
+
+// Change password
+export const changePassword = async (id, passwordData) => {
+    try {
+        const response = await api.post(`/api/auth/change-password`, passwordData);
+        toast.success("Password changed successfully");
+        return response.data;
+    } catch (error) {
+        toast.error(error.response?.data || "Failed to change password");
+        throw error;
+    }
+};
