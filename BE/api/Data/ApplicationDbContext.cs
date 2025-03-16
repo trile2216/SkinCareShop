@@ -284,6 +284,12 @@ public partial class ApplicationDbContext : IdentityDbContext<ApplicationUser>
             entity.Property(e => e.DeliveryAddress)
                     .HasColumnType("nvarchar(max)")
                     .HasColumnName("deliveryAddress");
+            entity.Property(e => e.PaymentMethod)
+                   .HasColumnType("nvarchar(max)")
+                    .HasColumnName("paymentMethod");
+            entity.Property(e => e.TransactionId)
+                    .HasColumnType("nvarchar(max)")
+                    .HasColumnName("transactionId");
 
             entity.HasOne(d => d.Customer).WithMany(p => p.Orders)
                 .HasForeignKey(d => d.CustomerId)

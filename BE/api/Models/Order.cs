@@ -18,6 +18,9 @@ public partial class Order
 
     public string? DeliveryAddress { get; set; }
 
+    public string? PaymentMethod { get; set; }
+
+    public string? TransactionId { get; set; }
 
     public OrderStatus Status { get; set; }
 
