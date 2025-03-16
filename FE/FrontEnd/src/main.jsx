@@ -23,8 +23,8 @@ import ProtectedRoute from "../src/context/ProtectedRoute.jsx";
 import Blog from "./pages/blog/Blog.jsx";
 import QuizManagement from "./pages/quizManagement/QuizManagement.jsx";
 import Result from "./pages/quiz/Result.jsx";
-import ChangePassword from "./pages/customerProfile/ChangePassword.jsx";
 import CheckoutResult from "./pages/paymentResult/CheckoutResult.jsx";
+import ChangePassword from "./pages/login/ChangePassword.jsx";
 // document.getElementById('root')
 // 1. Tìm tới root
 // 2. Lấy code ở trong App gắn vào root
@@ -35,6 +35,11 @@ const router = createBrowserRouter([
     path: "/login",
     element: <LoginPage />,
   },
+  {
+    path: "/changePassword",
+    element: <ChangePassword />,
+  },
+
   {
     path: "/register",
     element: <RegisterPage />,
@@ -109,14 +114,7 @@ const router = createBrowserRouter([
       </ProtectedRoute>
     ),
   },
-  {
-    path: "/changePassword",
-    element: (
-      <ProtectedRoute allowedRoles={["Customer"]}>
-        <ChangePassword />
-      </ProtectedRoute>
-    ),
-  },
+
 
   //Admin
   {

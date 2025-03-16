@@ -8,7 +8,7 @@ import { useNavigate } from "react-router-dom";
 // import { useDispatch } from "react-redux";
 // import { loginSuccess } from "../../context/UserSlice";
 
-import useAuth from "../../context/useAuth";  
+import useAuth from "../../context/useAuth";
 
 const LoginPage = () => {
   const { login } = useAuth();
@@ -159,10 +159,7 @@ const LoginPage = () => {
 
           <div className="flex items-center justify-between">
             <div className="text-sm">
-              <a
-                href="#"
-                className="font-medium text-rose-400 hover:text-rose-300"
-              >
+              <a href="/changePassword" className="font-medium text-rose-400 hover:text-rose-300">
                 Forgot your password?
               </a>
             </div>

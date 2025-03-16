@@ -4,8 +4,8 @@ import { useNavigate } from "react-router";
 import { changePassword } from "../../services/api.customer";
 import { toast } from "react-toastify";
 import { Visibility, VisibilityOff, ArrowBack } from "@mui/icons-material";
-import { 
-    Card, CardContent, Typography, TextField, Button, IconButton, InputAdornment 
+import {
+    Card, CardContent, Typography, TextField, Button, IconButton, InputAdornment
 } from "@mui/material";
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
@@ -73,8 +73,8 @@ const ChangePassword = () => {
                 <Card sx={{ maxWidth: 400, width: "100%", padding: 2, boxShadow: "none", border: "none" }}>
                     <CardContent sx={{ textAlign: "left" }}>
                         {/* Nút Back */}
-                        <Button 
-                            startIcon={<ArrowBack />} 
+                        <Button
+                            startIcon={<ArrowBack />}
                             sx={{ mb: 2, textTransform: "none", fontSize: 16 }}
                             onClick={() => navigate("/customerProfile")}
                         >
@@ -93,8 +93,8 @@ const ChangePassword = () => {
                                         field === "currentPassword"
                                             ? "Current Password"
                                             : field === "newPassword"
-                                            ? "New Password"
-                                            : "Confirm New Password"
+                                                ? "New Password"
+                                                : "Confirm New Password"
                                     }
                                     type={showPassword[field] ? "text" : "password"}
                                     name={field}
@@ -106,7 +106,7 @@ const ChangePassword = () => {
                                     variant="outlined"
                                     sx={{
                                         "& .MuiOutlinedInput-root": {
-                                            borderRadius: 8, 
+                                            borderRadius: 8,
                                         },
                                     }}
                                     InputProps={{
@@ -124,12 +124,12 @@ const ChangePassword = () => {
                                 type="submit"
                                 fullWidth
                                 variant="contained"
-                                sx={{ 
-                                    mt: 2, 
-                                    bgcolor: "#E11D48", 
-                                    "&:hover": { bgcolor: "#BE123C" }, 
-                                    borderRadius: 8 
-                                }} 
+                                sx={{
+                                    mt: 2,
+                                    bgcolor: "#E11D48",
+                                    "&:hover": { bgcolor: "#BE123C" },
+                                    borderRadius: 8
+                                }}
                                 disabled={loading}
                             >
                                 {loading ? "Changing..." : "Change Password"}
