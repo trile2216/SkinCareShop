@@ -102,7 +102,7 @@ const HomePage = () => {
     {
       id: 4,
       image:
-        "https://www.allthingshair.com/_next/image/?url=https%3A%2F%2Fcdn.sanity.io%2Fimages%2Fzqgvoczt%2Fproduction%2F51afbb18c75cc5207202feee6a4aba3dd0529b1a-1200x800.jpg%3Fq%3D85%26fit%3Dclip%26auto%3Dformat&w=3840&q=75",
+        "https://www.kanvasbeauty.com.au/cdn/shop/files/BANNER_WEBSITE_5_b5f88935-a79c-4f2d-a27b-ca04976006c6_1600x.jpg?v=1672463676",
       button: "Shopping now",
       text: "Scientific skincare, glowing results",
       slogan: "Know your skin, unlock its true potential",
