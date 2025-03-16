@@ -125,6 +125,7 @@ namespace api.Controller
 
                 var user = await _userManager.Users
                     .Include(u => u.Account)
+                        .ThenInclude(a => a.Customer)
                     .FirstOrDefaultAsync(x => x.UserName == loginDTO.UserName);
 
                 if (user == null)
