@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router";
 import { changePassword } from "../../services/api.customer";
@@ -27,11 +27,11 @@ const ChangePassword = () => {
         confirm: false,
     });
 
-    if (!customerId) {
-        navigate("/login");
-        return null;
-    }
-
+    useEffect(() => {
+        if (!customerId) {
+            navigate("/changePassword");
+        }
+    }, [customerId, navigate]);
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
