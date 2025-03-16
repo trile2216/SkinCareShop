@@ -13,7 +13,7 @@ import ProductDetail from "./pages/productDetail/productDetail.jsx";
 import CheckOutDetail from "./pages/checkout/CheckOutDetails.jsx";
 import { Provider } from "react-redux";
 import { store } from "./context/store.jsx";
-import CustomerProfile from "./pages/customerProfile/index.jsx";
+import CustomerProfile from "./pages/customerProfile/CustomerProfile.jsx";
 import { CartProvider } from "./context/CartContext.jsx";
 import Sale from "./pages/sale/sale.jsx";
 import AdminLayout from "./layouts/adminLayout.jsx";
@@ -24,6 +24,7 @@ import Blog from "./pages/blog/Blog.jsx";
 import QuizManagement from "./pages/quizManagement/QuizManagement.jsx";
 import Result from "./pages/quiz/Result.jsx";
 import ChangePassword from "./pages/customerProfile/ChangePassword.jsx";
+import CheckoutResult from "./pages/paymentResult/CheckoutResult.jsx";
 // document.getElementById('root')
 // 1. Tìm tới root
 // 2. Lấy code ở trong App gắn vào root
@@ -90,6 +91,14 @@ const router = createBrowserRouter([
       <ProtectedRoute allowedRoles={["Customer"]}>
         <CheckOutDetail />
       </ProtectedRoute>
+    ),
+  },
+  {
+    path: "/payment-result",
+    element: (
+      // <ProtectedRoute allowedRoles={["Customer"]}>
+      <CheckoutResult />
+      // </ProtectedRoute>
     ),
   },
   {

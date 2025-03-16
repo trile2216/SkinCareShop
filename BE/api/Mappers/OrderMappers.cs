@@ -30,6 +30,8 @@ namespace api.Mappers
                 CustomerId = order.CustomerId,
                 TotalPrice = order.TotalPrice,
                 ShippingFee = order.ShippingFee,
+                TransactionId = order.TransactionId,
+                PaymentMethod = order.PaymentMethod,
                 OrderDate = order.OrderDate,
                 DeliveryAddress = order.DeliveryAddress,
                 Status = order.Status.ToString(),

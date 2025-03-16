@@ -16,6 +16,8 @@ namespace api.Interface
 
         Task<List<Order>> GetOrdersAsync();
 
+        Task<Order?> UpdateOrderAsync(Order order);
+
         Task<Order?> UpdateOrderStatusAsync(int id, int orderStatus);
 
         Task<List<Order>> GetOrderByCustomerIdAsync(int CustomerId);

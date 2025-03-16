@@ -68,5 +68,22 @@ namespace api.Repository
             return existingOrder;
         }
 
+        public async Task<Order?> UpdateOrderAsync(Order order)
+        {
+            var existingOrder = await GetOrderByIdAsync(order.Id);
+
+            if (existingOrder == null)
+            {
+                return null;
+            }
+
+            existingOrder.Status = order.Status;
+            existingOrder.PaymentMethod = order.PaymentMethod;
+            existingOrder.TransactionId = order.TransactionId;
+
+            await _context.SaveChangesAsync();
+            return existingOrder;
+
+        }
     }
 }

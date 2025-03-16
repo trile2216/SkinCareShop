@@ -41,7 +41,7 @@ namespace api.Controller
         }
 
         [HttpPost]
-        [Route("processpayment")]
+        [Route("process-payment")]
         public async Task<IActionResult> ProcessPayment([FromBody] CheckOutDTO checkOutDTO)
         {
             if (!ModelState.IsValid)
@@ -82,7 +82,9 @@ namespace api.Controller
                         {
                             CustomerId = checkOutDTO.CustomerId,
                             OrderDate = DateTime.Now,
-                            Status = OrderStatus.Comfirmed,
+                            Status = OrderStatus.Pending,
+                            PaymentMethod = PaymentMethod.VNPay.ToString(),
+                            TransactionId = "",
                             TotalPrice = checkOutDTO.TotalPrice,
                             ShippingFee = checkOutDTO.ShippingFee,
                             DeliveryAddress = deliveryAddress
@@ -125,6 +127,8 @@ namespace api.Controller
                             CustomerId = checkOutDTO.CustomerId,
                             OrderDate = DateTime.Now,
                             Status = OrderStatus.Pending,
+                            PaymentMethod = PaymentMethod.COD.ToString(),
+                            TransactionId = "COD",
                             TotalPrice = checkOutDTO.TotalPrice,
                             ShippingFee = checkOutDTO.ShippingFee,
                             DeliveryAddress = deliveryAddress
@@ -168,7 +172,7 @@ namespace api.Controller
         }
 
         [HttpGet]
-        [Route("paymentcallback")]
+        [Route("payment-callback")]
         public async Task<IActionResult> PaymentCallback()
         {
             try
@@ -253,6 +257,45 @@ namespace api.Controller
                 Success = false,
                 Message = "Thanh toán thất bại"
             });
+        }
+
+        [HttpPost]
+        [Route("update-payment")]
+        public async Task<IActionResult> UpdatePayment([FromBody] PaymentUpdateRequest request)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            try
+            {
+                var order = await _orderRepo.GetOrderByIdAsync(request.OrderId);
+                if (order == null)
+                {
+                    return BadRequest(new { Success = false, Message = "Đơn hàng không tồn tại" });
+                }
+                if (!Enum.IsDefined(typeof(PaymentMethod), request.PaymentMethod))
+                {
+                    return BadRequest(new { Success = false, Message = "Phương thức thanh toán không hợp lệ" });
+                }
+                order.TransactionId = request.TransactionId;
+                order.PaymentMethod = request.PaymentMethod;
+                order.Status = request.ResponseCode == "00" ? OrderStatus.Comfirmed : OrderStatus.Cancelled;
+
+                await _orderRepo.UpdateOrderAsync(order);
+
+                if (order.Status == OrderStatus.Comfirmed)
+                {
+                    _cartService.ClearCart();
+                }
+
+                return Ok(new { Success = true, Message = "Cập nhật thanh toán thành công" });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { Message = "Lỗi cập nhật thanh toán", Error = ex.Message });
+            }
         }
     }
 

@@ -20,6 +20,10 @@ namespace api.DTOs.Order
 
         public string? DeliveryAddress { get; set; }
 
+        public string? TransactionId { get; set; }
+
+        public string? PaymentMethod { get; set; }
+
         public DateTime OrderDate { get; set; }
 
         public string? Status { get; set; }
