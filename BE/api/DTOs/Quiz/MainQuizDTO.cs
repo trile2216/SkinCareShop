@@ -9,5 +9,7 @@ namespace api.DTOs.Quiz
     {
         public int Id { get; set; }
         public List<SkinQuizDTO> SkinQuizzes { get; set; }
+
+        public bool IsActive { get; set; }
     }
 }

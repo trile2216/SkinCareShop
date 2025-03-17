@@ -15,7 +15,8 @@ namespace api.Mappers
             return new MainQuizDTO
             {
                 Id = mainQuiz.Id,
-                SkinQuizzes = mainQuiz.SkinQuizzes.Select(sq => sq.ToSkinQuizDTO()).ToList()
+                SkinQuizzes = mainQuiz.SkinQuizzes.Select(sq => sq.ToSkinQuizDTO()).ToList(),
+                IsActive = mainQuiz.IsActive
             };
         }
         public static SkinQuizDTO ToSkinQuizDTO(this SkinQuiz quiz)
