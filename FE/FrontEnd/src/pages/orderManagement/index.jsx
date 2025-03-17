@@ -148,17 +148,28 @@ const OrderManagement = () => {
             <div>
               <div className="order-info">
                 <p>
-                  <strong>Order ID:</strong> {selectedOrder.id}
+                  <strong>Order ID: </strong> {selectedOrder.id}
                 </p>
                 <p>
-                  <strong>Customer ID:</strong> {selectedOrder.customerId}
+                  <strong>Customer ID: </strong> {selectedOrder.customerId}
                 </p>
                 <p>
-                  <strong>Shipping Address:</strong>
+                  <strong>Shipping Address: </strong>
                   {selectedOrder.deliveryAddress}
                 </p>
                 <p>
-                  <strong>Status:</strong> {selectedOrder.status}
+                  <strong>Shipping Fee: </strong>${selectedOrder.shippingFee}
+                </p>
+                <p>
+                  <strong>Payment method: </strong>
+                  {selectedOrder.paymentMethod}
+                </p>
+                <p>
+                  <strong>Transaction: </strong>
+                  {selectedOrder.transactionId}
+                </p>
+                <p>
+                  <strong>Status: </strong> {selectedOrder.status}
                 </p>
               </div>
 

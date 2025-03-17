@@ -30,7 +30,7 @@ export const updateCustomer = async ({ id, customer }) => {
 // Change password
 export const changePassword = async (id, passwordData) => {
     try {
-        const response = await api.post(`/api/auth/change-password`, passwordData);
+        const response = await api.post(`/auth/change-password`, passwordData);
         toast.success("Password changed successfully");
         return response.data;
     } catch (error) {
