@@ -12,6 +12,10 @@ import {
   Space,
   Tooltip,
   Switch,
+  Collapse,
+  Typography,
+  Card,
+  Divider,
 } from "antd";
 import {
   UploadOutlined,
@@ -21,6 +25,8 @@ import {
 import { quizService } from "../../services/quizService";
 
 const { TabPane } = Tabs;
+const { Panel } = Collapse;
+const { Title, Text } = Typography;
 
 const QuizManagement = () => {
   const [fileType, setFileType] = useState("excel");
@@ -37,7 +43,6 @@ const QuizManagement = () => {
     try {
       const data = await quizService.getAllQuizzes();
       setQuizzes(data);
-      console.log(data.isActive);
     } catch (error) {
       message.error(
         `Failed to fetch quizzes: ${error.response?.data || error.message}`
@@ -122,6 +127,11 @@ const QuizManagement = () => {
       width: 80,
     },
     {
+      title: "Skin Quizzes Count",
+      key: "skinQuizzesCount",
+      render: (_, record) => record.skinQuizzes?.length || 0,
+    },
+    {
       title: "Status",
       dataIndex: "isActive",
       key: "isActive",
@@ -132,7 +142,6 @@ const QuizManagement = () => {
           <Tag color="default">Inactive</Tag>
         ),
     },
-
     {
       title: "Actions",
       key: "actions",
@@ -158,6 +167,52 @@ const QuizManagement = () => {
       ),
     },
   ];
+
+  // Render quiz details based on the new structure
+  const renderQuizDetails = () => {
+    if (!selectedQuiz) return null;
+
+    return (
+      <div className="quiz-details">
+        <div className="mb-4">
+          <Title level={4}>Main Quiz ID: {selectedQuiz.id}</Title>
+          <Text type="secondary">
+            Contains {selectedQuiz.skinQuizzes?.length || 0} skin element
+            quizzes
+          </Text>
+        </div>
+
+        <Divider />
+
+        <Collapse defaultActiveKey={["0"]} className="mb-4">
+          {selectedQuiz.skinQuizzes?.map((skinQuiz, skinQuizIndex) => (
+            <Panel
+              header={<strong>{skinQuiz.skinElement}</strong>}
+              key={skinQuizIndex}
+            >
+              {skinQuiz.questions?.map((question, questionIndex) => (
+                <Card
+                  key={question.id}
+                  title={`Question ${questionIndex + 1}: ${question.content}`}
+                  className="mb-4"
+                  type="inner"
+                  size="small"
+                >
+                  <ul className="pl-5 list-disc">
+                    {question.answers?.map((answer) => (
+                      <li key={answer.id} className="mb-2">
+                        {answer.content}
+                      </li>
+                    ))}
+                  </ul>
+                </Card>
+              ))}
+            </Panel>
+          ))}
+        </Collapse>
+      </div>
+    );
+  };
 
   return (
     <div className="p-6">
@@ -217,8 +272,8 @@ const QuizManagement = () => {
 
       {/* Quiz Detail Modal */}
       <Modal
-        title={`Quiz Details: ${selectedQuiz?.title || ""}`}
-        visible={detailModalVisible}
+        title="Quiz Details"
+        open={detailModalVisible}
         onCancel={() => setDetailModalVisible(false)}
         footer={[
           <Button key="close" onClick={() => setDetailModalVisible(false)}>
@@ -227,57 +282,7 @@ const QuizManagement = () => {
         ]}
         width={800}
       >
-        {selectedQuiz && (
-          <div>
-            <div className="mb-4">
-              <h3 className="text-lg font-medium">General Information</h3>
-              <p>
-                <strong>ID:</strong> {selectedQuiz.id}
-              </p>
-              <p>
-                <strong>Title:</strong> {selectedQuiz.title}
-              </p>
-              <p>
-                <strong>Description:</strong> {selectedQuiz.description}
-              </p>
-              <p>
-                <strong>Status:</strong>{" "}
-                {selectedQuiz.isActive ? (
-                  <Tag color="green">Active</Tag>
-                ) : (
-                  <Tag color="default">Inactive</Tag>
-                )}
-              </p>
-            </div>
-
-            <div>
-              <h3 className="text-lg font-medium mb-2">Questions</h3>
-              {selectedQuiz.questions && selectedQuiz.questions.length > 0 ? (
-                <ul className="list-disc pl-5">
-                  {selectedQuiz.questions.map((question, index) => (
-                    <li key={question.id} className="mb-4">
-                      <p>
-                        <strong>Question {index + 1}:</strong>{" "}
-                        {question.questionText}
-                      </p>
-                      <p>
-                        <strong>Options:</strong>
-                      </p>
-                      <ul className="list-circle pl-5">
-                        {question.options &&
-                          question.options.map((option) => (
-                            <li key={option.id}>{option.optionText}</li>
-                          ))}
-                      </ul>
-                    </li>
-                  ))}
-                </ul>
-              ) : (
-                <p>No questions available</p>
-              )}
-            </div>
-          </div>
-        )}
+        {renderQuizDetails()}
       </Modal>
     </div>
   );

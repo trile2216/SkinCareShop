@@ -5,6 +5,8 @@ import {
   ProductOutlined,
   UnorderedListOutlined,
   LogoutOutlined,
+  UserOutlined,
+  QuestionOutlined,
 } from "@ant-design/icons";
 import { Layout, Menu, theme, Button } from "antd";
 import { Link, Outlet, useNavigate } from "react-router-dom";
@@ -24,8 +26,9 @@ function getItem(label, key, icon, children) {
 
 const items = [
   getItem("PRODUCT", "product", <ProductOutlined />),
-  getItem("USER", "user", <DesktopOutlined />),
   getItem("ORDER", "order", <UnorderedListOutlined />),
+  getItem("USER", "user", <UserOutlined />),
+  getItem("QUIZ", "quiz", <QuestionOutlined />),
   getItem("LOGOUT", "logout", <LogoutOutlined />),
 ];
 
