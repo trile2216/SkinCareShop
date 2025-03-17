@@ -3,8 +3,6 @@ import { useNavigate } from "react-router";
 import "swiper/css";
 import "swiper/css/navigation";
 import { Navigation, Autoplay } from "swiper/modules";
-import Header from "../../components/Header";
-import Footer from "../../components/Footer";
 import { useEffect, useState } from "react";
 import api from "../../config/axios";
 import ProductCard from "../productlist/ProductCard";
@@ -113,8 +111,7 @@ const HomePage = () => {
   const navigate = useNavigate();
 
   return (
-    <>
-      <Header />
+    <div className="bg-white">
       {/* Body Contain */}
       <div className="container mx-auto px-4 py-8">
         {/* Banner */}
@@ -212,8 +209,7 @@ const HomePage = () => {
           </Swiper>
         </section>
       </div>
-      <Footer />
-    </>
+    </div>
   );
 };
 

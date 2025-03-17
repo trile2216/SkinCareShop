@@ -58,7 +58,6 @@ const OrderHistory = () => {
 
   return (
     <>
-      <Header />
       <div className="container mx-auto">
         <div className="bg-white p-6 shadow-lg rounded-lg my-10">
           <h2 className="text-xl font-semibold mb-4">Order History</h2>
@@ -189,7 +188,6 @@ const OrderHistory = () => {
           )}
         </div>
       </div>
-      <Footer />
     </>
   );
 };

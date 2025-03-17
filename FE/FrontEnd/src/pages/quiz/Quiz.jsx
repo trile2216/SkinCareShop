@@ -2,9 +2,8 @@ import React, { useState, useEffect } from "react";
 import { FaArrowRight } from "react-icons/fa";
 import { message, Spin, Card } from "antd";
 import { quizService } from "../../services/quizService";
-import Header from "../../components/Header";
-import Footer from "../../components/Footer";
 import { useNavigate } from "react-router-dom";
+import MainLayout from "../../layouts/MainLayout";
 
 const Quiz = () => {
   const navigate = useNavigate();
@@ -149,8 +148,6 @@ const Quiz = () => {
         </div>
 
         <Card className="shadow-lg">
-
-
           {currentQuestions.map((question, index) => (
             <div key={question.id} className="mb-8 bg-purple-50 p-5 rounded-lg border-l-4 border-purple-600">
               <h4 className="mb-4 text-lg font-medium text-purple-800">
@@ -209,14 +206,10 @@ const Quiz = () => {
   };
 
   return (
-    <>
-      <Header />
-      <div className="min-h-screen bg-purple-50 py-12">
-        {step === 0 && renderWelcome()}
-        {step > 0 && renderQuestion()}
-      </div>
-      <Footer />
-    </>
+    <div className="min-h-screen bg-purple-50 py-12">
+      {step === 0 && renderWelcome()}
+      {step > 0 && renderQuestion()}
+    </div>
   );
 };
 

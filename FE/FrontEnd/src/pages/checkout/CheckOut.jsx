@@ -114,7 +114,7 @@ const Checkout = () => {
 
               {/* Payment */}
               <div className="mt-4 text-right">
-                <Link to="/checkoutDetail">
+                <Link to="/checkout-details">
                   <button className="bg-rose-500 text-white py-2 px-6 rounded-lg hover:bg-rose-600">
                     Proceed to Payment
                   </button>{" "}
