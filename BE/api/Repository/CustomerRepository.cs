@@ -23,7 +23,10 @@ namespace api.Repository
 
         public async Task<List<Customer>> GetAllCustomerAsync()
         {
-            return await _context.Customers.ToListAsync();
+            return await _context.Customers
+            .Include(c => c.Account)
+            .Where(c => c.Account.IsActive)
+            .ToListAsync();
         }
 
         public async Task<Customer?> CreateCustomerAsync(Customer customer)

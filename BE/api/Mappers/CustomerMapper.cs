@@ -19,7 +19,8 @@ namespace api.Mappers
                 LastName = customer.LastName,
                 Email = customer.Email,
                 Phone = customer.Phone,
-                Address = customer.Address
+                Address = customer.Address,
+                IsActive = customer.Account.IsActive
             };
         }
 

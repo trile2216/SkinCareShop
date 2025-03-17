@@ -50,30 +50,6 @@ const customerService = {
             throw error;
         }
     },
-
-    // Lấy danh sách đơn hàng của khách hàng
-    getCustomerOrders: async (id) => {
-        try {
-            const response = await api.get(`/customers/${id}/orders`);
-            return response.data;
-        } catch (error) {
-            console.error(`Error fetching orders for customer with id ${id}:`, error);
-            throw error;
-        }
-    },
-
-    // Lấy kết quả quiz của khách hàng
-    getCustomerQuizResults: async (id) => {
-        try {
-            const response = await api.get(`/customers/${id}/quiz-results`);
-            return response.data;
-        } catch (error) {
-            console.error(`Error fetching quiz results for customer with id ${id}:`, error);
-            throw error;
-        }
-    },
-
-    
 };
 
 export default customerService;

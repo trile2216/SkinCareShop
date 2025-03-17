@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using api.DTOs.Account;
+using api.DTOs.Order;
+using api.DTOs.Quiz;
 
 namespace api.DTOs.Customer
 {
@@ -19,6 +21,8 @@ namespace api.DTOs.Customer
         public string? Address { get; set; }
 
         public string? Phone { get; set; }
+
+        public bool IsActive { get; set; }
 
     }
 }
