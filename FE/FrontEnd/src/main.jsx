@@ -25,6 +25,7 @@ import QuizManagement from "./pages/quizManagement/QuizManagement.jsx";
 import Result from "./pages/quiz/Result.jsx";
 import CheckoutResult from "./pages/paymentResult/CheckoutResult.jsx";
 import ChangePassword from "./pages/login/ChangePassword.jsx";
+import OrderHistory from "./pages/orderHistory/orderHistory.jsx";
 // document.getElementById('root')
 // 1. Tìm tới root
 // 2. Lấy code ở trong App gắn vào root
@@ -114,7 +115,14 @@ const router = createBrowserRouter([
       </ProtectedRoute>
     ),
   },
-
+  {
+    path: "/order-history",
+    element: (
+      <ProtectedRoute allowedRoles={["Customer"]}>
+        <OrderHistory />
+      </ProtectedRoute>
+    ),
+  },
 
   //Admin
   {

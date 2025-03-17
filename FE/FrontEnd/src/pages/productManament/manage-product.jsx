@@ -15,6 +15,7 @@ import {
   Select,
   Table,
   Upload,
+  Space,
 } from "antd";
 import { getCategories } from "../../services/api.category";
 import { useForm } from "antd/es/form/Form";
@@ -23,6 +24,7 @@ import { getSkinTypes } from "../../services/api.skintype";
 import { getBrands } from "../../services/api.brand";
 import FormItem from "antd/es/form/FormItem";
 import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
+import { uploadImage } from "../../services/api.image";
 
 function ManageProduct() {
   const [products, setProducts] = useState([]);
@@ -96,6 +98,42 @@ function ManageProduct() {
     fetchBrands();
   }, []);
 
+  const handleEdit = (record) => {
+    setOpen(true);
+    const formattedSkinTypes = record.productSkinTypes.map((st) => ({
+      skinTypeId: st.skinTypeId,
+      recommentedLevel: st.recommentedLevel,
+    }));
+
+    form.setFieldsValue({
+      id: record.id,
+      name: record.name,
+      ingredient: record.ingredient,
+      image: record.image,
+      gender: record.gender,
+      stock: record.stock,
+      description: record.description,
+      categoryId: record.categoryId,
+      brandId: record.brandId,
+      sale: record.sale,
+      price: record.price,
+      skinTypes: formattedSkinTypes,
+    });
+
+    if (record.image) {
+      setFileList([
+        {
+          uid: "-1",
+          name: "image.png",
+          status: "done",
+          url: record.image,
+        },
+      ]);
+    } else {
+      setFileList([]);
+    }
+  };
+
   const columns = [
     {
       title: "Name",
@@ -103,14 +141,20 @@ function ManageProduct() {
       key: "name",
     },
     {
-      title: "Description",
-      dataIndex: "description",
-      key: "descripton",
+      title: "Category",
+      dataIndex: "categoryName",
+      key: "categoryName",
+    },
+    {
+      title: "Brand",
+      dataIndex: "brandName",
+      key: "brandName",
     },
     {
       title: "Price",
       dataIndex: "price",
       key: "price",
+      render: (price) => `$${price.toFixed(2)}`,
     },
     {
       title: "Stock",
@@ -118,9 +162,10 @@ function ManageProduct() {
       key: "stock",
     },
     {
-      title: "Ingerdients",
-      dataIndex: "ingredient",
-      key: "ingredient",
+      title: "Sale",
+      dataIndex: "sale",
+      key: "sale",
+      render: (sale) => `${sale}%`,
     },
     {
       title: "Image",
@@ -130,37 +175,23 @@ function ManageProduct() {
     },
     {
       title: "Action",
-      dataIndex: "id",
-      key: "id",
-      render: (id, record) => {
-        return (
-          <>
-            <Button
-              type="primary"
-              onClick={() => {
-                setOpen(true);
-                form.setFieldsValue({
-                  ...record,
-                  categoryID: record?.categories
-                    ? record?.categories?.map((item) => item.id)
-                    : [],
-                });
-              }}
-            >
-              Edit
+      key: "action",
+      render: (_, record) => (
+        <Space>
+          <Button type="primary" onClick={() => handleEdit(record)}>
+            Edit
+          </Button>
+          <Popconfirm
+            title="Delete the product"
+            description="Are you sure to delete this product?"
+            onConfirm={() => handleDeteleProduct(record.id)}
+          >
+            <Button danger type="primary">
+              Delete
             </Button>
-            <Popconfirm
-              title="Delete the product"
-              description="Are you sure to delete this product?"
-              onConfirm={() => handleDeteleProduct(id)}
-            >
-              <Button danger type="primary">
-                Delete
-              </Button>
-            </Popconfirm>
-          </>
-        );
-      },
+          </Popconfirm>
+        </Space>
+      ),
     },
   ];
 
@@ -173,25 +204,38 @@ function ManageProduct() {
   };
 
   const handleSubmit = async (formValues) => {
-    formValues.image = "123";
-    // co id thi update
-    if (formValues.id) {
-      const response = await updateProduct({
-        id: formValues.id,
-        product: formValues,
-      });
-      console.log(response);
-      toast.success("Successfilly update product");
+    try {
+      const productData = {
+        ...formValues,
+        image: formValues.image, // Sử dụng URL hình ảnh từ form
+        stock: parseInt(formValues.stock),
+        sale: parseInt(formValues.sale) || 0,
+        price: parseFloat(formValues.price),
+        status: true,
+        productSkinTypes: formValues.skinTypes.map((st) => ({
+          skinTypeId: parseInt(st.skinTypeId),
+          recommentedLevel: parseInt(st.recommentedLevel),
+        })),
+      };
+
+      if (formValues.id) {
+        await updateProduct({
+          id: formValues.id,
+          product: productData,
+        });
+        toast.success("Successfully updated product");
+      } else {
+        await createProduct(productData);
+        toast.success("Successfully created new product");
+      }
+      setOpen(false);
+      form.resetFields();
+      setFileList([]);
+      fetchProduct();
+    } catch (error) {
+      toast.error("Error saving product");
+      console.error(error);
     }
-    // nguoc lai ko co thi la create
-    else {
-      const response = await createProduct(formValues);
-      console.log(response);
-      toast.success("Successfilly create new  product");
-    }
-    setOpen(false);
-    form.resetFields();
-    fetchProduct();
   };
 
   return (
@@ -210,76 +254,35 @@ function ManageProduct() {
       />
 
       <Modal
-        title="Product"
+        title={form.getFieldValue("id") ? "Edit Product" : "Create Product"}
         open={open}
-        onCancel={() => setOpen(false)}
+        onCancel={() => {
+          setOpen(false);
+          form.resetFields();
+          setFileList([]);
+        }}
         onOk={() => form.submit()}
+        width={800}
       >
-        <Form
-          labelCol={{
-            span: 24,
-          }}
-          form={form}
-          onFinish={handleSubmit}
-        >
-          <Form.Item label="Id" name="id" hidden>
+        <Form labelCol={{ span: 24 }} form={form} onFinish={handleSubmit}>
+          <Form.Item name="id" hidden>
             <Input />
           </Form.Item>
 
           <Form.Item
             label="Name"
             name="name"
-            rules={[
-              {
-                required: true,
-                message: "Name is required!",
-              },
-              {
-                min: 3,
-                message: "Name must be at least 3 characters!",
-              },
-            ]}
+            rules={[{ required: true, message: "Name is required!" }]}
           >
             <Input />
           </Form.Item>
 
           <Form.Item
-            label="Price"
-            name="price"
-            rules={[
-              {
-                required: true,
-                message: "Price is required!",
-              },
-            ]}
+            label="Category"
+            name="categoryId"
+            rules={[{ required: true, message: "Category is required!" }]}
           >
-            <Input type="number" />
-          </Form.Item>
-
-          <Form.Item
-            label="Stock"
-            name="stock"
-            rules={[
-              {
-                required: true,
-                message: "Stock is required!",
-              },
-            ]}
-          >
-            <Input type="number" />
-          </Form.Item>
-
-          <Form.Item
-            label="Category ID"
-            name="categoryID"
-            rules={[
-              {
-                required: true,
-                message: "At least one category must be selected!",
-              },
-            ]}
-          >
-            <Select mode="multiple">
+            <Select>
               {categories.map((category) => (
                 <Select.Option value={category.id} key={category.id}>
                   {category.name}
@@ -287,57 +290,78 @@ function ManageProduct() {
               ))}
             </Select>
           </Form.Item>
+
           <Form.Item
-            label="Brand ID"
-            name="BrandID"
-            rules={[
-              {
-                required: true,
-                message: "At least one Brand must be selected!",
-              },
-            ]}
+            label="Brand"
+            name="brandId"
+            rules={[{ required: true, message: "Brand is required!" }]}
           >
-            <Select mode="multiple">
-              {categories.map((Brand) => (
-                <Select.Option value={Brand.id} key={Brand.id}>
-                  {Brand.name}
+            <Select>
+              {brands.map((brand) => (
+                <Select.Option value={brand.id} key={brand.id}>
+                  {brand.name}
                 </Select.Option>
               ))}
             </Select>
           </Form.Item>
-          <Form.Item
-            label="Description"
-            name="description"
-            rules={[
-              {
-                required: true,
-                message: "Description is required!",
-              },
-              {
-                min: 5,
-                message: "Description must be at least 5 characters!",
-              },
-            ]}
-          >
-            <Input.TextArea />
+
+          <Form.Item label="Gender" name="gender" initialValue="Unisex">
+            <Select>
+              <Select.Option value="Male">Male</Select.Option>
+              <Select.Option value="Female">Female</Select.Option>
+              <Select.Option value="Unisex">Unisex</Select.Option>
+            </Select>
           </Form.Item>
-          <FormItem label="Image" name="imagee">
+
+          <Form.Item
+            label="Image"
+            name="image"
+            rules={[{ required: true, message: "Image is required!" }]}
+          >
             <Upload
-              action="/image/upload"
               listType="picture-card"
+              maxCount={1}
               fileList={fileList}
               onPreview={handlePreview}
-              onChange={handleChange}
+              onChange={async (info) => {
+                const { fileList: newFileList } = info;
+                setFileList(newFileList);
+
+                if (info.file.status === "uploading") {
+                  return;
+                }
+                if (info.file.status === "done") {
+                  // Get image URL from response
+                  form.setFieldValue("image", info.file.response.url);
+                }
+              }}
+              customRequest={async ({ file, onSuccess, onError }) => {
+                try {
+                  const result = await uploadImage(file);
+                  onSuccess(result);
+                } catch (error) {
+                  onError(error);
+                }
+              }}
+              beforeUpload={(file) => {
+                const isImage = file.type.startsWith("image/");
+                if (!isImage) {
+                  toast.error("You can only upload image files!");
+                  return false;
+                }
+                return true; // Allow upload
+              }}
             >
-              {fileList.length >= 8 ? null : uploadButton}
+              {fileList.length >= 1 ? null : uploadButton}
             </Upload>
-          </FormItem>
+          </Form.Item>
+
           <Form.List
             name="skinTypes"
             rules={[
               {
-                validator: async (_, types) => {
-                  if (!types || types.length < 1) {
+                validator: async (_, skinTypes) => {
+                  if (!skinTypes || skinTypes.length < 1) {
                     return Promise.reject(
                       new Error("At least 1 skin type required")
                     );
@@ -348,26 +372,18 @@ function ManageProduct() {
           >
             {(fields, { add, remove }, { errors }) => (
               <>
-                {fields.map((field, index) => (
-                  <Form.Item
-                    label={index === 0 ? "Skin Types" : ""}
-                    required={false}
-                    key={field.key}
+                {fields.map(({ key, name, ...restField }) => (
+                  <div
+                    key={key}
+                    style={{ display: "flex", marginBottom: 8, gap: 8 }}
                   >
                     <Form.Item
-                      {...field}
-                      validateTrigger={["onChange", "onBlur"]}
-                      rules={[
-                        {
-                          required: true,
-                          whitespace: true,
-                          message:
-                            "Please select a skin type or delete this field.",
-                        },
-                      ]}
-                      noStyle
+                      {...restField}
+                      name={[name, "skinTypeId"]}
+                      rules={[{ required: true, message: "Select skin type" }]}
+                      style={{ flex: 2 }}
                     >
-                      <Select style={{ width: "60%" }}>
+                      <Select placeholder="Select skin type">
                         {skinTypes.map((type) => (
                           <Select.Option key={type.id} value={type.id}>
                             {type.name}
@@ -375,61 +391,88 @@ function ManageProduct() {
                         ))}
                       </Select>
                     </Form.Item>
-                    {fields.length > 1 && (
-                      <MinusCircleOutlined
-                        className="dynamic-delete-button"
-                        onClick={() => remove(field.name)}
-                      />
-                    )}
-                  </Form.Item>
+                    <Form.Item
+                      {...restField}
+                      name={[name, "recommentedLevel"]}
+                      rules={[
+                        { required: true, message: "Enter level" },
+                        {
+                          type: "number",
+                          min: 1,
+                          max: 5,
+                          message: "Level must be 1-5",
+                        },
+                      ]}
+                      style={{ flex: 1 }}
+                    >
+                      <Select placeholder="Select level">
+                        <Select.Option value={1}>1</Select.Option>
+                        <Select.Option value={2}>2</Select.Option>
+                        <Select.Option value={3}>3</Select.Option>
+                        <Select.Option value={4}>4</Select.Option>
+                        <Select.Option value={5}>5</Select.Option>
+                      </Select>
+                    </Form.Item>
+                    <MinusCircleOutlined onClick={() => remove(name)} />
+                  </div>
                 ))}
                 <Form.Item>
                   <Button
                     type="dashed"
                     onClick={() => add()}
-                    style={{ width: "60%" }}
+                    block
                     icon={<PlusOutlined />}
                   >
                     Add Skin Type
                   </Button>
+                  <Form.ErrorList errors={errors} />
                 </Form.Item>
               </>
             )}
           </Form.List>
 
           <Form.Item
-            label="Recommend Level"
-            name="recommendLevel"
-            rules={[
-              {
-                required: true,
-                message: "Recommend level is required!",
-              },
-              {
-                type: "number",
-                min: 3,
-                max: 5,
-                message: "Recommend level must be between 3 and 5!",
-              },
-            ]}
+            label="Price"
+            name="price"
+            rules={[{ required: true, message: "Price is required!" }]}
           >
-            <Input type="number" min={3} max={5} />
+            <Input type="number" min={0} step={0.01} />
+          </Form.Item>
+
+          <Form.Item
+            label="Stock"
+            name="stock"
+            rules={[{ required: true, message: "Stock is required!" }]}
+          >
+            <Input type="number" min={0} />
+          </Form.Item>
+
+          <Form.Item label="Sale (%)" name="sale" initialValue={0}>
+            <Input type="number" min={0} max={100} />
+          </Form.Item>
+
+          <Form.Item label="Ingredients" name="ingredient">
+            <Input.TextArea />
+          </Form.Item>
+
+          <Form.Item
+            label="Description"
+            name="description"
+            rules={[{ required: true, message: "Description is required!" }]}
+          >
+            <Input.TextArea />
           </Form.Item>
         </Form>
       </Modal>
-      {previewImage && (
-        <Image
-          wrapperStyle={{
-            display: "none",
-          }}
-          preview={{
-            visible: previewOpen,
-            onVisibleChange: (visible) => setPreviewOpen(visible),
-            afterOpenChange: (visible) => !visible && setPreviewImage(""),
-          }}
-          src={previewImage}
-        />
-      )}
+
+      <Modal
+        open={previewOpen}
+        title="Preview"
+        footer={null}
+        onCancel={() => setPreviewOpen(false)}
+      >
+        <img alt="preview" style={{ width: "100%" }} src={previewImage} />
+      </Modal>
     </div>
   );
 }
