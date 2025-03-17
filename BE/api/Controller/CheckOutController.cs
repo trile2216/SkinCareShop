@@ -279,6 +279,8 @@ namespace api.Controller
                 {
                     return BadRequest(new { Success = false, Message = "Phương thức thanh toán không hợp lệ" });
                 }
+
+
                 order.TransactionId = request.TransactionId;
                 order.PaymentMethod = request.PaymentMethod;
                 order.Status = request.ResponseCode == "00" ? OrderStatus.Comfirmed : OrderStatus.Cancelled;
@@ -288,6 +290,23 @@ namespace api.Controller
                 if (order.Status == OrderStatus.Comfirmed)
                 {
                     _cartService.ClearCart();
+                }
+
+                if (order.Status == OrderStatus.Cancelled)
+                {
+                    var orderItems = await _orderItemRepo.GetOrderItemsByOrderIdAsync(order.Id);
+                    foreach (var orderItem in orderItems)
+                    {
+                        foreach (var item in order.OrderItems)
+                        {
+                            var product = await _productRepo.GetProductByIdAsync(item.ProductId);
+                            if (product != null)
+                            {
+                                product.Stock += item.Quantity;
+                                await _productRepo.UpdateProductAsync(product.Id, product);
+                            }
+                        }
+                    }
                 }
 
                 return Ok(new { Success = true, Message = "Cập nhật thanh toán thành công" });

@@ -104,7 +104,6 @@ namespace api.Controller
                             product.Stock += item.Quantity;
                             await _productRepo.UpdateProductAsync(product.Id, product);
                         }
-                        await _orderItemRepo.DeleteOrderItemByIdAsync(item.Id);
                     }
                 }
             }
