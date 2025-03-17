@@ -34,7 +34,8 @@ const CustomerProfile = () => {
       return;
     }
 
-    axios.get(`http://localhost:5286/api/customer/${customerId}`)
+    axios
+      .get(`http://localhost:5286/api/customer/${customerId}`)
       .then((response) => {
         console.log("API Response:", response.data);
         if (response.data) {
@@ -53,8 +54,6 @@ const CustomerProfile = () => {
       })
       .finally(() => setLoading(false));
   }, []);
-
-
 
   const validateEmail = (email) => {
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
@@ -78,7 +77,8 @@ const CustomerProfile = () => {
       validationErrors.email = "Invalid email format!";
     }
     if (!validatePhone(formData.phone)) {
-      validationErrors.phone = "Phone must be 9-15 digits and contain only numbers!";
+      validationErrors.phone =
+        "Phone must be 9-15 digits and contain only numbers!";
     }
 
     if (Object.keys(validationErrors).length > 0) {
@@ -93,7 +93,10 @@ const CustomerProfile = () => {
         return;
       }
 
-      await axios.put(`http://localhost:5286/api/customer/${customerId}`, formData);
+      await axios.put(
+        `http://localhost:5286/api/customer/${customerId}`,
+        formData
+      );
 
       setCustomerData((prevData) => ({
         ...prevData,
@@ -120,8 +123,6 @@ const CustomerProfile = () => {
     transition: "0.3s",
   };
 
-
-
   if (loading) return <p>Loading...</p>;
   if (!customerData) return <p>No customer data found.</p>;
 
@@ -129,7 +130,16 @@ const CustomerProfile = () => {
     <>
       <Header />
 
-      <div style={{ maxWidth: "1000px", margin: "auto", padding: "70px", backgroundColor: "#fff1f2", borderRadius: "5px", boxShadow: "0 6px 12px rgba(0, 0, 0, 0.3)" }}>
+      <div
+        style={{
+          maxWidth: "1000px",
+          margin: "auto",
+          padding: "70px",
+          backgroundColor: "#fff1f2",
+          borderRadius: "5px",
+          boxShadow: "0 6px 12px rgba(0, 0, 0, 0.3)",
+        }}
+      >
         <h2
           style={{
             textAlign: "center",
@@ -138,26 +148,37 @@ const CustomerProfile = () => {
             fontWeight: "bold", // In đậm
             marginBottom: "20px",
           }}
-        >My Profile</h2>
+        >
+          My Profile
+        </h2>
 
         {editing ? (
-          <form onSubmit={handleSubmit}
+          <form
+            onSubmit={handleSubmit}
             style={{
               backgroundColor: "#fff", // Màu rose-100
               padding: "20px",
               borderRadius: "10px",
-              boxShadow: "0 2px 4px rgba(0, 0, 0, 0.3)"
+              boxShadow: "0 2px 4px rgba(0, 0, 0, 0.3)",
             }}
           >
             <table style={{ width: "100%", borderCollapse: "collapse" }}>
               <tbody>
                 {Object.keys(formData).map((field) => (
-                  <tr key={field} style={{ borderBottom: "1px solid #ddd", height: "50px" }}>
-                    <th style={{ padding: "15px", textAlign: "left", width: "30%" }}>
+                  <tr
+                    key={field}
+                    style={{ borderBottom: "1px solid #ddd", height: "50px" }}
+                  >
+                    <th
+                      style={{
+                        padding: "15px",
+                        textAlign: "left",
+                        width: "30%",
+                      }}
+                    >
                       {field.charAt(0).toUpperCase() + field.slice(1)}
                     </th>
                     <td style={{ padding: "15px" }}>
-
                       <input
                         type="text"
                         name={field}
@@ -170,10 +191,20 @@ const CustomerProfile = () => {
                           borderRadius: "5px",
                           border: "1px solid #ddd",
                           outline: "none",
-                          fontSize: "16px"
+                          fontSize: "16px",
                         }}
                       />
-                      {errors[field] && <p style={{ color: "red", fontSize: "14px", marginTop: "5px" }}>{errors[field]}</p>}
+                      {errors[field] && (
+                        <p
+                          style={{
+                            color: "red",
+                            fontSize: "14px",
+                            marginTop: "5px",
+                          }}
+                        >
+                          {errors[field]}
+                        </p>
+                      )}
                     </td>
                   </tr>
                 ))}
@@ -181,46 +212,87 @@ const CustomerProfile = () => {
             </table>
 
             <div style={{ textAlign: "center", marginTop: "20px" }}>
-              <button type="submit" style={buttonStyle}>Save</button>
-              <button type="button" onClick={() => setEditing(false)} style={{ ...buttonStyle, backgroundColor: "#ddd", color: "#333", marginLeft: "10px" }}>Cancel</button>
+              <button type="submit" style={buttonStyle}>
+                Save
+              </button>
+              <button
+                type="button"
+                onClick={() => setEditing(false)}
+                style={{
+                  ...buttonStyle,
+                  backgroundColor: "#ddd",
+                  color: "#333",
+                  marginLeft: "10px",
+                }}
+              >
+                Cancel
+              </button>
             </div>
           </form>
         ) : (
           <div>
-            <table style={{
-              width: "100%",
-              borderCollapse: "collapse",
-              backgroundColor: "#fff",
-              padding: "20px",
-              borderRadius: "10px",
-              boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)"
-            }}>
+            <table
+              style={{
+                width: "100%",
+                borderCollapse: "collapse",
+                backgroundColor: "#fff",
+                padding: "20px",
+                borderRadius: "10px",
+                boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
+              }}
+            >
               <tbody>
                 <tr style={{ borderBottom: "1px solid #ddd", height: "50px" }}>
-                  <th style={{ padding: "15px", textAlign: "left", width: "30%" }}>First Name</th>
+                  <th
+                    style={{ padding: "15px", textAlign: "left", width: "30%" }}
+                  >
+                    First Name
+                  </th>
                   <td style={{ padding: "15px" }}>{customerData.firstName}</td>
                 </tr>
                 <tr style={{ borderBottom: "1px solid #ddd", height: "50px" }}>
-                  <th style={{ padding: "15px", textAlign: "left", width: "30%" }}>Last Name</th>
+                  <th
+                    style={{ padding: "15px", textAlign: "left", width: "30%" }}
+                  >
+                    Last Name
+                  </th>
                   <td style={{ padding: "15px" }}>{customerData.lastName}</td>
                 </tr>
                 <tr style={{ borderBottom: "1px solid #ddd", height: "50px" }}>
-                  <th style={{ padding: "15px", textAlign: "left", width: "30%" }}>Email</th>
+                  <th
+                    style={{ padding: "15px", textAlign: "left", width: "30%" }}
+                  >
+                    Email
+                  </th>
                   <td style={{ padding: "15px" }}>{customerData.email}</td>
                 </tr>
                 <tr style={{ borderBottom: "1px solid #ddd", height: "50px" }}>
-                  <th style={{ padding: "15px", textAlign: "left", width: "30%" }}>Phone</th>
-                  <td style={{ padding: "15px" }}>{customerData.phone || "N/A"}</td>
+                  <th
+                    style={{ padding: "15px", textAlign: "left", width: "30%" }}
+                  >
+                    Phone
+                  </th>
+                  <td style={{ padding: "15px" }}>
+                    {customerData.phone || "N/A"}
+                  </td>
                 </tr>
                 <tr style={{ height: "50px" }}>
-                  <th style={{ padding: "15px", textAlign: "left", width: "30%" }}>Address</th>
-                  <td style={{ padding: "15px" }}>{customerData.address || "N/A"}</td>
+                  <th
+                    style={{ padding: "15px", textAlign: "left", width: "30%" }}
+                  >
+                    Address
+                  </th>
+                  <td style={{ padding: "15px" }}>
+                    {customerData.address || "N/A"}
+                  </td>
                 </tr>
               </tbody>
             </table>
 
             <div style={{ textAlign: "center", marginTop: "20px" }}>
-              <button onClick={() => setEditing(true)} style={buttonStyle}>Edit</button>
+              <button onClick={() => setEditing(true)} style={buttonStyle}>
+                Edit
+              </button>
             </div>
           </div>
         )}
@@ -228,10 +300,7 @@ const CustomerProfile = () => {
 
       <Footer />
     </>
-
   );
 };
-
-
 
 export default CustomerProfile;
