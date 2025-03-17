@@ -190,8 +190,10 @@ const ProductList = () => {
 
   return (
     <>
-      <Header />
       <div className="container mx-auto px-4 py-8">
+        <h2 className="text-3xl font-bold text-center text-rose-500 mb-6">
+          Shop Skincare Products
+        </h2>
         <div className="flex flex-col md:flex-row gap-8">
           <div className="w-full md:w-1/4 bg-white p-6 rounded-lg shadow-md h-fit">
             <h2 className="text-xl font-semibold mb-6">Filters</h2>
@@ -243,7 +245,6 @@ const ProductList = () => {
           </div>
         </div>
       </div>
-      <Footer />
     </>
   );
 };

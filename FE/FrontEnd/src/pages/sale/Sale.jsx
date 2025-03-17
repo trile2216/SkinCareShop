@@ -21,8 +21,6 @@ const Sale = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
-
       <main className="flex-grow container mx-auto p-4">
         <h2 className="text-3xl font-bold text-center text-rose-500 mb-6">
           Products on Sale
@@ -41,8 +39,6 @@ const Sale = () => {
           </div>
         )}
       </main>
-
-      <Footer />
     </div>
   );
 };

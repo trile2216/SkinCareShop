@@ -128,8 +128,6 @@ const CustomerProfile = () => {
 
   return (
     <>
-      <Header />
-
       <div
         style={{
           maxWidth: "1000px",
@@ -297,8 +295,6 @@ const CustomerProfile = () => {
           </div>
         )}
       </div>
-
-      <Footer />
     </>
   );
 };
