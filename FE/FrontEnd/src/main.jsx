@@ -26,6 +26,7 @@ import Result from "./pages/quiz/Result.jsx";
 import CheckoutResult from "./pages/paymentResult/CheckoutResult.jsx";
 import ChangePassword from "./pages/login/ChangePassword.jsx";
 import OrderHistory from "./pages/orderHistory/orderHistory.jsx";
+import UserManagement from "./pages/userManagement/UserManagement.jsx";
 // document.getElementById('root')
 // 1. Tìm tới root
 // 2. Lấy code ở trong App gắn vào root
@@ -135,6 +136,7 @@ const router = createBrowserRouter([
     children: [
       { path: "product", element: <ManageProduct /> },
       { path: "order", element: <OrderManagement /> },
+      { path: "user", element: <UserManagement /> },
       { path: "quizManagement", element: <QuizManagement /> },
     ],
   },

@@ -27,6 +27,7 @@ import {
   ReloadOutlined,
 } from "@ant-design/icons";
 import customerService from "../../services/api.customer";
+import { orderService } from "../../services/orderService";
 
 const { Title, Text } = Typography;
 const { TabPane } = Tabs;
@@ -40,7 +41,6 @@ const UserManagement = () => {
   const [currentUser, setCurrentUser] = useState(null);
   const [form] = Form.useForm();
   const [userOrders, setUserOrders] = useState([]);
-  const [userResults, setUserResults] = useState([]);
 
   // Fetch users data
   const fetchUsers = async () => {
@@ -106,12 +106,9 @@ const UserManagement = () => {
 
     try {
       // Fetch user orders
-      const orders = await customerService.getCustomerOrders(user.id);
+      const orders = await orderService.getOrdersByCustomerId(user.id);
+      console.log(orders);
       setUserOrders(orders);
-
-      // Fetch user quiz results
-      const results = await customerService.getCustomerQuizResults(user.id);
-      setUserResults(results);
     } catch (error) {
       message.error("Failed to fetch user details");
     }
@@ -276,54 +273,15 @@ const UserManagement = () => {
                   },
                   {
                     title: "Total",
-                    dataIndex: "totalAmount",
-                    key: "totalAmount",
-                    render: (amount) => `$${amount.toFixed(2)}`,
+                    dataIndex: "totalPrice",
+                    key: "totalPrice",
+                    render: (amount) =>
+                      amount ? `$${amount.toFixed(2)}` : "$0.00",
                   },
                 ]}
               />
             ) : (
               <Text>No orders found for this user.</Text>
-            )}
-          </TabPane>
-          <TabPane tab="Quiz Results" key="2">
-            {userResults.length > 0 ? (
-              <Table
-                dataSource={userResults}
-                rowKey="id"
-                pagination={{ pageSize: 5 }}
-                columns={[
-                  {
-                    title: "Result ID",
-                    dataIndex: "id",
-                    key: "id",
-                  },
-                  {
-                    title: "Date",
-                    dataIndex: "createdAt",
-                    key: "createdAt",
-                    render: (date) => new Date(date).toLocaleDateString(),
-                  },
-                  {
-                    title: "Skin Type",
-                    dataIndex: "skinType",
-                    key: "skinType",
-                  },
-                  {
-                    title: "Concerns",
-                    dataIndex: "skinConcerns",
-                    key: "skinConcerns",
-                    render: (concerns) =>
-                      concerns?.map((concern) => (
-                        <Tag key={concern} color="purple" className="mb-1">
-                          {concern}
-                        </Tag>
-                      )),
-                  },
-                ]}
-              />
-            ) : (
-              <Text>No quiz results found for this user.</Text>
             )}
           </TabPane>
         </Tabs>
