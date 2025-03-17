@@ -4,11 +4,15 @@ import {
   PieChartOutlined,
   ProductOutlined,
   UnorderedListOutlined,
+  LogoutOutlined,
 } from "@ant-design/icons";
-import { Layout, Menu, theme } from "antd";
-import { Link, Outlet } from "react-router-dom";
+import { Layout, Menu, theme, Button } from "antd";
+import { Link, Outlet, useNavigate } from "react-router-dom";
 import { Content } from "antd/es/layout/layout";
+import { toast } from "react-toastify";
+
 const { Header, Sider } = Layout;
+
 function getItem(label, key, icon, children) {
   return {
     key,
@@ -17,23 +21,36 @@ function getItem(label, key, icon, children) {
     label: <Link to={`/dashboard/${key}`}>{label}</Link>,
   };
 }
+
 const items = [
-  getItem("overview", "overview", <PieChartOutlined />),
-  getItem("product", "product", <ProductOutlined />),
-  getItem("user", "user", <DesktopOutlined />),
-  getItem("order", "order", <UnorderedListOutlined />),
+  getItem("OVERVIEW", "overview", <PieChartOutlined />),
+  getItem("PRODUCT", "product", <ProductOutlined />),
+  getItem("USER", "user", <DesktopOutlined />),
+  getItem("ORDER", "order", <UnorderedListOutlined />),
+  getItem("LOGOUT", "logout", <LogoutOutlined />),
 ];
+
 const AdminLayout = () => {
   const [collapsed, setCollapsed] = useState(false);
+  const navigate = useNavigate();
   const {
     token: { colorBgContainer },
   } = theme.useToken();
+
+  const handleMenuClick = ({ key }) => {
+    if (key === "logout") {
+      localStorage.removeItem("token");
+      localStorage.removeItem("role");
+      navigate("/");
+      toast.success("Log out success!", {
+        position: "top-right",
+        autoClose: 3000,
+      });
+    }
+  };
+
   return (
-    <Layout
-      style={{
-        minHeight: "100vh",
-      }}
-    >
+    <Layout style={{ minHeight: "100vh" }}>
       <Sider
         collapsible
         collapsed={collapsed}
@@ -45,6 +62,7 @@ const AdminLayout = () => {
           defaultSelectedKeys={["1"]}
           mode="inline"
           items={items}
+          onClick={handleMenuClick}
         />
       </Sider>
       <Layout>
@@ -74,4 +92,5 @@ const AdminLayout = () => {
     </Layout>
   );
 };
+
 export default AdminLayout;

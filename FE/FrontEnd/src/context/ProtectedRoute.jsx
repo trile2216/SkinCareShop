@@ -1,42 +1,37 @@
-import { useNavigate, Navigate, Outlet} from "react-router-dom";
+import { useNavigate, Navigate, Outlet } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import { useState, useEffect } from "react";
 
 const showLoginToast = () => {
-  toast.warn(
-    <div className="text-center">
-      <p className="font-semibold text-lg">You are not logged in!</p>
-    </div>,
-    {
-      autoClose: 3000, 
-      closeOnClick: false,
-      closeButton: true,
-      position: "top-center",
-    }
-  );
+  toast.warn({
+    autoClose: 3000,
+    closeOnClick: false,
+    closeButton: true,
+    position: "top-center",
+  });
 };
 
 const ProtectedRoute = ({ allowedRoles, children }) => {
   const token = useSelector((state) => state.user.token);
   const role = useSelector((state) => state.user.role);
   const navigate = useNavigate();
-  
-  const [toastShown, setToastShown] = useState(false); 
+
+  const [toastShown, setToastShown] = useState(false);
 
   useEffect(() => {
     if (!token && !toastShown) {
       showLoginToast();
-      setToastShown(true); 
+      setToastShown(true);
       setTimeout(() => {
         navigate("/login", { replace: true });
-      }, 0); 
+      }, 0);
     }
   }, [token, toastShown, navigate]);
 
   // Not logged in
   if (!token) {
-    return null; 
+    return null;
   }
 
   // No permission

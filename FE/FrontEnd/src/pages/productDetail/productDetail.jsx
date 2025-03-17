@@ -90,7 +90,7 @@ const ProductDetail = () => {
               {product.sale > 0 ? (
                 <div>
                   <p className="text-3xl font-bold text-red-500">
-                    {(product.price * (1 - product.sale)).toLocaleString(
+                    {(product.price * (1 - product.sale / 100)).toLocaleString(
                       "vi-VN"
                     )}
                     $

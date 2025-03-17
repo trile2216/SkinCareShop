@@ -448,9 +448,12 @@ const RegisterPage = () => {
                 <FaGoogle className="text-red-500 mr-2" />
               </div>
               <div className="mt-6 text-center">
-                <button className="text-sm text-rose-500 hover:text-rose-400 hover:underline focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                  Already have an account? Login
-                </button>
+              <button
+                className="text-sm text-rose-500 hover:underline"
+                onClick={() => navigate("/login")}
+              >
+              Already have an account? Login
+            </button>
               </div>
             </form>
           </>

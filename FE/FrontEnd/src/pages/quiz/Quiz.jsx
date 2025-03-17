@@ -22,9 +22,20 @@ const Quiz = () => {
     try {
       setLoading(true);
       const response = await quizService.getActiveQuiz();
-      if (Array.isArray(response) && response.length > 0) {
+      console.log("API Response:", response);
+
+      // Kiểm tra nếu response là object có skinQuizzes
+      if (response && response.skinQuizzes) {
+        console.log("Setting mainQuiz directly");
+        setMainQuiz(response);
+      }
+      // Hoặc nếu response là mảng
+      else if (Array.isArray(response) && response.length > 0) {
+        console.log("Setting mainQuiz from array");
         setMainQuiz(response[0]);
-      } else {
+      }
+      else {
+        console.log("No valid quiz data in response:", response);
         message.error("No quiz available");
       }
     } catch (error) {
@@ -126,7 +137,9 @@ const Quiz = () => {
             <div
               className="h-2 bg-purple-600 rounded-full transition-all"
               style={{
-                width: `${((currentSkinQuizIndex + 1) / mainQuiz?.skinQuizzes?.length) * 100}%`,
+                width: `${((currentSkinQuizIndex + 1) / mainQuiz?.skinQuizzes?.length) *
+                  100
+                  }%`,
               }}
             />
           </div>
@@ -136,27 +149,32 @@ const Quiz = () => {
         </div>
 
         <Card className="shadow-lg">
-          <h3 className="text-xl font-semibold mb-6">
-            {currentSkinQuiz.skinElement}
-          </h3>
 
-          {currentQuestions.map((question) => (
-            <div key={question.id} className="mb-6">
-              <p className="mb-4">{question.content}</p>
-              <div className="space-y-4">
+
+          {currentQuestions.map((question, index) => (
+            <div key={question.id} className="mb-8 bg-purple-50 p-5 rounded-lg border-l-4 border-purple-600">
+              <h4 className="mb-4 text-lg font-medium text-purple-800">
+                <span className="inline-block bg-purple-600 text-white rounded-full w-7 h-7 text-center mr-3">
+                  {index + 1}
+                </span>
+                {question.content}
+              </h4>
+              <div className="space-y-4 ml-10">
                 {question.answers.map((answer) => (
                   <label
                     key={answer.id}
                     className={`block p-4 rounded-lg border-2 cursor-pointer transition-all ${answers[currentSkinQuiz.id]?.[question.id] === answer.id
-                      ? "border-purple-600 bg-purple-50"
-                      : "border-gray-200 hover:border-purple-200"
+                      ? "border-purple-600 bg-white"
+                      : "border-gray-200 hover:border-purple-200 bg-white"
                       }`}
                   >
                     <input
                       type="radio"
                       name={`question-${question.id}`}
                       value={answer.id}
-                      checked={answers[currentSkinQuiz.id]?.[question.id] === answer.id}
+                      checked={
+                        answers[currentSkinQuiz.id]?.[question.id] === answer.id
+                      }
                       onChange={() => handleAnswer(question.id, answer.id)}
                       className="hidden"
                     />
