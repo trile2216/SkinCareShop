@@ -19,10 +19,10 @@ const useAuth = () => {
 
       switch (role) {
         case "Admin":
-          navigate("/dashboard");
+          navigate("/dashboard/order");
           break;
         case "Staff":
-          navigate("/dashboard");
+          navigate("/dashboard/order");
           break;
         case "Customer":
           navigate("/");
