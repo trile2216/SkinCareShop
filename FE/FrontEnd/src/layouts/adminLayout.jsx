@@ -23,7 +23,6 @@ function getItem(label, key, icon, children) {
 }
 
 const items = [
-  getItem("OVERVIEW", "overview", <PieChartOutlined />),
   getItem("PRODUCT", "product", <ProductOutlined />),
   getItem("USER", "user", <DesktopOutlined />),
   getItem("ORDER", "order", <UnorderedListOutlined />),
@@ -41,7 +40,7 @@ const AdminLayout = () => {
     if (key === "logout") {
       localStorage.removeItem("token");
       localStorage.removeItem("role");
-      navigate("/");
+      navigate("/login");
       toast.success("Log out success!", {
         position: "top-right",
         autoClose: 3000,
