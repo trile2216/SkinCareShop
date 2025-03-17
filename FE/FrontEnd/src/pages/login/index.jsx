@@ -159,7 +159,10 @@ const LoginPage = () => {
 
           <div className="flex items-center justify-between">
             <div className="text-sm">
-              <a href="/changePassword" className="font-medium text-rose-400 hover:text-rose-300">
+              <a
+                href="/changePassword"
+                className="font-medium text-rose-400 hover:text-rose-300"
+              >
                 Forgot your password?
               </a>
             </div>
@@ -207,30 +210,6 @@ const LoginPage = () => {
                 Register here
               </a>
             </p>
-          </div>
-
-          {/* Hoặc đăng nhập với Google */}
-          <div className="relative mt-4">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-gray-300"></div>
-            </div>
-            <div className="relative flex justify-center text-sm">
-              <span className="px-2 bg-rose-55 text-gray-500">
-                Or continue with
-              </span>
-            </div>
-          </div>
-
-          <div className="mt-4">
-            <button
-              type="button"
-              className="w-full flex items-center justify-center gap-2 py-2 px-4 
-               text-sm font-medium rounded-md text-rose-500 bg-white 
-               hover:bg-rose-100 focus:ring-2 focus:ring-offset-2 focus:ring-rose-100"
-            >
-              <FcGoogle className="h-5 w-5" />
-              Sign in with Google
-            </button>
           </div>
         </form>
       </div>

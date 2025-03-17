@@ -1,5 +1,5 @@
+import { toast } from 'react-toastify';
 import api from '../config/axios';
-import axios from '../config/axios';
 
 
 export const getRoutineBySkinTypeId = async (skinTypeId) => {
