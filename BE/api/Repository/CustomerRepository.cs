@@ -54,7 +54,10 @@ namespace api.Repository
 
         public async Task<Customer?> GetCustomerByIdAsync(int id)
         {
-            return await _context.Customers.FirstOrDefaultAsync(c => c.Id == id);
+            return await _context.Customers
+                .Include(c => c.Account)
+                .Where(c => c.Account.IsActive)
+                .FirstOrDefaultAsync(c => c.Id == id);
         }
 
         public async Task<Customer?> UpdateCustomerAsync(int id, Customer customer)
