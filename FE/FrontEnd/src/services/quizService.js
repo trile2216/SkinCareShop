@@ -60,4 +60,9 @@ export const quizService = {
         const response = await api.get('/quiz/all');
         return response.data;
     },
+
+    setQuizActiveStatus: async (quizId, isActive) => {
+        const response = await api.put(`/quiz/change-status/${quizId}`, { isActive });
+        return response.data;
+    },
 };

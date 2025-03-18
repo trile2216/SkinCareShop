@@ -228,17 +228,17 @@ namespace api.Controller
         [HttpPut]
         [Route("change-status/{quizId:int}")]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> ChangeQuizStatus([FromRoute] int quizId, [FromBody] bool isActive)
+        public async Task<IActionResult> ChangeQuizStatus([FromRoute] int quizId, [FromBody] QuizStatusUpdateDTO quizStatus)
         {
             try
             {
-                var quiz = await _quizRepo.SetActiveAsync(quizId, isActive);
+                var quiz = await _quizRepo.SetActiveAsync(quizId, quizStatus.IsActive);
                 if (quiz == null)
                 {
                     return NotFound("Quiz not found");
                 }
 
-                if (isActive)
+                if (quizStatus.IsActive)
                 {
                     return Ok(new
                     {

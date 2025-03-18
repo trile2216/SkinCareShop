@@ -127,7 +127,7 @@ const QuizManagement = () => {
       width: 80,
     },
     {
-      title: "Skin Quizzes Count",
+      title: "Skin Quizzes",
       key: "skinQuizzesCount",
       render: (_, record) => record.skinQuizzes?.length || 0,
     },
