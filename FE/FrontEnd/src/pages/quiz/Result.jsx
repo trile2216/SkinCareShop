@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { Spin, Card } from "antd";
-import { Swiper, SwiperSlide } from 'swiper/react';
-import { Navigation, Pagination, Autoplay } from 'swiper/modules';
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Navigation, Pagination, Autoplay } from "swiper/modules";
 import { quizService } from "../../services/quizService";
 import { getRoutineBySkinTypeId } from "../../services/api.routine";
 import { getRecommendedProducts } from "../../services/api.product";
@@ -11,9 +11,9 @@ import Footer from "../../components/Footer";
 import ProductCard from "../productlist/ProductCard";
 
 // Import Swiper styles
-import 'swiper/css';
-import 'swiper/css/navigation';
-import 'swiper/css/pagination';
+import "swiper/css";
+import "swiper/css/navigation";
+import "swiper/css/pagination";
 
 const Result = () => {
   const { resultId } = useParams();
@@ -35,7 +35,9 @@ const Result = () => {
       setResult(detailedResult);
 
       // Fetch routines
-      const routinesData = await getRoutineBySkinTypeId(detailedResult.skinTypeId);
+      const routinesData = await getRoutineBySkinTypeId(
+        detailedResult.skinTypeId
+      );
       setRoutines(routinesData);
 
       // Fetch recommended products for each routine step
@@ -43,16 +45,24 @@ const Result = () => {
       for (const routine of routinesData) {
         for (const step of routine.steps) {
           try {
-            const products = await getRecommendedProducts(detailedResult.skinTypeId, step.categoryId);
+            const products = await getRecommendedProducts(
+              detailedResult.skinTypeId,
+              step.categoryId
+            );
             // Filter products with recommendedLevel = 3
-            const highlyRecommended = products.filter(product =>
-              product.productSkinTypes.some(pst =>
-                pst.skinTypeId === detailedResult.skinTypeId && pst.recommentedLevel === 3
+            const highlyRecommended = products.filter((product) =>
+              product.productSkinTypes.some(
+                (pst) =>
+                  pst.skinTypeId === detailedResult.skinTypeId &&
+                  pst.recommentedLevel === 3
               )
             );
             productsMap[step.id] = highlyRecommended;
           } catch (error) {
-            console.error(`Error fetching products for step ${step.id}:`, error);
+            console.error(
+              `Error fetching products for step ${step.id}:`,
+              error
+            );
             productsMap[step.id] = [];
           }
         }
@@ -100,10 +110,9 @@ const Result = () => {
 
   const RoutineCard = ({ routine }) => (
     <Card
-      className={`h-full shadow-md hover:shadow-lg transition-shadow ${routine.time === "Morning"
-        ? "border-yellow-200"
-        : "border-indigo-200"
-        }`}
+      className={`h-full shadow-md hover:shadow-lg transition-shadow ${
+        routine.time === "Morning" ? "border-yellow-200" : "border-indigo-200"
+      }`}
     >
       <div className="mb-4">
         <p className="text-gray-600">{routine.description}</p>
@@ -115,10 +124,13 @@ const Result = () => {
           .map((step) => (
             <div key={step.id} className="border-b pb-4 last:border-b-0">
               <div className="flex items-center gap-2 mb-3">
-                <span className={`font-semibold ${routine.time === "Morning"
-                  ? "text-yellow-600"
-                  : "text-indigo-600"
-                  }`}>
+                <span
+                  className={`font-semibold ${
+                    routine.time === "Morning"
+                      ? "text-yellow-600"
+                      : "text-indigo-600"
+                  }`}
+                >
                   Step {step.stepOrder}:
                 </span>
                 <h5 className="font-medium">{step.name}</h5>
@@ -128,7 +140,9 @@ const Result = () => {
               {/* Recommended Products Slider */}
               {recommendedProducts[step.id]?.length > 0 && (
                 <div className="mt-3">
-                  <h6 className="text-sm font-semibold mb-4">Recommended Products:</h6>
+                  <h6 className="text-sm font-semibold mb-4">
+                    Recommended Products:
+                  </h6>
                   <ProductSlider products={recommendedProducts[step.id]} />
                 </div>
               )}
@@ -148,13 +162,14 @@ const Result = () => {
 
   return (
     <>
-      <Header />
       <div className="min-h-screen bg-purple-50 py-12">
         <div className="max-w-4xl mx-auto p-6">
           <div className="bg-white rounded-lg p-8 shadow-lg">
             {/* Skin Type Result */}
             <div className="text-center mb-12">
-              <h2 className="text-2xl font-bold mb-4">Your Skin Type Results</h2>
+              <h2 className="text-2xl font-bold mb-4">
+                Your Skin Type Results
+              </h2>
               <div className="text-4xl font-bold text-purple-600 mb-8">
                 {result?.symbol}
               </div>
@@ -181,16 +196,22 @@ const Result = () => {
                     .map((routine) => (
                       <div key={routine.id} className="mb-8 last:mb-0">
                         <div className="flex items-center mb-4">
-                          <div className={`text-2xl mr-3 ${routine.time === "Morning"
-                            ? "text-yellow-500"
-                            : "text-indigo-600"
-                            }`}>
+                          <div
+                            className={`text-2xl mr-3 ${
+                              routine.time === "Morning"
+                                ? "text-yellow-500"
+                                : "text-indigo-600"
+                            }`}
+                          >
                             {routine.time === "Morning" ? "☀️" : "🌙"}
                           </div>
-                          <h4 className={`text-xl font-semibold ${routine.time === "Morning"
-                            ? "text-yellow-600"
-                            : "text-indigo-600"
-                            }`}>
+                          <h4
+                            className={`text-xl font-semibold ${
+                              routine.time === "Morning"
+                                ? "text-yellow-600"
+                                : "text-indigo-600"
+                            }`}
+                          >
                             {routine.time} Routine
                           </h4>
                         </div>
@@ -203,7 +224,6 @@ const Result = () => {
           </div>
         </div>
       </div>
-      <Footer />
     </>
   );
 };
