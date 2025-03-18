@@ -12,6 +12,8 @@ import { Layout, Menu, theme, Button } from "antd";
 import { Link, Outlet, useNavigate } from "react-router-dom";
 import { Content } from "antd/es/layout/layout";
 import { toast } from "react-toastify";
+import ScrollToTop from "../components/ScrollToTop";
+import useScrollToTop from "../hooks/useScrollToTop";
 
 const { Header, Sider } = Layout;
 
@@ -38,6 +40,8 @@ const AdminLayout = () => {
   const {
     token: { colorBgContainer },
   } = theme.useToken();
+
+  useScrollToTop();
 
   const handleMenuClick = ({ key }) => {
     if (key === "logout") {
@@ -91,6 +95,7 @@ const AdminLayout = () => {
           </div>
         </Content>
       </Layout>
+      <ScrollToTop />
     </Layout>
   );
 };
