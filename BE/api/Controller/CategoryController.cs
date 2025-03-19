@@ -61,7 +61,7 @@ namespace api.Controller
             var category = categoryDTO.ToCategoryFromCreateDTO();
             var newCategory = await _categoryRepo.AddCategoryAsync(category);
 
-            return Ok(newCategory);
+            return CreatedAtAction(nameof(GetCategory), new { id = category.Id }, category.ToCategoryDTO());
         }
 
         [HttpPut]
@@ -78,7 +78,7 @@ namespace api.Controller
             {
                 return NotFound("Product not found");
             }
-            return Ok(updatedCategory);
+            return Ok(updatedCategory.ToCategoryDTO());
         }
 
         [HttpDelete]
