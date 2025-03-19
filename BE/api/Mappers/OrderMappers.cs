@@ -32,7 +32,7 @@ namespace api.Mappers
                 ShippingFee = order.ShippingFee,
                 TransactionId = order.TransactionId,
                 PaymentMethod = order.PaymentMethod,
-                OrderDate = order.OrderDate,
+                OrderDate = order.OrderDate.ToString(),
                 DeliveryAddress = order.DeliveryAddress,
                 Status = order.Status.ToString(),
                 OrderItems = order.OrderItems.Select(x => x.ToOrderItemDTO()).ToList()
