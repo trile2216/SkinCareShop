@@ -148,7 +148,7 @@ builder.Services.AddScoped<IQuizService, QuizService>();
 builder.Services.AddScoped<IQuizImportService, QuizImportService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IDashBoardRepository, DashboardRepository>();
-
+builder.Services.AddScoped<IBlogRepository, BlogRepository>();
 
 
 

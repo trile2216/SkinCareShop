@@ -49,7 +49,7 @@ public partial class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     public virtual DbSet<SkinQuiz> SkinQuizzes { get; set; }
 
     public virtual DbSet<SkinType> SkinTypes { get; set; }
-
+    public virtual DbSet<Blog> Blogs { get; set; }
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         => optionsBuilder.UseSqlServer("Name=DefaultConnection");
 
