@@ -7,6 +7,7 @@ import {
   LogoutOutlined,
   UserOutlined,
   QuestionOutlined,
+  FieldTimeOutlined,
 } from "@ant-design/icons";
 import { Layout, Menu, theme, Button } from "antd";
 import { Link, Outlet, useNavigate } from "react-router-dom";
@@ -27,11 +28,12 @@ function getItem(label, key, icon, children) {
 }
 
 const items = [
-  getItem("OVERVIEW", "overview", <LogoutOutlined />),
+  getItem("OVERVIEW", "overview", <PieChartOutlined />),
   getItem("PRODUCT", "product", <ProductOutlined />),
   getItem("ORDER", "order", <UnorderedListOutlined />),
   getItem("USER", "user", <UserOutlined />),
   getItem("QUIZ", "quiz", <QuestionOutlined />),
+  getItem("ROUTINE", "routine", <FieldTimeOutlined />),
   getItem("LOGOUT", "logout", <LogoutOutlined />),
 ];
 
