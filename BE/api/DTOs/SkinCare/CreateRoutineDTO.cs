@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace api.DTOs.SkinCare
 {
-    public class UpdateRoutineDTO
+    public class CreateRoutineDTO
     {
         [Required]
         public int SkinTypeId { get; set; }
@@ -21,6 +21,6 @@ namespace api.DTOs.SkinCare
         public string? Description { get; set; }
 
         [Required]
-        public List<UpdateStepDTO> Steps { get; set; } = new List<UpdateStepDTO>();
+        public List<CreateStepDTO> Steps { get; set; } = new List<CreateStepDTO>();
     }
 }

@@ -18,9 +18,11 @@ namespace api.Repository
             _context = context;
         }
 
-        public Task<SkinCareRoutine> CreateSkinCareRoutineAsync(SkinCareRoutine skinCareRoutine)
+        public async Task<SkinCareRoutine> CreateSkinCareRoutineAsync(SkinCareRoutine skinCareRoutine)
         {
-            throw new NotImplementedException();
+            await _context.SkinCareRoutines.AddAsync(skinCareRoutine);
+            await _context.SaveChangesAsync();
+            return skinCareRoutine;
         }
 
         public async Task<SkinCareRoutine?> DeleteSkinCareRoutineAsync(int id)
@@ -32,7 +34,7 @@ namespace api.Repository
                 return null;
             }
 
-            _context.SkinCareRoutines.Remove(skinCareRoutine); // làm repo cho skincarestep để có thể xóa cũng như add
+            _context.SkinCareRoutines.Remove(skinCareRoutine);
             await _context.SaveChangesAsync();
 
             return skinCareRoutine;
