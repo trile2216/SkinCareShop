@@ -93,11 +93,7 @@ const AdminLayout = () => {
           }}
         >
           <Title level={4} style={{ margin: 0 }}>Dashboard</Title>
-          <img
-            src="src/assets/logo.png" 
-            alt="Logo"
-            style={{ width: 100, height: 80, cursor: "pointer" }}
-          />
+          
         </Header>
         <Content
           style={{
