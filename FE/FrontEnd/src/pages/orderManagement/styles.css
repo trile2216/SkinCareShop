@@ -30,4 +30,47 @@
 .order-items h3 {
   font-size: 18px;
   margin-bottom: 16px;
-} 
+}
+
+/* 🌸 Đổi màu viền của Select khi chọn */
+.ant-select-selector {
+  border-color: #eb2f96 !important;
+}
+
+.ant-select-focused .ant-select-selector {
+  border-color: #eb2f96 !important;
+  box-shadow: 0 0 0 2px rgba(235, 47, 150, 0.2) !important;
+}
+
+/* 🌸 Đổi màu Tab khi active */
+.ant-tabs-tab-active .ant-tabs-tab-btn {
+  color: #eb2f96 !important;
+}
+
+.ant-tabs-ink-bar {
+  background-color: #eb2f96 !important;
+}
+/* 🌸 Đổi màu viền Pagination khi active */
+.ant-pagination-item-active {
+  border-color: #c41d7f !important;
+}
+
+.ant-pagination-item-active a {
+  color: #c41d7f !important;
+}
+/* 🌸 Đổi màu hover của Tabs */
+.ant-tabs-tab:hover {
+  color: #c41d7f !important;
+}
+.custom-search {
+  width: 200px;
+  border: 2px solid #fda4af; /* Rose nhạt */
+  border-radius: 6px;
+  transition: border-color 0.3s ease;
+}
+
+.custom-button {
+  border: 2px solid #fda4af; /* Rose nhạt */
+  color: #fda4af;
+  transition: all 0.3s ease;
+}
