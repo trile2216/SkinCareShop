@@ -27,6 +27,7 @@ function getItem(label, key, icon, children) {
 }
 
 const items = [
+  getItem("OVERVIEW", "overview", <LogoutOutlined />),
   getItem("PRODUCT", "product", <ProductOutlined />),
   getItem("ORDER", "order", <UnorderedListOutlined />),
   getItem("USER", "user", <UserOutlined />),
