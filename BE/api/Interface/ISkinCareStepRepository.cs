@@ -16,8 +16,8 @@ namespace api.Interface
 
         Task<SkinCareStep> AddSkinCareStepAsync(SkinCareStep skinCareStep);
 
-        Task<SkinCareStep?> UpdateSkinCareStepAsync(int id, SkinCareStep skinCareStep);
+        Task<List<SkinCareStep>?> UpdateSkinCareStepByRoutineIdAsync(int routineId, List<SkinCareStep> skinCareSteps);
 
-        Task<SkinCareStep?> DeleteSkinCareStepAsync(int id);
+        Task<List<SkinCareStep>?> DeleteSkinCareStepByRoutineIdAsync(int routineId);
     }
 }

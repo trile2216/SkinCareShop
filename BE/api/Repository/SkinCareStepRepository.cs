@@ -26,15 +26,15 @@ namespace api.Repository
             return skinCareStep;
         }
 
-        public async Task<SkinCareStep?> DeleteSkinCareStepAsync(int id)
+        public async Task<List<SkinCareStep>?> DeleteSkinCareStepByRoutineIdAsync(int routineId)
         {
-            var skinCareStep = await GetSkinCareStepByIdAsync(id);
+            var skinCareStep = await GetSkinCareStepByRoutineIdAsync(routineId);
             if (skinCareStep == null)
             {
                 return null;
             }
 
-            _context.SkinCareSteps.Remove(skinCareStep);
+            _context.SkinCareSteps.RemoveRange(skinCareStep);
             await _context.SaveChangesAsync();
 
             return skinCareStep;
@@ -55,21 +55,29 @@ namespace api.Repository
             return await _context.SkinCareSteps.ToListAsync();
         }
 
-        public async Task<SkinCareStep?> UpdateSkinCareStepAsync(int id, SkinCareStep skinCareStep)
+        public async Task<List<SkinCareStep>?> UpdateSkinCareStepByRoutineIdAsync(int routineId, List<SkinCareStep> skinCareSteps)
         {
-            var existingStep = await GetSkinCareStepByIdAsync(id);
+            var existingSteps = await GetSkinCareStepByRoutineIdAsync(routineId);
 
-            if (existingStep == null)
+            if (existingSteps.Count == 0)
             {
                 return null;
             }
 
-            existingStep.Name = skinCareStep.Name;
-            existingStep.Description = skinCareStep.Description;
-            existingStep.StepOrder = skinCareStep.StepOrder;
-
+            foreach (var step in existingSteps)
+            {
+                if (!skinCareSteps.Any(s => s.Id == step.Id))
+                {
+                    _context.SkinCareSteps.Remove(step);
+                    continue;
+                }
+                step.Name = skinCareSteps.First(s => s.Id == step.Id).Name;
+                step.Description = skinCareSteps.First(s => s.Id == step.Id).Description;
+                step.StepOrder = skinCareSteps.First(s => s.Id == step.Id).StepOrder;
+                step.CategoryId = skinCareSteps.First(s => s.Id == step.Id).CategoryId;
+            }
             await _context.SaveChangesAsync();
-            return existingStep;
+            return existingSteps;
         }
     }
 }

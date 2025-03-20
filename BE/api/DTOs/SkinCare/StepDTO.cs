@@ -16,7 +16,5 @@ namespace api.DTOs.SkinCare
         public int StepOrder { get; set; }
 
         public int CategoryId { get; set; }
-
-        public int RoutineId { get; set; }
     }
 }

@@ -23,15 +23,25 @@ namespace api.Mappers
             };
         }
 
-        public static SkinCareRoutine ToRoutineFromUpdateDTO(this UpdateRoutineDTO updateRoutineDTO)
+        public static SkinCareRoutine ToRoutineFromCreateDTO(this CreateRoutineDTO routineRequestDTO)
         {
             return new SkinCareRoutine
             {
-                SkinTypeId = updateRoutineDTO.SkinTypeId,
-                Time = updateRoutineDTO.Time,
-                Name = updateRoutineDTO.Name,
-                Description = updateRoutineDTO.Description,
-                SkinCareSteps = updateRoutineDTO.Steps.Select(s => s.ToStep()).ToList()
+                SkinTypeId = routineRequestDTO.SkinTypeId,
+                Time = routineRequestDTO.Time,
+                Name = routineRequestDTO.Name,
+                Description = routineRequestDTO.Description,
+            };
+        }
+
+        public static SkinCareRoutine ToRoutineFromUpdateDTO(this UpdateRoutineDTO routineRequestDTO)
+        {
+            return new SkinCareRoutine
+            {
+                SkinTypeId = routineRequestDTO.SkinTypeId,
+                Time = routineRequestDTO.Time,
+                Name = routineRequestDTO.Name,
+                Description = routineRequestDTO.Description,
             };
         }
 
@@ -44,22 +54,45 @@ namespace api.Mappers
                 Description = step.Description,
                 StepOrder = step.StepOrder,
                 CategoryId = step.CategoryId,
-                RoutineId = step.RoutineId
             };
         }
 
-        public static SkinCareStep ToStep(this StepDTO stepDTO)
+        public static SkinCareStep ToStepFromDTO(this StepDTO stepDTO, int routineId)
         {
             return new SkinCareStep
             {
+                Id = stepDTO.Id,
                 Name = stepDTO.Name,
                 Description = stepDTO.Description,
                 StepOrder = stepDTO.StepOrder,
                 CategoryId = stepDTO.CategoryId,
-                RoutineId = stepDTO.RoutineId
+                RoutineId = routineId
             };
         }
 
+        public static SkinCareStep ToStepFromUpdateDTO(this UpdateStepDTO stepRequestDTO, int routineId)
+        {
+            return new SkinCareStep
+            {
+                Id = stepRequestDTO.Id,
+                Name = stepRequestDTO.Name,
+                Description = stepRequestDTO.Description,
+                StepOrder = stepRequestDTO.StepOrder,
+                CategoryId = stepRequestDTO.CategoryId,
+                RoutineId = routineId
+            };
+        }
 
+        public static SkinCareStep ToStepFromCreateDTO(this CreateStepDTO stepRequestDTO, int routineId)
+        {
+            return new SkinCareStep
+            {
+                Name = stepRequestDTO.Name,
+                Description = stepRequestDTO.Description,
+                StepOrder = stepRequestDTO.StepOrder,
+                CategoryId = stepRequestDTO.CategoryId,
+                RoutineId = routineId
+            };
+        }
     }
 }

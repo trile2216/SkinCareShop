@@ -29,6 +29,7 @@ import OrderHistory from "./pages/orderHistory/orderHistory.jsx";
 import UserManagement from "./pages/userManagement/UserManagement.jsx";
 import CustomerProfile from "./pages/customerProfile/CustomerProfile.jsx";
 import Overview from "./pages/overview/overview.jsx";
+import RoutineManagement from "./pages/routineManagement/RoutineManagement.jsx";
 // document.getElementById('root')
 // 1. Tìm tới root
 // 2. Lấy code ở trong App gắn vào root
@@ -125,6 +126,7 @@ const router = createBrowserRouter([
       { path: "product", element: <ManageProduct /> },
       { path: "order", element: <OrderManagement /> },
       { path: "quiz", element: <QuizManagement /> },
+      { path: "routine", element: <RoutineManagement /> },
       { path: "user", element: <UserManagement /> },
     ],
   },

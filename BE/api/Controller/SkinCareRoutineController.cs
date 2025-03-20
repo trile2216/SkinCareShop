@@ -6,6 +6,7 @@ using api.DTOs.SkinCare;
 using api.Interface;
 using api.Mappers;
 using api.Models;
+using Google.Apis.Util;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
@@ -43,6 +44,11 @@ namespace api.Controller
         [Route("{id:int}")]
         public async Task<IActionResult> GetSkinCareRoutineById(int id)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
             var skinCareRoutine = await _skinCareRoutineRepo.GetSkinCareRoutineByIdAsync(id);
 
             if (skinCareRoutine == null)
@@ -54,33 +60,15 @@ namespace api.Controller
             return Ok(routineDTO);
         }
 
-        // [HttpPost]
-        // [Route("{id:int}")]
-        // public async Task<IActionResult> UpdateRoutineAsync([FromRoute] int id, [FromBody] UpdateRoutineDTO updateRoutineDTO)
-        // {
-        //     if (!ModelState.IsValid)
-        //     {
-        //         return BadRequest(ModelState);
-        //     }
-
-        //     var steps = updateRoutineDTO.Steps.Select(s => s.ToStep()).ToList();
-
-        //     foreach (var step in steps)
-        //     {
-        //         await _skinCareStepRepo.AddSkinCareStepAsync(step);
-        //     }
-
-        //     var routine = updateRoutineDTO.ToRoutineFromUpdateDTO();
-
-        //     await _skinCareRoutineRepo.UpdateSkinCareRoutineAsync(id, routine);
-
-        //     return Ok();
-        // }
-
         [HttpGet]
         [Route("skintype/{id:int}")]
         public async Task<IActionResult> GetSkinCareRoutineBySkinTypeId([FromRoute] int id)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
             var routines = await _skinCareRoutineRepo.GetSkinCareRoutineBySkinTypeIdAsync(id);
 
             if (routines.Count == 0)
@@ -90,6 +78,76 @@ namespace api.Controller
 
             var routineDTO = routines.Select(r => r.ToRoutineDTO()).ToList();
             return Ok(routineDTO);
+        }
+
+        [HttpPut]
+        [Route("update/{id:int}")]
+        public async Task<IActionResult> UpdateRoutineAsync([FromRoute] int id, [FromBody] UpdateRoutineDTO updateRoutineDTO)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var steps = updateRoutineDTO.Steps.Select(s => s.ToStepFromUpdateDTO(id)).ToList();
+
+            await _skinCareStepRepo.UpdateSkinCareStepByRoutineIdAsync(id, steps);
+
+
+            var routine = await _skinCareRoutineRepo.UpdateSkinCareRoutineAsync(id, updateRoutineDTO.ToRoutineFromUpdateDTO());
+
+            if (routine == null)
+            {
+                return NotFound("Skin care routine not found");
+            }
+
+            return Ok(routine.ToRoutineDTO());
+        }
+
+        [HttpPost]
+        [Route("create")]
+        public async Task<IActionResult> CreateRoutineAsync([FromBody] CreateRoutineDTO createRoutineDTO)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var routine = createRoutineDTO.ToRoutineFromCreateDTO();
+
+            var createdRoutine = await _skinCareRoutineRepo.CreateSkinCareRoutineAsync(routine);
+            var steps = createRoutineDTO.Steps.Select(s => s.ToStepFromCreateDTO(createdRoutine.Id)).ToList();
+
+            foreach (var step in steps)
+            {
+                await _skinCareStepRepo.AddSkinCareStepAsync(step);
+            }
+
+            return CreatedAtAction(nameof(GetSkinCareRoutineById), new { id = routine.Id }, routine.ToRoutineDTO());
+        }
+
+        [HttpDelete]
+        [Route("delete/{id:int}")]
+        public async Task<IActionResult> DeleteRoutineAsync([FromRoute] int id)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var routine = await _skinCareRoutineRepo.GetSkinCareRoutineByIdAsync(id);
+
+            if (routine == null)
+            {
+                return NotFound("Skin care routine not found");
+            }
+
+
+            await _skinCareStepRepo.DeleteSkinCareStepByRoutineIdAsync(id);
+
+            await _skinCareRoutineRepo.DeleteSkinCareRoutineAsync(id);
+
+            return Ok(routine);
         }
 
     }
