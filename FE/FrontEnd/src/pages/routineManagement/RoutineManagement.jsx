@@ -9,10 +9,17 @@ import {
     Popconfirm,
     Space,
     List,
+    Select,
 } from "antd";
 import routineService from "../../services/api.routine";
+import { SearchOutlined, SortAscendingOutlined, SortDescendingOutlined } from "@ant-design/icons";
+const { Option } = Select;
 
 const RoutineManagement = () => {
+    const [searchText, setSearchText] = useState("");
+    const [filterTime, setFilterTime] = useState(""); // Lọc theo Time
+    const [sortConfig, setSortConfig] = useState({ key: null, order: null }); // Sắp xếp
+    
     const [routines, setRoutines] = useState([]);
     const [loading, setLoading] = useState(false);
     const [isModalVisible, setIsModalVisible] = useState(false);
@@ -137,6 +144,31 @@ const RoutineManagement = () => {
         },
     ];
 
+     // Hàm xử lý sắp xếp
+     const handleSort = (key) => {
+        let order = "asc";
+        if (sortConfig.key === key && sortConfig.order === "asc") {
+            order = "desc";
+        }
+        setSortConfig({ key, order });
+
+        const sortedData = [...routines].sort((a, b) => {
+            if (a[key] < b[key]) return order === "asc" ? -1 : 1;
+            if (a[key] > b[key]) return order === "asc" ? 1 : -1;
+            return 0;
+        });
+
+        setRoutines(sortedData);
+    };
+
+    // Lọc & Tìm kiếm
+    const filteredRoutines = routines.filter((routine) =>
+        (routine.name.toLowerCase().includes(searchText.toLowerCase()) ||
+            routine.time.toLowerCase().includes(searchText.toLowerCase()) ||
+            routine.skinTypeId.toLowerCase().includes(searchText.toLowerCase())) &&
+        (filterTime ? routine.time === filterTime : true) // Lọc theo time
+    );
+
     return (
         <div className="p-6">
             <h2 className="text-2xl font-bold mb-6">Routine Management</h2>
@@ -150,9 +182,38 @@ const RoutineManagement = () => {
             >
                 Create Routine
             </Button>
+
+            <div style={{ display: "flex", gap: "10px", marginBottom: "10px" , marginTop: "20px"}}>
+                {/*Search Bar */}
+                <Input
+                    placeholder="Search by name"
+                    prefix={<SearchOutlined />}
+                    value={searchText}
+                    onChange={(e) => setSearchText(e.target.value)}
+                    style={{ width: 200, borderColor: "#ff69b4", color: "#ff69b4" }}
+                />
+
+                {/* Lọc theo Time */}
+                <Select
+                    placeholder="Filter by Time"
+                    style={{ width: 150, borderColor: "#ff69b4", color: "#ff69b4" }}
+                    allowClear
+                    value={filterTime}
+                    onChange={(value) => setFilterTime(value)}
+                >
+                    <Option value="Morning">Morning</Option>
+                    <Option value="Night">Night</Option>
+                </Select>
+
+                {/* ⬆️⬇️ Sắp xếp */}
+                <Button onClick={() => handleSort("id")}  style={{  borderColor: "#ff69b4", color: "#ff69b4" }}>
+                    Sort by ID {sortConfig.key === "id" && (sortConfig.order === "asc" ? <SortAscendingOutlined /> : <SortDescendingOutlined />)}
+                </Button>
+            </div>
+
             <Table
                 columns={columns}
-                dataSource={routines}
+                dataSource={filteredRoutines}
                 rowKey="id"
                 loading={loading}
                 pagination={{ pageSize: 10 }}
