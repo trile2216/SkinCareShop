@@ -134,7 +134,7 @@ const ProductDetail = () => {
             <p className="text-lg mb-6">
               Status:{" "}
               {product.stock > 0 ? (
-                <span className="text-green-600">
+                <span className="text-rose-600">
                   In Stock ({product.stock} available)
                 </span>
               ) : (
@@ -147,7 +147,7 @@ const ProductDetail = () => {
               className={` py-3 px-6 rounded-lg text-white text-lg font-semibold
                 ${
                   product.stock > 0
-                    ? "bg-blue-600 hover:bg-blue-700"
+                    ? "bg-rose-500 hover:bg-rose-400"
                     : "bg-gray-400 cursor-not-allowed"
                 }`}
             >
