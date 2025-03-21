@@ -15,8 +15,10 @@ import { Content } from "antd/es/layout/layout";
 import { toast } from "react-toastify";
 import ScrollToTop from "../components/ScrollToTop";
 import useScrollToTop from "../hooks/useScrollToTop";
-
+import { Avatar, Typography } from "antd";
 const { Header, Sider } = Layout;
+const { Title } = Typography;
+
 
 function getItem(label, key, icon, children) {
   return {
@@ -61,41 +63,48 @@ const AdminLayout = () => {
   return (
     <Layout style={{ minHeight: "100vh" }}>
       <Sider
+        width={300}
         collapsible
         collapsed={collapsed}
-        onCollapse={(value) => setCollapsed(value)}
+        onCollapse={setCollapsed}
+        style={{ boxShadow: "2px 0 10px rgba(0,0,0,0.1)" }}
       >
-        <div className="demo-logo-vertical" />
+        <div style={{ padding: 16, textAlign: "center" }}>
+          <Avatar size={64} src="https://png.pngtree.com/png-clipart/20210308/original/pngtree-admin-line-icon-png-image_5784769.jpg" />
+          {!collapsed && <Title level={5} style={{ color: "#fff", marginTop: 10 }}>Admin Panel</Title>}
+        </div>
         <Menu
           theme="dark"
-          defaultSelectedKeys={["1"]}
           mode="inline"
           items={items}
           onClick={handleMenuClick}
+          style={{ fontSize: "16px" }}
         />
       </Sider>
       <Layout>
         <Header
           style={{
-            padding: 0,
+            padding: "0 20px",
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
             background: colorBgContainer,
-          }}
-        />
-        <Content
-          style={{
-            margin: "0 16px",
+            boxShadow: "0px 2px 10px rgba(0,0,0,0.1)",
           }}
         >
-          <div
-            style={{
-              padding: 24,
-              height: "100%",
-              minHeight: 360,
-              background: colorBgContainer,
-            }}
-          >
-            <Outlet />
-          </div>
+          <Title level={4} style={{ margin: 0 }}>Dashboard</Title>
+          
+        </Header>
+        <Content
+          style={{
+            margin: "20px 16px",
+            padding: 24,
+            borderRadius: "8px",
+            background: colorBgContainer,
+            boxShadow: "0 2px 10px rgba(0,0,0,0.1)",
+          }}
+        >
+          <Outlet />
         </Content>
       </Layout>
       <ScrollToTop />
