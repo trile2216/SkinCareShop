@@ -161,8 +161,12 @@ const ProductList = () => {
       <h3 className="font-medium mb-2">Sort By</h3>
       <select
         value={sortBy}
-        onChange={(e) => setSortBy(e.target.value)}
-        className="w-full p-2 border rounded"
+        onChange={(value) => handleFilterChange("priceRange", value)}
+  trackStyle={[{ backgroundColor: "#fb7185" }]} // Thanh trượt màu rose-400
+  handleStyle={[
+    { borderColor: "#fb7185", backgroundColor: "#fb7185" }, 
+    { borderColor: "#fb7185", backgroundColor: "#fb7185" }
+  ]}
       >
         <option value="default">Default Sorting</option>
         <option value="priceLowToHigh">Price: Low to High</option>
@@ -200,16 +204,21 @@ const ProductList = () => {
             <div className="mb-6">
               <h3 className="font-medium mb-2">Price Range</h3>
               <Slider
-                range
-                min={0}
-                max={50}
-                step={5}
-                value={filters.priceRange}
-                onChange={(value) => handleFilterChange("priceRange", value)}
-              />
+  range
+  min={0}
+  max={50}
+  step={5}
+  value={filters.priceRange}
+  onChange={(value) => handleFilterChange("priceRange", value)}
+  trackStyle={[{ backgroundColor: "#fb7185" }]} // Thanh trượt màu rose-400
+  handleStyle={[
+    { borderColor: "#fb7185", backgroundColor: "#fb7185" }, 
+    { borderColor: "#fb7185", backgroundColor: "#fb7185" }
+  ]} 
+/>
               <div className="flex justify-between text-sm text-gray-600">
-                <span>{filters.priceRange[0].toLocaleString("vi-VN")} $</span>
-                <span>{filters.priceRange[1].toLocaleString("vi-VN")} $</span>
+                <span  className="text-rose-600">{filters.priceRange[0].toLocaleString("vi-VN")} $</span>
+                <span className="text-rose-600">{filters.priceRange[1].toLocaleString("vi-VN")} $</span>
               </div>
             </div>
 
