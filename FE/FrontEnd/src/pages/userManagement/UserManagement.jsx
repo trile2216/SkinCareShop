@@ -28,6 +28,7 @@ import {
 } from "@ant-design/icons";
 import customerService from "../../services/api.customer";
 import { orderService } from "../../services/orderService";
+import { SortAscendingOutlined, SortDescendingOutlined } from "@ant-design/icons";
 
 const { Title, Text } = Typography;
 const { TabPane } = Tabs;
@@ -41,6 +42,7 @@ const UserManagement = () => {
   const [currentUser, setCurrentUser] = useState(null);
   const [form] = Form.useForm();
   const [userOrders, setUserOrders] = useState([]);
+  const [sortConfig, setSortConfig] = useState({ key: "id", order: "asc" });
 
   // Fetch users data
   const fetchUsers = async () => {
@@ -58,6 +60,22 @@ const UserManagement = () => {
   useEffect(() => {
     fetchUsers();
   }, []);
+
+   const filteredUsers = users.filter(
+    (user) =>
+      (user.firstName.toLowerCase().includes(searchText.toLowerCase()) ||
+        user.lastName.toLowerCase().includes(searchText.toLowerCase()) ||
+        user.email.toLowerCase().includes(searchText.toLowerCase()))
+  );
+
+  const sortedUsers = [...filteredUsers].sort((a, b) => {
+    if (sortConfig.order === "asc") {
+      return a[sortConfig.key] - b[sortConfig.key];
+    } else {
+      return b[sortConfig.key] - a[sortConfig.key];
+    }
+  });
+
 
   // Handle user edit
   const handleEdit = (user) => {
@@ -99,6 +117,13 @@ const UserManagement = () => {
     }
   };
 
+  const handleSort = (key) => {
+    setSortConfig((prevConfig) => ({
+      key,
+      order: prevConfig.order === "asc" ? "desc" : "asc",
+    }));
+  };
+
   // View user details
   const viewUserDetails = async (user) => {
     setCurrentUser(user);
@@ -113,15 +138,6 @@ const UserManagement = () => {
       message.error("Failed to fetch user details");
     }
   };
-
-  // Filter users based on search text
-  const filteredUsers = users.filter(
-    (user) =>
-      user.firstName.toLowerCase().includes(searchText.toLowerCase()) ||
-      user.lastName.toLowerCase().includes(searchText.toLowerCase()) ||
-      user.email.toLowerCase().includes(searchText.toLowerCase()) ||
-      (user.phone && user.phone.includes(searchText))
-  );
 
   // Table columns
   const columns = [
@@ -295,10 +311,39 @@ const UserManagement = () => {
         <Title level={3}>User Management</Title>
       </div>
 
+      {/* Search/ Sort */}
+      <Space className="mb-4">
+        <Input
+          placeholder="Search by Name or Email"
+          value={searchText}
+          onChange={(e) => setSearchText(e.target.value)}
+          style={{ width: 250 , border: "2px solid #fda4af", borderRadius: "6px", transition: "border-color 0.3s ease"}}
+          suffix={<SearchOutlined style={{ color: "#fda4af" }} />}
+        />
+       <Button
+          className="custom-button"
+          onClick={() => handleSort("id")}
+          style={{
+            border: "2px solid #fda4af",
+            borderRadius: "6px",
+            transition: "border-color 0.3s ease",
+            color: "#fda4af",
+          }}
+        >
+          User ID{" "}
+          {sortConfig.key === "id" &&
+            (sortConfig.order === "asc" ? (
+              <SortAscendingOutlined style={{ color: "#fda4af" }} />
+            ) : (
+              <SortDescendingOutlined style={{ color: "#fda4af" }} />
+            ))}
+        </Button>
+      </Space>
+      
       <div className="mb-4"></div>
 
       <Table
-        dataSource={filteredUsers}
+        dataSource={sortedUsers}
         columns={columns}
         rowKey="id"
         loading={loading}
