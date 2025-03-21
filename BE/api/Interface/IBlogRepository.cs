@@ -1,8 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using api.Data;
 using api.Models;
 
 namespace api.Interface
@@ -14,5 +11,9 @@ namespace api.Interface
         Task<Blog?> CreateBlogAsync(Blog blog);
         Task<Blog?> UpdateBlogAsync(int id, Blog blog);
         Task<Blog?> DeleteBlogAsync(int id);
+
+        // Thêm 2 hàm mới
+        Task<List<string>> GetAllCategoriesAsync();
+        Task<List<string>> GetAllSkintypesAsync();
     }
 }

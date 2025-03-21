@@ -1,15 +1,10 @@
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace api.Models
 {
     public class Blog
     {
-
         [Key]
         public int Id { get; set; }
 
@@ -25,6 +20,9 @@ namespace api.Models
         public string Summary { get; set; }
 
         public DateTime CreatedAt { get; set; } = DateTime.Now;
-    }
 
+        // Thêm 2 thuộc tính mới
+        public string Skintype { get; set; }
+        public string Category { get; set; }
+    }
 }

@@ -1,5 +1,4 @@
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using api.Data;
@@ -29,9 +28,7 @@ namespace api.Repository
         {
             var blog = await GetBlogByIdAsync(id);
             if (blog == null)
-            {
                 return null;
-            }
 
             _context.Blogs.Remove(blog);
             await _context.SaveChangesAsync();
@@ -52,17 +49,39 @@ namespace api.Repository
         {
             var existingBlog = await GetBlogByIdAsync(id);
             if (existingBlog == null)
-            {
                 return null;
-            }
 
             existingBlog.Title = blog.Title;
             existingBlog.ImageUrl = blog.ImageUrl;
             existingBlog.Summary = blog.Summary;
             existingBlog.Content = blog.Content;
 
+            // Thêm 2 trường mới khi update
+            existingBlog.Skintype = blog.Skintype;
+            existingBlog.Category = blog.Category;
+
             await _context.SaveChangesAsync();
             return existingBlog;
+        }
+
+        // Lấy toàn bộ Category (distinct)
+        public async Task<List<string>> GetAllCategoriesAsync()
+        {
+            return await _context.Blogs
+                                 .Where(b => b.Category != null)
+                                 .Select(b => b.Category)
+                                 .Distinct()
+                                 .ToListAsync();
+        }
+
+        // Lấy toàn bộ Skintype (distinct)
+        public async Task<List<string>> GetAllSkintypesAsync()
+        {
+            return await _context.Blogs
+                                 .Where(b => b.Skintype != null)
+                                 .Select(b => b.Skintype)
+                                 .Distinct()
+                                 .ToListAsync();
         }
     }
 }

@@ -1,7 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System;
 
 namespace api.DTOs.Blog
 {
@@ -13,5 +10,9 @@ namespace api.DTOs.Blog
         public string ImageUrl { get; set; }
         public string Summary { get; set; }
         public string CreatedAt { get; set; }
+
+        // Thêm 2 trường mới
+        public string Skintype { get; set; }
+        public string Category { get; set; }
     }
 }

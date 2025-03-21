@@ -1,10 +1,6 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System;
 using api.DTOs.Blog;
 using api.Models;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace api.Mappers
 {
@@ -19,6 +15,10 @@ namespace api.Mappers
                 Title = blogCreateDTO.Title,
                 ImageUrl = blogCreateDTO.ImageUrl,
                 CreatedAt = DateTime.Now,
+
+                // Thêm 2 trường mới
+                Skintype = blogCreateDTO.Skintype,
+                Category = blogCreateDTO.Category
             };
         }
 
@@ -30,6 +30,10 @@ namespace api.Mappers
                 Content = blogUpdateDTO.Content,
                 Title = blogUpdateDTO.Title,
                 ImageUrl = blogUpdateDTO.ImageUrl,
+
+                // Thêm 2 trường mới
+                Skintype = blogUpdateDTO.Skintype,
+                Category = blogUpdateDTO.Category
             };
         }
 
@@ -43,6 +47,10 @@ namespace api.Mappers
                 Summary = blog.Summary,
                 ImageUrl = blog.ImageUrl,
                 CreatedAt = blog.CreatedAt.ToString(),
+
+                // Thêm 2 trường mới
+                Skintype = blog.Skintype,
+                Category = blog.Category
             };
         }
     }
