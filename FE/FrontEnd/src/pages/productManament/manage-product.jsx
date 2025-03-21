@@ -16,6 +16,7 @@ import {
   Table,
   Upload,
   Space,
+  Typography,
 } from "antd";
 import { getCategories } from "../../services/api.category";
 import { useForm } from "antd/es/form/Form";
@@ -25,6 +26,8 @@ import { getBrands } from "../../services/api.brand";
 import FormItem from "antd/es/form/FormItem";
 import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
 import { uploadImage } from "../../services/api.image";
+const { Title} = Typography;
+import { SearchOutlined } from "@ant-design/icons";
 
 function ManageProduct() {
   const [products, setProducts] = useState([]);
@@ -36,6 +39,18 @@ function ManageProduct() {
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewImage, setPreviewImage] = useState("");
   const [fileList, setFileList] = useState([]);
+  const [searchText, setSearchText] = useState("");
+
+  const handleSearch = (value) => {
+  setSearchText(value.toLowerCase());
+  };
+
+  const filteredProducts = products.filter(
+    (product) =>
+      product.name.toLowerCase().includes(searchText) ||
+      product.brandName.toLowerCase().includes(searchText)
+  );
+
   const handlePreview = async (file) => {
     if (!file.url && !file.preview) {
       file.preview = await getBase64(file.originFileObj);
@@ -139,33 +154,39 @@ function ManageProduct() {
       title: "Name",
       dataIndex: "name",
       key: "name",
+      sorter: (a, b) => a.name.localeCompare(b.name),
     },
     {
       title: "Category",
       dataIndex: "categoryName",
       key: "categoryName",
+      sorter: (a, b) => a.categoryName.localeCompare(b.categoryName),
     },
     {
       title: "Brand",
       dataIndex: "brandName",
       key: "brandName",
+      sorter: (a, b) => a.brandName.localeCompare(b.brandName),
     },
     {
       title: "Price",
       dataIndex: "price",
       key: "price",
       render: (price) => `$${price.toFixed(2)}`,
+      sorter: (a, b) => a.price - b.price,
     },
     {
       title: "Stock",
       dataIndex: "stock",
       key: "stock",
+      sorter: (a, b) => a.stock - b.stock,
     },
     {
       title: "Sale",
       dataIndex: "sale",
       key: "sale",
       render: (sale) => `${sale}%`,
+      sorter: (a, b) => a.sale - b.sale,
     },
     {
       title: "Image",
@@ -240,7 +261,27 @@ function ManageProduct() {
 
   return (
     <div>
+      <Title level={4} className="mb-4" style={{fontWeight: "bold"}}>
+            Product Management
+      </Title>
+
+      <Input
+        placeholder="Search by name or brand..."
+        allowClear
+        enterButton={<SearchOutlined />}
+        onSearch={handleSearch}
+        style={{
+          marginBottom: 16,
+          width: 300,
+          marginRight: "10px",
+          borderColor: "#fda4af", 
+          borderWidth: "2px", 
+        }}
+        suffix={<SearchOutlined style={{ color: "#fda4af" }} />}
+      />
+
       <Button
+        style={{backgroundColor:"#fda4af"}}
         type="primary"
         onClick={() => {
           setOpen(true);
@@ -249,8 +290,9 @@ function ManageProduct() {
         Create new product
       </Button>
       <Table
-        dataSource={products.filter((product) => !product.deleted)}
+        dataSource={filteredProducts.filter((product) => !product.deleted)}
         columns={columns}
+        pagination={{ pageSize: 10 }}
       />
 
       <Modal
