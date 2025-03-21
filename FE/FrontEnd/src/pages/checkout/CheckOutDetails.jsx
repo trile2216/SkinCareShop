@@ -665,7 +665,6 @@ const CheckOutDetails = () => {
       )}
 
       {/* Footer */}
-      <Footer />
     </>
   );
 };

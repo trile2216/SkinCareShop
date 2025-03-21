@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { Card, Row, Col, Statistic, Table, Tag, Spin, message } from "antd";
+import { Area } from "@ant-design/plots";
+import { Spin } from "antd";
 import {
   ShoppingCartOutlined,
   UserOutlined,
@@ -7,9 +8,11 @@ import {
   AppstoreOutlined,
   TagOutlined,
   DollarOutlined,
+  ArrowUpOutlined,
+  ArrowDownOutlined,
 } from "@ant-design/icons";
-import { Area } from "@ant-design/plots";
 import overviewService from "../../services/api.overview";
+import { toast } from "react-toastify";
 
 const Overview = () => {
   const [loading, setLoading] = useState(true);
@@ -26,7 +29,7 @@ const Overview = () => {
       const data = await overviewService.getAllDashboardData();
       setDashboardData(data);
     } catch (error) {
-      message.error("Failed to fetch dashboard data");
+      toast.error("Failed to fetch dashboard data");
     } finally {
       setLoading(false);
     }
@@ -35,82 +38,6 @@ const Overview = () => {
   useEffect(() => {
     fetchDashboardData();
   }, []);
-
-  const topProductColumns = [
-    {
-      title: "Product",
-      dataIndex: "name",
-      key: "name",
-      render: (text, record) => (
-        <div className="flex items-center">
-          <img
-            src={record.image}
-            alt={text}
-            className="w-10 h-10 object-cover rounded mr-2"
-          />
-          <span>{text}</span>
-        </div>
-      ),
-    },
-    {
-      title: "Price",
-      dataIndex: "price",
-      key: "price",
-      render: (price) => `$${price.toFixed(2)}`,
-    },
-    {
-      title: "Total Sold",
-      dataIndex: "totalSold",
-      key: "totalSold",
-    },
-  ];
-
-  const recentOrderColumns = [
-    {
-      title: "Order ID",
-      dataIndex: "id",
-      key: "id",
-    },
-    {
-      title: "Customer",
-      dataIndex: "customerName",
-      key: "customerName",
-    },
-    {
-      title: "Date",
-      dataIndex: "orderDate",
-      key: "orderDate",
-      render: (date) => new Date(date).toLocaleDateString(),
-    },
-    {
-      title: "Total",
-      dataIndex: "totalPrice",
-      key: "totalPrice",
-      render: (price) => `$${price.toFixed(2)}`,
-    },
-    {
-      title: "Status",
-      dataIndex: "status",
-      key: "status",
-      render: (status) => (
-        <Tag
-          color={
-            status === "Delivered"
-              ? "green"
-              : status === "Processing"
-              ? "blue"
-              : status === "Pending"
-              ? "orange"
-              : status === "Cancelled"
-              ? "red"
-              : "default"
-          }
-        >
-          {status}
-        </Tag>
-      ),
-    },
-  ];
 
   if (loading) {
     return (
@@ -123,116 +50,213 @@ const Overview = () => {
   const { summary, topProducts, recentOrders, orderStatus } = dashboardData;
 
   return (
-    <div className="p-6">
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold">Dashboard Overview</h2>
-        <button
-          onClick={fetchDashboardData}
-          className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg"
-        >
-          Refresh Data
-        </button>
+    <div className="min-h-screen bg-gray-50 p-6">
+      {/* Header */}
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold text-gray-900">Dashboard Overview</h1>
+        <p className="mt-2 text-gray-600">Welcome to your dashboard overview</p>
       </div>
 
-      {/* Summary Statistics */}
-      <Row gutter={[16, 16]} className="mb-6">
-        <Col xs={24} sm={12} md={8} lg={4}>
-          <Card>
-            <Statistic
-              title="Total Orders"
-              value={summary?.totalOrders}
-              prefix={<ShoppingCartOutlined />}
-            />
-          </Card>
-        </Col>
-        <Col xs={24} sm={12} md={8} lg={4}>
-          <Card>
-            <Statistic
-              title="Total Customers"
-              value={summary?.totalCustomers}
-              prefix={<UserOutlined />}
-            />
-          </Card>
-        </Col>
-        <Col xs={24} sm={12} md={8} lg={4}>
-          <Card>
-            <Statistic
-              title="Total Products"
-              value={summary?.totalProducts}
-              prefix={<ShoppingOutlined />}
-            />
-          </Card>
-        </Col>
-        <Col xs={24} sm={12} md={8} lg={4}>
-          <Card>
-            <Statistic
-              title="Total Categories"
-              value={summary?.totalCategories}
-              prefix={<AppstoreOutlined />}
-            />
-          </Card>
-        </Col>
-        <Col xs={24} sm={12} md={8} lg={4}>
-          <Card>
-            <Statistic
-              title="Total Brands"
-              value={summary?.totalBrands}
-              prefix={<TagOutlined />}
-            />
-          </Card>
-        </Col>
-        <Col xs={24} sm={12} md={8} lg={4}>
-          <Card>
-            <Statistic
-              title="Total Revenue"
-              value={summary?.totalRevenue}
-              prefix={<DollarOutlined />}
-              precision={2}
-            />
-          </Card>
-        </Col>
-      </Row>
-
-      {/* Order Status Chart */}
-      <Row gutter={[16, 16]} className="mb-6">
-        <Col xs={24} lg={12}>
-          <Card title="Order Status Distribution">
-            <div style={{ height: "300px" }}>
-              {orderStatus.length > 0 && (
-                <Area
-                  data={orderStatus}
-                  xField="status"
-                  yField="count"
-                  seriesField="status"
-                  color={["#6366f1"]}
-                  areaStyle={{
-                    fill: "l(270) 0:#ffffff 0.5:#6366f1 1:#6366f1",
-                  }}
-                />
-              )}
+      {/* Summary Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6 mb-8">
+        {/* Total Orders Card */}
+        <div className="bg-white rounded-xl shadow-sm p-6 transition-all hover:shadow-md">
+          <div className="flex items-center justify-between">
+            <div className="p-3 bg-blue-100 rounded-full">
+              <ShoppingCartOutlined className="text-blue-600 text-xl" />
             </div>
-          </Card>
-        </Col>
-        <Col xs={24} lg={12}>
-          <Card title="Top Products">
-            <Table
-              columns={topProductColumns}
-              dataSource={topProducts}
-              pagination={false}
-              size="small"
-            />
-          </Card>
-        </Col>
-      </Row>
+            <span className="text-green-500 flex items-center">
+              <ArrowUpOutlined /> 12%
+            </span>
+          </div>
+          <h3 className="text-2xl font-bold mt-4">{summary?.totalOrders}</h3>
+          <p className="text-gray-600 text-sm">Total Orders</p>
+        </div>
+
+        {/* Total Customers Card */}
+        <div className="bg-white rounded-xl shadow-sm p-6 transition-all hover:shadow-md">
+          <div className="flex items-center justify-between">
+            <div className="p-3 bg-purple-100 rounded-full">
+              <UserOutlined className="text-purple-600 text-xl" />
+            </div>
+            <span className="text-green-500 flex items-center">
+              <ArrowUpOutlined /> 8%
+            </span>
+          </div>
+          <h3 className="text-2xl font-bold mt-4">{summary?.totalCustomers}</h3>
+          <p className="text-gray-600 text-sm">Total Customers</p>
+        </div>
+
+        {/* Total Products Card */}
+        <div className="bg-white rounded-xl shadow-sm p-6 transition-all hover:shadow-md">
+          <div className="flex items-center justify-between">
+            <div className="p-3 bg-green-100 rounded-full">
+              <ShoppingOutlined className="text-green-600 text-xl" />
+            </div>
+            <span className="text-red-500 flex items-center">
+              <ArrowDownOutlined /> 3%
+            </span>
+          </div>
+          <h3 className="text-2xl font-bold mt-4">{summary?.totalProducts}</h3>
+          <p className="text-gray-600 text-sm">Total Products</p>
+        </div>
+
+        {/* Additional Summary Cards... */}
+        <div className="bg-white rounded-xl shadow-sm p-6 transition-all hover:shadow-md">
+          <div className="flex items-center justify-between">
+            <div className="p-3 bg-yellow-100 rounded-full">
+              <AppstoreOutlined className="text-yellow-600 text-xl" />
+            </div>
+            <span className="text-green-500 flex items-center">
+              <ArrowUpOutlined /> 5%
+            </span>
+          </div>
+          <h3 className="text-2xl font-bold mt-4">
+            {summary?.totalCategories}
+          </h3>
+          <p className="text-gray-600 text-sm">Categories</p>
+        </div>
+
+        <div className="bg-white rounded-xl shadow-sm p-6 transition-all hover:shadow-md">
+          <div className="flex items-center justify-between">
+            <div className="p-3 bg-pink-100 rounded-full">
+              <TagOutlined className="text-pink-600 text-xl" />
+            </div>
+            <span className="text-green-500 flex items-center">
+              <ArrowUpOutlined /> 7%
+            </span>
+          </div>
+          <h3 className="text-2xl font-bold mt-4">{summary?.totalBrands}</h3>
+          <p className="text-gray-600 text-sm">Brands</p>
+        </div>
+
+        <div className="bg-white rounded-xl shadow-sm p-6 transition-all hover:shadow-md">
+          <div className="flex items-center justify-between">
+            <div className="p-3 bg-indigo-100 rounded-full">
+              <DollarOutlined className="text-indigo-600 text-xl" />
+            </div>
+            <span className="text-green-500 flex items-center">
+              <ArrowUpOutlined /> 15%
+            </span>
+          </div>
+          <h3 className="text-2xl font-bold mt-4">
+            ${summary?.totalRevenue.toFixed(2)}
+          </h3>
+          <p className="text-gray-600 text-sm">Total Revenue</p>
+        </div>
+      </div>
+
+      {/* Charts and Tables Section */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+        {/* Order Status Chart */}
+        <div className="bg-white rounded-xl shadow-sm p-6">
+          <h2 className="text-xl font-semibold mb-6">Order Status</h2>
+          <div className="h-[300px]">
+            {orderStatus.length > 0 && (
+              <Area
+                data={orderStatus}
+                xField="status"
+                yField="count"
+                seriesField="status"
+                color={["#6366f1"]}
+                areaStyle={{
+                  fill: "l(270) 0:#ffffff 0.5:#6366f1 1:#6366f1",
+                }}
+              />
+            )}
+          </div>
+        </div>
+
+        {/* Top Products */}
+        <div className="bg-white rounded-xl shadow-sm p-6">
+          <h2 className="text-xl font-semibold mb-6">Top Products</h2>
+          <div className="space-y-4">
+            {topProducts.map((product, index) => (
+              <div
+                key={product.id}
+                className="flex items-center justify-between p-4 bg-gray-50 rounded-lg"
+              >
+                <div className="flex items-center space-x-4">
+                  <img
+                    src={product.image}
+                    alt={product.name}
+                    className="w-12 h-12 rounded-lg object-cover"
+                  />
+                  <div>
+                    <h3 className="font-medium">{product.name}</h3>
+                    <p className="text-sm text-gray-500">
+                      ${product.price.toFixed(2)}
+                    </p>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <p className="font-semibold">{product.totalSold} sold</p>
+                  <p className="text-sm text-gray-500">Rank #{index + 1}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
 
       {/* Recent Orders */}
-      <Card title="Recent Orders" className="mb-6">
-        <Table
-          columns={recentOrderColumns}
-          dataSource={recentOrders}
-          pagination={false}
-        />
-      </Card>
+      <div className="bg-white rounded-xl shadow-sm p-6">
+        <h2 className="text-xl font-semibold mb-6">Recent Orders</h2>
+        <div className="overflow-x-auto">
+          <table className="min-w-full divide-y divide-gray-200">
+            <thead>
+              <tr>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Order ID
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Customer
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Date
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Total
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Status
+                </th>
+              </tr>
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-200">
+              {recentOrders.map((order) => (
+                <tr key={order.id} className="hover:bg-gray-50">
+                  <td className="px-6 py-4 whitespace-nowrap">#{order.id}</td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    {order.customerName}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    {new Date(order.orderDate).toLocaleDateString()}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    ${order.totalPrice.toFixed(2)}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <span
+                      className={`px-2 py-1 text-xs font-semibold rounded-full ${
+                        order.status === "Delivered"
+                          ? "bg-green-100 text-green-800"
+                          : order.status === "Processing"
+                          ? "bg-blue-100 text-blue-800"
+                          : order.status === "Pending"
+                          ? "bg-yellow-100 text-yellow-800"
+                          : "bg-red-100 text-red-800"
+                      }`}
+                    >
+                      {order.status}
+                    </span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
   );
 };

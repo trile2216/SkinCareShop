@@ -81,9 +81,7 @@ const OrderHistory = () => {
                     <React.Fragment key={order.id}>
                       <tr className="text-center hover:bg-gray-50">
                         <td className="border p-2">{order.id}</td>
-                        <td className="border p-2">
-                          {formatDate(order.orderDate)}
-                        </td>
+                        <td className="border p-2">{order.orderDate}</td>
                         <td className="border p-2">
                           {formatCurrency(order.totalPrice)}
                         </td>
