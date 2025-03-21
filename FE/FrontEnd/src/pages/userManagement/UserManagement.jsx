@@ -308,7 +308,7 @@ const UserManagement = () => {
   return (
     <div className="p-6">
       <div className="flex justify-between items-center mb-6">
-        <Title level={3}>User Management</Title>
+        <Title style={{fontWeight: "bold"}} level={3}>User Management</Title>
       </div>
 
       {/* Search/ Sort */}

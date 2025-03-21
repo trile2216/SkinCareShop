@@ -173,6 +173,7 @@ const RoutineManagement = () => {
         <div className="p-6">
             <h2 className="text-2xl font-bold mb-6">Routine Management</h2>
             <Button
+                style={{backgroundColor: "#fda4af"}}
                 type="primary"
                 onClick={() => {
                     setCurrentRoutine(null);
@@ -190,13 +191,17 @@ const RoutineManagement = () => {
                     prefix={<SearchOutlined />}
                     value={searchText}
                     onChange={(e) => setSearchText(e.target.value)}
-                    style={{ width: 200, borderColor: "#ff69b4", color: "#ff69b4" }}
+                    style={{
+                        width: 200,
+                        border: "2px solid #fda4af",
+                        color: "#fda4af",
+                    }}
                 />
 
                 {/* Lọc theo Time */}
                 <Select
                     placeholder="Filter by Time"
-                    style={{ width: 150, borderColor: "#ff69b4", color: "#ff69b4" }}
+                    style={{ width: 150, borderColor: "#fda4af", color: "##fda4af" }}
                     allowClear
                     value={filterTime}
                     onChange={(value) => setFilterTime(value)}
@@ -206,7 +211,7 @@ const RoutineManagement = () => {
                 </Select>
 
                 {/* ⬆️⬇️ Sắp xếp */}
-                <Button onClick={() => handleSort("id")}  style={{  borderColor: "#ff69b4", color: "#ff69b4" }}>
+                <Button onClick={() => handleSort("id")}  style={{  borderColor: "#fda4af", color: "#fda4af" }}>
                     Sort by ID {sortConfig.key === "id" && (sortConfig.order === "asc" ? <SortAscendingOutlined /> : <SortDescendingOutlined />)}
                 </Button>
             </div>
