@@ -123,5 +123,31 @@ namespace api.Repository
                 await _context.SaveChangesAsync();
             }
         }
+
+        public async Task<Question?> UpdateQuesionAsync(int id, Question question)
+        {
+            var existingQuestion = await _context.Questions.
+                    Include(q => q.Answers).
+                    FirstOrDefaultAsync(q => q.Id == id);
+            if (existingQuestion == null)
+            {
+                return null;
+            }
+
+            existingQuestion.Content = question.Content;
+            foreach (var answer in question.Answers)
+            {
+                var existingAnswer = existingQuestion.Answers.FirstOrDefault(a => a.Id == answer.Id);
+                if (existingAnswer != null)
+                {
+                    existingAnswer.Content = answer.Content;
+                    existingAnswer.Score = answer.Score;
+                }
+            }
+
+            _context.Questions.Update(existingQuestion);
+            await _context.SaveChangesAsync();
+            return existingQuestion;
+        }
     }
 }

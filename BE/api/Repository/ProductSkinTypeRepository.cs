@@ -54,7 +54,7 @@ namespace api.Repository
 
             var idsToKeep = newProductSkinTypes.Select(p => p.Id).ToList();
             var recordsToDelete = existingProductSkinTypes.Where(p => !idsToKeep.Contains(p.Id)).ToList();
-            if (recordsToDelete.Any())
+            if (recordsToDelete.Count != 0)
             {
                 _context.ProductSkinTypes.RemoveRange(recordsToDelete);
             }

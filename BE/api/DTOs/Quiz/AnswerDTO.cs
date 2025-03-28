@@ -9,5 +9,7 @@ namespace api.DTOs.Quiz
     {
         public int Id { get; set; }
         public string Content { get; set; }
+        public decimal Score { get; set; }
+
     }
 }

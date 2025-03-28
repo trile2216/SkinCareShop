@@ -9,6 +9,7 @@ using api.Mappers;
 using api.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace api.Controller
 {
@@ -262,5 +263,25 @@ namespace api.Controller
         }
 
 
+        [HttpPut]
+        [Route("update/question/{questionId:int}")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> UpdateQuestion([FromRoute] int questionId, [FromBody] QuestionDTO questionDTO)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            var question = questionDTO.ToQuestionFromDTO();
+
+            var updatedQuestion = await _quizRepo.UpdateQuesionAsync(questionId, question);
+            if (updatedQuestion == null)
+            {
+                return NotFound("Question not found");
+            }
+
+            return Ok(updatedQuestion.ToQuestionDTO());
+        }
     }
+
 }
