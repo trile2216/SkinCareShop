@@ -16,6 +16,7 @@ namespace api.Mappers
             {
                 Id = mainQuiz.Id,
                 SkinQuizzes = mainQuiz.SkinQuizzes.Select(sq => sq.ToSkinQuizDTO()).ToList(),
+                CreatedDate = mainQuiz.CreatedAt.ToString(),
                 IsActive = mainQuiz.IsActive
             };
         }
