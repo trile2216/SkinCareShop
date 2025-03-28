@@ -8,6 +8,7 @@ namespace api.DTOs.ImportQuiz
 {
     public class MainQuizImportDTO
     {
+        public int? Id { get; set; }
 
         [Required]
         public bool IsActive { get; set; } = false;

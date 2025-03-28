@@ -45,6 +45,7 @@ namespace api.Mappers
             {
                 Id = answer.Id,
                 Content = answer.Content,
+                Score = answer.Score,
             };
         }
 
@@ -56,6 +57,26 @@ namespace api.Mappers
                 SkinTypeId = customerTestResult.SkinTypeId,
                 Symbol = customerTestResult.SkinType.Symbol,
                 Characteristics = customerTestResult.SkinType.Characteristics
+            };
+        }
+
+        public static Question ToQuestionFromDTO(this QuestionDTO questionDTO)
+        {
+            return new Question
+            {
+                Id = questionDTO.Id,
+                Content = questionDTO.Content,
+                Answers = questionDTO.Answers.Select(a => a.ToAnswerFromDTO()).ToList()
+            };
+        }
+
+        public static Answer ToAnswerFromDTO(this AnswerDTO answerDTO)
+        {
+            return new Answer
+            {
+                Id = answerDTO.Id,
+                Content = answerDTO.Content,
+                Score = answerDTO.Score,
             };
         }
     }

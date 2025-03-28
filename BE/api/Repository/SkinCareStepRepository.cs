@@ -55,29 +55,42 @@ namespace api.Repository
             return await _context.SkinCareSteps.ToListAsync();
         }
 
-        public async Task<List<SkinCareStep>?> UpdateSkinCareStepByRoutineIdAsync(int routineId, List<SkinCareStep> skinCareSteps)
+        public async Task<List<SkinCareStep>?> UpdateSkinCareStepByRoutineIdAsync(int routineId, List<SkinCareStep> newSkinCareSteps)
         {
             var existingSteps = await GetSkinCareStepByRoutineIdAsync(routineId);
-
-            if (existingSteps.Count == 0)
+            if (existingSteps == null)
             {
                 return null;
             }
 
-            foreach (var step in existingSteps)
+            var recordsToUpdate = new List<SkinCareStep>();
+
+            foreach (var newStep in newSkinCareSteps)
             {
-                if (!skinCareSteps.Any(s => s.Id == step.Id))
+                var existingStep = existingSteps.FirstOrDefault(s => s.Id == newStep.Id);
+                if (existingStep != null)
                 {
-                    _context.SkinCareSteps.Remove(step);
-                    continue;
+                    existingStep.Name = newStep.Name;
+                    existingStep.Description = newStep.Description;
+                    existingStep.StepOrder = newStep.StepOrder;
+                    existingStep.RoutineId = newStep.RoutineId;
+
                 }
-                step.Name = skinCareSteps.First(s => s.Id == step.Id).Name;
-                step.Description = skinCareSteps.First(s => s.Id == step.Id).Description;
-                step.StepOrder = skinCareSteps.First(s => s.Id == step.Id).StepOrder;
-                step.CategoryId = skinCareSteps.First(s => s.Id == step.Id).CategoryId;
+                else
+                {
+                    await _context.SkinCareSteps.AddAsync(newStep);
+                }
             }
+
+            var idsToKeep = newSkinCareSteps.Select(s => s.Id).ToList();
+            var recordsToDelete = existingSteps.Where(s => !idsToKeep.Contains(s.Id)).ToList();
+            if (recordsToDelete.Count != 0)
+            {
+                _context.SkinCareSteps.RemoveRange(recordsToDelete);
+            }
+
             await _context.SaveChangesAsync();
-            return existingSteps;
+            return await GetSkinCareStepByRoutineIdAsync(routineId);
         }
     }
 }

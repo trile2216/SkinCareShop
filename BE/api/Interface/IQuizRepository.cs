@@ -22,6 +22,8 @@ namespace api.Interface
 
         Task<List<SkinQuiz>> GetSkinQuizzesByMainQuizIdAsync(int mainQuizId);
 
+        Task<Question?> UpdateQuesionAsync(int id, Question question);
+
         Task<CustomerTestResult?> SaveCustomerResultAsync(CustomerTestResult result);
 
         Task<CustomerTestResult?> GetLatestCustomerResultAsync(int customerId);
