@@ -20,7 +20,6 @@ import AdminLayout from "./layouts/adminLayout.jsx";
 import ManageProduct from "./pages/productManament/manage-product.jsx";
 import OrderManagement from "./pages/orderManagement/index.jsx";
 import ProtectedRoute from "../src/context/ProtectedRoute.jsx";
-import Blog from "./pages/blog/Blog.jsx";
 import QuizManagement from "./pages/quizManagement/QuizManagement.jsx";
 import Result from "./pages/quiz/Result.jsx";
 import CheckoutResult from "./pages/paymentResult/CheckoutResult.jsx";
@@ -30,6 +29,8 @@ import UserManagement from "./pages/userManagement/UserManagement.jsx";
 import CustomerProfile from "./pages/customerProfile/CustomerProfile.jsx";
 import Overview from "./pages/overview/overview.jsx";
 import RoutineManagement from "./pages/routineManagement/RoutineManagement.jsx";
+import BlogDetail from "./pages/blog/BlogDetail.jsx";
+import Blogs from "./pages/blog/Blog.jsx";
 // document.getElementById('root')
 // 1. Tìm tới root
 // 2. Lấy code ở trong App gắn vào root
@@ -57,6 +58,8 @@ const router = createBrowserRouter([
     path: "/register",
     element: <RegisterPage />,
   },
+
+
 
   // Các trang customer sử dụng MainLayout
   {
@@ -104,8 +107,13 @@ const router = createBrowserRouter([
       },
       {
         path: "/blog",
-        element: <Blog />,
+        element: <Blogs />,
       },
+      {
+        path: "/blog/:id",
+        element: <BlogDetail />,
+      },
+
       {
         path: "/order-history",
         element: <OrderHistory />,

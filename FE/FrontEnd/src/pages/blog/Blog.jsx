@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
-import { useLocation } from "react-router-dom";
+import { Link, Navigate, useLocation, useNavigate } from "react-router-dom";
 import { getBlogs, getAllBlogCategories, getAllBlogSkintypes } from "../../services/blogs";
 
 const Blogs = () => {
+  const navigate = useNavigate();
   const [blogs, setBlogs] = useState([]);
   const [loading, setLoading] = useState(false);
   const [selectedBlog, setSelectedBlog] = useState(null);
@@ -247,13 +248,15 @@ const Blogs = () => {
                           {post.category}
                         </span>
                       </div>
-                      <button
-                        className="w-full bg-white text-rose-500 border-2 border-rose-500
-                                  px-6 py-2.5 rounded-lg font-medium
-                                  hover:bg-rose-50 transition-all duration-300"
+
+                      <Link to={`/blog/${post.id}`}
+
+                        className="text-rose-500 font-medium hover:underline"
                       >
-                        Read more
-                      </button>
+                        Read More
+                      </Link>
+
+
                     </div>
                   </div>
                 ))}
@@ -326,7 +329,7 @@ const Blogs = () => {
               {filteredBlogs.length === 0 && (
                 <div className="text-center py-12">
                   <p className="text-gray-500 text-lg">
-                    Không tìm thấy bài viết nào phù hợp với bộ lọc.
+                    No blogs.
                   </p>
                 </div>
               )}
