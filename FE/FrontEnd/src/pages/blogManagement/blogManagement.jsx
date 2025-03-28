@@ -1,677 +1,440 @@
-import React, { useState, useEffect } from "react";
-import blogsAPI from "../../../services/blogs";
+import React, { useState, useCallback, useMemo, useEffect } from "react";
+import { FiEdit2, FiTrash2, FiPlus, FiSearch, FiX, FiCheck, FiImage } from "react-icons/fi";
 import Swal from "sweetalert2";
 import "sweetalert2/dist/sweetalert2.min.css";
 import { getBlogs } from "../../services/blogs";
 
-// Thêm hàm để cắt ngắn nội dung
-const truncateText = (text, maxLength = 100) => {
-    if (!text) return '';
-    if (text.length <= maxLength) return text;
-    return text.substring(0, maxLength) + '...';
-};
-
 const BlogManagement = () => {
-    const [blogs, setBlogs] = useState([]);
-    const [search, setSearch] = useState("");
-    const [currentPage, setCurrentPage] = useState(1);
-    const blogsPerPage = 5;
-    const [isEditing, setIsEditing] = useState(false);
-    const [editBlog, setEditBlog] = useState(null);
-    const [isAdding, setIsAdding] = useState(false);
-    const [newBlog, setNewBlog] = useState({
-        title: "",
-        content: "",
-        authorId: "",
-        status: "",
-        skinType: "",
-        category: "",
-        createdDate: "",
-        updatedDate: "",
-        imgURL: "",
+  const [blogs, setBlogs] = useState([]);
+  const [blogs, setBlogs] = useState([]);
+  const categories = [
+    "Cleanser",
+    "Moisturizer",
+    "Serum",
+    "Sunscreen",
+    "Toner",
+    "Exfoliator",
+    "Essence",
+    "Face Mask",
+    "Eye Cream",
+    "Face Oil"
+  ];
+
+  const skinTypes = [
+    "OSPW", "OSPT", "OSNW", "OSNT",
+    "ORPW", "ORPT", "ORNW", "ORNT",
+    "DSPW", "DSPT", "DSNW", "DSNT",
+    "DRPW", "DRPT", "DRNW", "DRNT"
+  ];
+
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [selectedBlog, setSelectedBlog] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [errors, setErrors] = useState({});
+  const [newBlog, setNewBlog] = useState({
+    title: "",
+    content: "",
+    action: "",
+    summary: "",
+    category: "",
+    skinType: "",
+    imgURL: "",
+  });
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [previewImage, setPreviewImage] = useState(null);
+
+  // Fetch blogs from API
+  const fetchBlogs = async () => {
+    try {
+      const response = await getBlogs();
+      setBlogs(response.data);
+    } catch (error) {
+      console.error("Error fetching blogs:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchBlogs();
+  }, []);
+
+
+  const validateForm = () => {
+    const newErrors = {};
+    if (!newBlog.title || newBlog.title.length < 5 || newBlog.title.length > 100) {
+      newErrors.title = "Title must be between 5 and 100 characters";
+    }
+    if (!newBlog.content || newBlog.content.length < 50) {
+      newErrors.content = "Content must be at least 50 characters";
+    }
+    if (!newBlog.summary || newBlog.summary.length < 50 || newBlog.summary.length > 250) {
+      newErrors.summary = "Summary must be between 50 and 250 characters";
+    }
+    if (!newBlog.category) {
+      newErrors.category = "Please select a category";
+    }
+    if (!newBlog.skinType) {
+      newErrors.skinType = "Please select a skin type";
+    }
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSubmit = async () => {
+    try {
+      if (!newBlog.title.trim() || !newBlog.content.trim()) {
+        Swal.fire("Error", "Enter full information!", "error");
+        return;
+      }
+
+      const requestBody = {
+        title: newBlog.title.trim(),
+        content: newBlog.content.trim(),
+        imageUrl: newBlog.imgURL || "",
+        summary: newBlog.summary || "",
+        skintype: newBlog.skinType || "All",
+        category: newBlog.category || "General",
+      };
+
+      const response = await fetch("http://localhost:5286/api/blog/create", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(requestBody),
+      });
+
+      const data = await response.json();
+      console.log("API Response:", data);
+
+      if (response.status === 201) {
+        await fetchBlogs();
+        setNewBlog({ title: "", content: "", skinType: "", category: "", imgURL: "" });
+        Swal.fire("Success", "Add blog successfully", "success");
+      } else {
+        Swal.fire("Error", data.message || "Failed to add blog", "error");
+      }
+    } catch (error) {
+      console.error("Error adding blog:", error);
+      Swal.fire("Error", "Error adding blog", "error");
+    }
+  };
+
+
+  const resetForm = () => {
+    setNewBlog({
+      title: "",
+      content: "",
+      action: "",
+      summary: "",
+      category: "",
+      skinType: "",
+      imgURL: "",
     });
-    const [selectedFile, setSelectedFile] = useState(null);
-    const [previewImage, setPreviewImage] = useState(null);
+    setSelectedBlog(null);
+    setErrors({});
+  };
 
-    // Fetch blogs from API
-    const fetchBlogs = async () => {
-        try {
-            const response = await getBlogs.getAll();
-            setBlogs(response.data);
-        } catch (error) {
-            console.error("Error fetching blogs:", error);
-        }
-    };
+  const handleEdit = (blog) => {
+    setSelectedBlog(blog);
+    setNewBlog(blog);
+    setIsModalOpen(true);
+  };
 
-    useEffect(() => {
-        fetchBlogs();
-    }, []);
+  const handleDelete = (blog) => {
+    setSelectedBlog(blog);
+    setIsDeleteModalOpen(true);
+  };
 
-    // Handle Delete Blog
-    const handleDelete = async (blogId) => {
-        Swal.fire({
-            title: "Bạn có chắc muốn xóa?",
-            text: "Hành động này không thể hoàn tác!",
-            icon: "warning",
-            showCancelButton: true,
-            confirmButtonColor: "#d33",
-            cancelButtonColor: "#3085d6",
-            confirmButtonText: "Xóa",
-        }).then(async (result) => {
-            if (result.isConfirmed) {
-                try {
-                    await blogsAPI.deleteBlog(blogId);
-                    setBlogs(blogs.filter((blog) => blog.blogId !== blogId));
-                    Swal.fire("Đã xóa!", "Blog đã bị xóa.", "success");
-                } catch (error) {
-                    Swal.fire("Lỗi", "Không thể xóa blog", "error");
-                }
-            }
-        });
-    };
+  const confirmDelete = () => {
+    setBlogs(prev => prev.filter(blog => blog.id !== selectedBlog.id));
+    setIsDeleteModalOpen(false);
+    setSelectedBlog(null);
+  };
+  // Xử lý khi chọn file
+  const handleFileChange = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      setSelectedFile(file);
+      setPreviewImage(URL.createObjectURL(file));
+    }
+  };
 
-    // Handle Edit Blog
-    const handleEdit = (blog) => {
-        setEditBlog(blog);
-        setIsEditing(true);
-    };
 
-    // Xử lý khi chọn file
-    const handleFileChange = (event) => {
-        const file = event.target.files[0];
-        if (file) {
-            setSelectedFile(file);
-            setPreviewImage(URL.createObjectURL(file));
-        }
-    };
-
-    // Handle Add Blog
-    const handleAdd = async () => {
-        try {
-            if (
-                !newBlog.title.trim() ||
-                !newBlog.content.trim() ||
-                !newBlog.authorId
-            ) {
-                Swal.fire("Lỗi", "Vui lòng nhập đầy đủ thông tin", "error");
-                return;
-            }
-
-            const formData = new FormData();
-            formData.append("title", newBlog.title.trim());
-            formData.append("content", newBlog.content.trim());
-            formData.append("authorId", newBlog.authorId);
-            formData.append("status", newBlog.status || "Draft");
-            formData.append("skinType", newBlog.skinType || "All");
-            formData.append("category", newBlog.category || "General");
-
-            if (selectedFile) {
-                formData.append("file", selectedFile);
-            }
-
-            const response = await blogsAPI.createBlog(formData);
-
-            if (response.status === 201) {
-                await fetchBlogs();
-                setIsAdding(false);
-                setNewBlog({
-                    title: "",
-                    content: "",
-                    authorId: "",
-                    status: "",
-                    skinType: "",
-                    category: "",
-                    imgURL: "",
-                });
-                setSelectedFile(null);
-                setPreviewImage(null);
-                Swal.fire("Thành công", "Blog đã được thêm", "success");
-            }
-        } catch (error) {
-            console.error("Lỗi khi thêm blog:", error);
-            Swal.fire("Lỗi", "Không thể thêm blog", "error");
-        }
-    };
-
-    // Handle Save (Edit)
-    const handleSave = async () => {
-        try {
-            const formData = new FormData();
-            formData.append("title", editBlog.title.trim());
-            formData.append("content", editBlog.content.trim());
-            formData.append("authorId", editBlog.authorId);
-            formData.append("status", editBlog.status);
-            formData.append("skinType", editBlog.skinType);
-            formData.append("category", editBlog.category);
-
-            // Chỉ gửi file nếu có file mới được chọn
-            if (selectedFile) {
-                formData.append("file", selectedFile);
-            }
-
-            await blogsAPI.editBlog(editBlog.blogId, formData);
-            await fetchBlogs();
-            setIsEditing(false);
-            setSelectedFile(null);
-            setPreviewImage(null);
-            Swal.fire("Thành công", "Blog đã được cập nhật", "success");
-        } catch (error) {
-            console.error("Lỗi khi cập nhật blog:", error);
-            Swal.fire("Lỗi", "Không thể cập nhật blog", "error");
-        }
-    };
-
-    const filteredBlogs = blogs.filter((blog) =>
-        blog.title.toLowerCase().includes(search.toLowerCase())
+  const filteredBlogs = useMemo(() => {
+    return blogs.filter(blog =>
+      blog.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      blog.category.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      blog.skinType.toLowerCase().includes(searchTerm.toLowerCase())
     );
+  }, [blogs, searchTerm]);
 
-    const indexOfLastBlog = currentPage * blogsPerPage;
-    const indexOfFirstBlog = indexOfLastBlog - blogsPerPage;
-    const currentBlogs = filteredBlogs.slice(indexOfFirstBlog, indexOfLastBlog);
+  const itemsPerPage = 5;
+  const totalPages = Math.ceil(filteredBlogs.length / itemsPerPage);
+  const paginatedBlogs = filteredBlogs.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
 
-    return (
-        <div className="p-4 md:p-6 bg-gradient-to-br from-blue-50 to-white rounded-lg shadow-lg">
-            <div className="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
-                <h2 className="text-2xl md:text-3xl font-bold text-blue-800 flex items-center">
-                    <i className="fas fa-blog mr-3"></i>
-                    Quản lý Blogs
-                </h2>
-                <div className="flex flex-col md:flex-row gap-3 w-full md:w-auto">
-                    <div className="relative w-full md:w-64">
-                        <input
-                            type="text"
-                            placeholder="Tìm kiếm..."
-                            className="border pl-10 p-2 rounded-full w-full shadow-sm focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition-all duration-300"
-                            value={search}
-                            onChange={(e) => setSearch(e.target.value)}
-                        />
-                        <i className="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
-                    </div>
-                    <button
-                        className="w-full md:w-auto px-5 py-2 bg-blue-600 text-white rounded-full shadow-md hover:bg-blue-700 transition-all duration-300 flex items-center justify-center gap-2 hover:scale-105 transform"
-                        onClick={() => setIsAdding(true)}
-                    >
-                        <i className="fas fa-plus-circle"></i>
-                        Thêm Blog
-                    </button>
-                </div>
-            </div>
-
-            <div className="bg-white p-4 rounded-xl shadow-md mb-6 overflow-x-auto">
-                <div className="inline-block min-w-full align-middle">
-                    <div className="overflow-hidden border rounded-xl">
-                        <table className="min-w-full divide-y divide-gray-200">
-                            <thead className="bg-gradient-to-r from-blue-600 to-blue-400 text-white">
-                                <tr>
-                                    <th className="py-3 px-2 md:px-4 rounded-tl-lg text-center">ID</th>
-                                    <th className="py-3 px-2 md:px-4 text-left">Tiêu đề</th>
-                                    <th className="hidden md:table-cell py-3 px-4 text-left">Nội dung</th>
-                                    <th className="py-3 px-2 md:px-4 text-center">Trạng thái</th>
-                                    <th className="hidden md:table-cell py-3 px-4 text-center">Ngày tạo</th>
-                                    <th className="hidden md:table-cell py-3 px-4 text-center">Ngày cập nhật</th>
-                                    <th className="hidden md:table-cell py-3 px-4 text-center">Loại da</th>
-                                    <th className="hidden md:table-cell py-3 px-4 text-center">Danh mục</th>
-                                    <th className="py-3 px-2 md:px-4 rounded-tr-lg text-center">Hành động</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {currentBlogs.length > 0 ? (
-                                    currentBlogs.map((blog, index) => (
-                                        <tr
-                                            key={blog.blogId}
-                                            className={`border-t hover:bg-blue-50 transition-colors duration-150 ${index % 2 === 0 ? 'bg-gray-50' : 'bg-white'
-                                                }`}
-                                        >
-                                            <td className="py-3 px-2 md:px-4 text-center text-sm font-medium text-gray-700">
-                                                {blog.blogId}
-                                            </td>
-                                            <td className="py-3 px-2 md:px-4 font-semibold text-sm text-blue-700 text-left">
-                                                {truncateText(blog.title, 50)}
-                                            </td>
-                                            <td className="hidden md:table-cell py-3 px-4 text-sm text-gray-600 text-left">
-                                                {truncateText(blog.content, 100)}
-                                            </td>
-                                            <td className="py-3 px-2 md:px-4 text-sm text-center">
-                                                <span className={`inline-block min-w-[90px] px-2 py-1 rounded-full font-medium text-center ${blog.status === "Published"
-                                                    ? "bg-green-100 text-green-800"
-                                                    : "bg-yellow-100 text-yellow-800"
-                                                    }`}>
-                                                    {blog.status}
-                                                </span>
-                                            </td>
-                                            <td className="hidden md:table-cell py-3 px-4 text-sm text-gray-600 text-center">
-                                                {new Date(blog.createdDate).toLocaleDateString("vi-VN")}
-                                            </td>
-                                            <td className="hidden md:table-cell py-3 px-4 text-sm text-gray-600 text-center">
-                                                {new Date(blog.updatedDate).toLocaleDateString("vi-VN")}
-                                            </td>
-                                            <td className="hidden md:table-cell py-3 px-4 text-sm text-center">
-                                                <span className="inline-block min-w-[90px] px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs text-center">
-                                                    {blog.skinType}
-                                                </span>
-                                            </td>
-                                            <td className="hidden md:table-cell py-3 px-4 text-sm text-center">
-                                                <span className="inline-block min-w-[90px] px-2 py-1 bg-purple-100 text-purple-800 rounded-full text-xs text-center">
-                                                    {blog.category}
-                                                </span>
-                                            </td>
-                                            <td className="py-3 px-2 md:px-4 text-center">
-                                                <div className="flex flex-col md:flex-row gap-2 md:space-x-2 justify-center">
-                                                    <button
-                                                        className="px-3 py-1 text-sm bg-green-500 text-white rounded-full hover:bg-green-600 transition-colors duration-300 flex items-center justify-center gap-1"
-                                                        onClick={() => handleEdit(blog)}
-                                                    >
-                                                        <i className="fas fa-edit"></i>
-                                                        <span className="hidden md:inline">Sửa</span>
-                                                    </button>
-                                                    <button
-                                                        className="px-3 py-1 text-sm bg-red-500 text-white rounded-full hover:bg-red-600 transition-colors duration-300 flex items-center justify-center gap-1"
-                                                        onClick={() => handleDelete(blog.blogId)}
-                                                    >
-                                                        <i className="fas fa-trash-alt"></i>
-                                                        <span className="hidden md:inline">Xóa</span>
-                                                    </button>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    ))
-                                ) : (
-                                    <tr>
-                                        <td colSpan="9" className="py-8 text-center text-gray-500 italic">
-                                            Không tìm thấy blog nào
-                                        </td>
-                                    </tr>
-                                )}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-            <div className="flex justify-center mt-6 gap-2">
-                <button
-                    className="px-4 py-2 bg-blue-500 text-white rounded-full disabled:opacity-50 hover:bg-blue-600 transition-colors duration-300 flex items-center gap-2"
-                    onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-                    disabled={currentPage === 1}
-                >
-                    <i className="fas fa-chevron-left"></i> Trước
-                </button>
-                <div className="flex items-center px-4 py-2 bg-white rounded-full shadow">
-                    <span className="text-blue-800 font-medium">
-                        Trang {currentPage} / {Math.ceil(filteredBlogs.length / blogsPerPage) || 1}
-                    </span>
-                </div>
-                <button
-                    className="px-4 py-2 bg-blue-500 text-white rounded-full disabled:opacity-50 hover:bg-blue-600 transition-colors duration-300 flex items-center gap-2"
-                    onClick={() => setCurrentPage((prev) => prev + 1)}
-                    disabled={indexOfLastBlog >= filteredBlogs.length}
-                >
-                    Sau <i className="fas fa-chevron-right"></i>
-                </button>
-            </div>
-
-            {isEditing && (
-                <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 p-4 z-50">
-                    <div className="bg-white p-6 rounded-xl w-full max-w-4xl max-h-[90vh] overflow-y-auto shadow-2xl transform transition-all duration-300">
-                        <div className="flex justify-between items-center border-b pb-4 mb-6">
-                            <h2 className="text-2xl font-bold text-blue-800">
-                                <i className="fas fa-edit mr-2"></i> Chỉnh sửa Blog
-                            </h2>
-                            <button
-                                onClick={() => {
-                                    setIsEditing(false);
-                                    setSelectedFile(null);
-                                    setPreviewImage(null);
-                                }}
-                                className="text-gray-500 hover:text-red-500 transition-colors"
-                            >
-                                <i className="fas fa-times text-xl"></i>
-                            </button>
-                        </div>
-
-                        <div className="space-y-5">
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">
-                                    Tiêu đề
-                                </label>
-                                <input
-                                    type="text"
-                                    className="block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 transition-colors duration-200"
-                                    value={editBlog.title}
-                                    onChange={(e) =>
-                                        setEditBlog({ ...editBlog, title: e.target.value })
-                                    }
-                                />
-                            </div>
-
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">
-                                    Nội dung
-                                </label>
-                                <textarea
-                                    className="block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 transition-colors duration-200"
-                                    rows={8}
-                                    value={editBlog.content}
-                                    onChange={(e) =>
-                                        setEditBlog({ ...editBlog, content: e.target.value })
-                                    }
-                                />
-                            </div>
-
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                                        <i className="fas fa-image mr-1"></i> Hình ảnh
-                                    </label>
-                                    <input
-                                        type="file"
-                                        accept="image/*"
-                                        onChange={handleFileChange}
-                                        className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
-                                    />
-                                    <div className="mt-3 border rounded-lg p-2 bg-gray-50">
-                                        {previewImage ? (
-                                            <img
-                                                src={previewImage}
-                                                alt="Preview"
-                                                className="h-40 object-cover rounded-lg mx-auto"
-                                            />
-                                        ) : editBlog.imgURL ? (
-                                            <img
-                                                src={editBlog.imgURL}
-                                                alt="Current"
-                                                className="h-40 object-cover rounded-lg mx-auto"
-                                            />
-                                        ) : (
-                                            <div className="h-40 flex items-center justify-center text-gray-400">
-                                                <i className="fas fa-image text-4xl"></i>
-                                            </div>
-                                        )}
-                                    </div>
-                                </div>
-
-                                <div className="space-y-5">
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                                            ID Tác giả
-                                        </label>
-                                        <input
-                                            type="text"
-                                            className="block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 transition-colors duration-200"
-                                            value={editBlog.authorId}
-                                            onChange={(e) =>
-                                                setEditBlog({ ...editBlog, authorId: e.target.value })
-                                            }
-                                        />
-                                    </div>
-
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                                            Trạng thái
-                                        </label>
-                                        <select
-                                            className="block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 transition-colors duration-200"
-                                            value={editBlog.status}
-                                            onChange={(e) =>
-                                                setEditBlog({ ...editBlog, status: e.target.value })
-                                            }
-                                        >
-                                            <option value="Draft">Draft</option>
-                                            <option value="Published">Published</option>
-                                        </select>
-                                    </div>
-
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                                            Loại da
-                                        </label>
-                                        <select
-                                            className="block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 transition-colors duration-200"
-                                            value={editBlog.skinType}
-                                            onChange={(e) =>
-                                                setEditBlog({ ...editBlog, skinType: e.target.value })
-                                            }
-                                        >
-                                            <option value="All">All skin types</option>
-                                            <option value="OSPW">OSPW</option>
-                                            <option value="OSPT">OSPT</option>
-                                            <option value="OSNW">OSNW</option>
-                                            <option value="OSNT">OSNT</option>
-                                            <option value="ORPW">ORPW</option>
-                                            <option value="ORPT">ORPT</option>
-                                            <option value="ORNW">ORNW</option>
-                                            <option value="ORNT">ORNT</option>
-                                            <option value="DSPW">DSPW</option>
-                                            <option value="DSPT">DSPT</option>
-                                            <option value="DSNW">DSNW</option>
-                                            <option value="DSNT">DSNT</option>
-                                            <option value="DRPW">DRPW</option>
-                                            <option value="DRPT">DRPT</option>
-                                            <option value="DRNW">DRNW</option>
-                                            <option value="DRNT">DRNT</option>
-                                        </select>
-                                    </div>
-
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                                            Danh mục
-                                        </label>
-                                        <select
-                                            className="block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 transition-colors duration-200"
-                                            value={editBlog.category}
-                                            onChange={(e) =>
-                                                setEditBlog({ ...editBlog, category: e.target.value })
-                                            }
-                                        >
-                                            <option value="All">All Categories</option>
-                                            <option value="Cleanser">Cleanser</option>
-                                            <option value="Moisturizer">Moisturizer</option>
-                                            <option value="Serum">Serum</option>
-                                            <option value="Sunscreen">Sunscreen</option>
-                                            <option value="Toner">Toner</option>
-                                            <option value="Exfoliator">Exfoliator</option>
-                                            <option value="Essence">Essence</option>
-                                            <option value="Face Mask">Face Mask</option>
-                                            <option value="Eye Cream">Eye Cream</option>
-                                            <option value="Face Oil">Face Oil</option>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div className="flex justify-end space-x-3 mt-8">
-                            <button
-                                className="px-5 py-2 bg-gray-500 text-white rounded-full hover:bg-gray-600 transition-all duration-300 flex items-center gap-2"
-                                onClick={() => {
-                                    setIsEditing(false);
-                                    setSelectedFile(null);
-                                    setPreviewImage(null);
-                                }}
-                            >
-                                <i className="fas fa-times"></i> Hủy
-                            </button>
-                            <button
-                                className="px-5 py-2 bg-blue-500 text-white rounded-full hover:bg-blue-600 transition-all duration-300 flex items-center gap-2"
-                                onClick={handleSave}
-                            >
-                                <i className="fas fa-save"></i> Lưu
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            )}
-
-            {isAdding && (
-                <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 p-4 z-50">
-                    <div className="bg-white p-6 rounded-xl w-full max-w-4xl max-h-[90vh] overflow-y-auto shadow-2xl transform transition-all duration-300">
-                        <div className="flex justify-between items-center border-b pb-4 mb-6">
-                            <h2 className="text-2xl font-bold text-blue-800">
-                                <i className="fas fa-plus-circle mr-2"></i> Thêm Blog Mới
-                            </h2>
-                            <button
-                                onClick={() => {
-                                    setIsAdding(false);
-                                    setSelectedFile(null);
-                                    setPreviewImage(null);
-                                }}
-                                className="text-gray-500 hover:text-red-500 transition-colors"
-                            >
-                                <i className="fas fa-times text-xl"></i>
-                            </button>
-                        </div>
-
-                        <div className="space-y-5">
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">
-                                    Tiêu đề
-                                </label>
-                                <input
-                                    type="text"
-                                    className="block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 transition-colors duration-200"
-                                    value={newBlog.title}
-                                    onChange={(e) =>
-                                        setNewBlog({ ...newBlog, title: e.target.value })
-                                    }
-                                />
-                            </div>
-
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">
-                                    Nội dung
-                                </label>
-                                <textarea
-                                    className="block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 transition-colors duration-200"
-                                    rows={8}
-                                    value={newBlog.content}
-                                    onChange={(e) =>
-                                        setNewBlog({ ...newBlog, content: e.target.value })
-                                    }
-                                />
-                            </div>
-
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                                        <i className="fas fa-image mr-1"></i> Hình ảnh
-                                    </label>
-                                    <input
-                                        type="file"
-                                        accept="image/*"
-                                        onChange={handleFileChange}
-                                        className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
-                                    />
-                                    <div className="mt-3 border rounded-lg p-2 bg-gray-50">
-                                        {previewImage ? (
-                                            <img
-                                                src={previewImage}
-                                                alt="Preview"
-                                                className="h-40 object-cover rounded-lg mx-auto"
-                                            />
-                                        ) : (
-                                            <div className="h-40 flex items-center justify-center text-gray-400">
-                                                <i className="fas fa-image text-4xl"></i>
-                                            </div>
-                                        )}
-                                    </div>
-                                </div>
-
-                                <div className="space-y-5">
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                                            ID Tác giả
-                                        </label>
-                                        <input
-                                            type="text"
-                                            className="block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 transition-colors duration-200"
-                                            value={newBlog.authorId}
-                                            onChange={(e) =>
-                                                setNewBlog({ ...newBlog, authorId: e.target.value })
-                                            }
-                                        />
-                                    </div>
-
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                                            Trạng thái
-                                        </label>
-                                        <select
-                                            className="block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 transition-colors duration-200"
-                                            value={newBlog.status}
-                                            onChange={(e) =>
-                                                setNewBlog({ ...newBlog, status: e.target.value })
-                                            }
-                                        >
-                                            <option value="Draft">Draft</option>
-                                            <option value="Published">Published</option>
-                                        </select>
-                                    </div>
-
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                                            Loại da
-                                        </label>
-                                        <select
-                                            className="block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 transition-colors duration-200"
-                                            value={newBlog.skinType}
-                                            onChange={(e) =>
-                                                setNewBlog({ ...newBlog, skinType: e.target.value })
-                                            }
-                                        >
-                                            <option value="Da Thường">Da Thường</option>
-                                            <option value="Da Khô">Da Khô</option>
-                                            <option value="Da Dầu">Da Dầu</option>
-                                            <option value="Da Hỗn Hợp">Da Hỗn Hợp</option>
-                                            <option value="Da Nhạy Cảm">Da Nhạy Cảm</option>
-                                        </select>
-                                    </div>
-
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                                            Danh mục
-                                        </label>
-                                        <select
-                                            className="block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 transition-colors duration-200"
-                                            value={newBlog.category}
-                                            onChange={(e) =>
-                                                setNewBlog({ ...newBlog, category: e.target.value })
-                                            }
-                                        >
-                                            <option value="Tẩy Trang">Tẩy Trang</option>
-                                            <option value="Sữa Rửa Mặt">Sữa Rửa Mặt</option>
-                                            <option value="Serum">Serum</option>
-                                            <option value="Toner">Toner</option>
-                                            <option value="Kem Dưỡng">Kem Dưỡng</option>
-                                            <option value="Kem Chống Nắng">Kem Chống Nắng</option>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div className="flex justify-end space-x-3 mt-8">
-                            <button
-                                className="px-5 py-2 bg-gray-500 text-white rounded-full hover:bg-gray-600 transition-all duration-300 flex items-center gap-2"
-                                onClick={() => {
-                                    setIsAdding(false);
-                                    setSelectedFile(null);
-                                    setPreviewImage(null);
-                                }}
-                            >
-                                <i className="fas fa-times"></i> Hủy
-                            </button>
-                            <button
-                                className="px-5 py-2 bg-blue-500 text-white rounded-full hover:bg-blue-600 transition-all duration-300 flex items-center gap-2"
-                                onClick={handleAdd}
-                            >
-                                <i className="fas fa-plus"></i> Thêm
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            )}
+  return (
+    <div className="min-h-screen bg-gray-100 p-4 dark:bg-gray-900">
+      <div className="mx-auto max-w-7xl">
+        <div className="mb-6 flex items-center justify-between">
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Blog Management</h1>
+          <button
+            onClick={() => setIsModalOpen(true)}
+            className="flex items-center rounded-lg bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
+          >
+            <FiPlus className="mr-2" /> Add New Blog
+          </button>
         </div>
-    );
+
+        <div className="mb-4">
+          <div className="relative">
+            <FiSearch className="absolute left-3 top-3 text-gray-400" />
+            <input
+              type="text"
+              placeholder="Search blogs..."
+              className="w-full rounded-lg border pl-10 pr-4 py-2 focus:border-blue-500 focus:outline-none dark:bg-gray-800 dark:border-gray-700 dark:text-white"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
+        </div>
+
+        <div className="overflow-x-auto rounded-lg bg-white shadow-md dark:bg-gray-800">
+          <table className="w-full table-auto">
+            <thead className="bg-gray-50 dark:bg-gray-700">
+              <tr>
+                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">Title</th>
+                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">Content</th>
+                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">Image</th>
+                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">Category</th>
+                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">Skin Type</th>
+                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">Created At</th>
+                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">Actions</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+              {paginatedBlogs.map((blog) => (
+                <tr key={blog.id} className="hover:bg-gray-50 dark:hover:bg-gray-700">
+                  <td className="px-6 py-4 text-sm text-gray-900 dark:text-white">{blog.title}</td>
+                  <td className="px-6 py-4 text-sm text-gray-900 dark:text-white">{blog.content}</td>
+                  <td className="px-6 py-4 text-sm text-gray-900 dark:text-white">{blog.imgURL}</td>
+                  <td className="px-6 py-4 text-sm text-gray-900 dark:text-white">{blog.category}</td>
+                  <td className="px-6 py-4 text-sm text-gray-900 dark:text-white">{blog.skinType}</td>
+                  <td className="px-6 py-4 text-sm text-gray-900 dark:text-white">{blog.createdAt}</td>
+                  <td className="px-6 py-4 text-sm">
+                    <button
+                      onClick={() => handleEdit(blog)}
+                      className="mr-2 text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300"
+                    >
+                      <FiEdit2 className="h-5 w-5" />
+                    </button>
+                    <button
+                      onClick={() => handleDelete(blog)}
+                      className="text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300"
+                    >
+                      <FiTrash2 className="h-5 w-5" />
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        {totalPages > 1 && (
+          <div className="mt-4 flex justify-center">
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+              <button
+                key={page}
+                onClick={() => setCurrentPage(page)}
+                className={`mx-1 px-4 py-2 rounded ${currentPage === page
+                  ? "bg-blue-600 text-white"
+                  : "bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-300"}`}
+              >
+                {page}
+              </button>
+            ))}
+          </div>
+        )}
+
+        {isModalOpen && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-black bg-opacity-50 p-4">
+            <div className="relative w-full max-w-4xl rounded-lg bg-white p-6 shadow-xl dark:bg-gray-800">
+              <div className="sticky top-0 mb-6 flex items-center justify-between bg-white dark:bg-gray-800">
+                <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+                  {selectedBlog ? "Edit Blog" : "Create New Blog"}
+                </h2>
+                <button
+                  onClick={() => {
+                    setIsModalOpen(false);
+                    resetForm();
+                  }}
+                  className="rounded-full p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-300"
+                >
+                  <FiX className="h-6 w-6" />
+                </button>
+              </div>
+
+              <form onSubmit={handleSubmit} className="space-y-6">
+                <div className="grid gap-6 md:grid-cols-2">
+                  <div>
+                    <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
+                      Title *
+                    </label>
+                    <input
+                      type="text"
+                      value={newBlog.title}
+                      onChange={(e) => setNewBlog({ ...newBlog, title: e.target.value })}
+                      className="w-full rounded-lg border border-gray-300 p-3 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+                      placeholder="Enter blog title"
+                    />
+                    {errors.title && (
+                      <p className="mt-1 text-sm text-red-600">{errors.title}</p>
+                    )}
+                  </div>
+
+
+
+                  <div>
+                    <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
+                      Category *
+                    </label>
+                    <select
+                      value={newBlog.category}
+                      onChange={(e) => setNewBlog({ ...newBlog, category: e.target.value })}
+                      className="w-full rounded-lg border border-gray-300 p-3 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+                    >
+                      <option value="">Select a category</option>
+                      {categories.map((category) => (
+                        <option key={category} value={category}>
+                          {category}
+                        </option>
+                      ))}
+                    </select>
+                    {errors.category && (
+                      <p className="mt-1 text-sm text-red-600">{errors.category}</p>
+                    )}
+                  </div>
+
+                  <div>
+                    <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
+                      Skin Type *
+                    </label>
+                    <select
+                      value={newBlog.skinType}
+                      onChange={(e) => setNewBlog({ ...newBlog, skinType: e.target.value })}
+                      className="w-full rounded-lg border border-gray-300 p-3 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+                    >
+                      <option value="">Select skin type</option>
+                      {skinTypes.map((type) => (
+                        <option key={type} value={type}>
+                          {type}
+                        </option>
+                      ))}
+                    </select>
+                    {errors.skinType && (
+                      <p className="mt-1 text-sm text-red-600">{errors.skinType}</p>
+                    )}
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      <i className="fas fa-image mr-1"></i> Hình ảnh
+                    </label>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleFileChange}
+                      className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                    />
+                    <div className="mt-3 border rounded-lg p-2 bg-gray-50">
+                      {previewImage ? (
+                        <img
+                          src={previewImage}
+                          alt="Preview"
+                          className="h-40 object-cover rounded-lg mx-auto"
+                        />
+                      ) : (
+                        <div className="h-40 flex items-center justify-center text-gray-400">
+                          <i className="fas fa-image text-4xl"></i>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Content
+                  </label>
+                  <textarea
+                    className="block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 transition-colors duration-200"
+                    rows={8}
+                    value={newBlog.content}
+                    onChange={(e) =>
+                      setNewBlog({ ...newBlog, content: e.target.value })
+                    }
+                  />
+                </div>
+
+
+                <div className="flex justify-end space-x-4 pt-4">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsModalOpen(false);
+                      resetForm();
+                    }}
+                    className="rounded-lg border border-gray-300 px-6 py-2.5 text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    className="rounded-lg bg-blue-600 px-6 py-2.5 text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                  >
+                    {selectedBlog ? "Update Blog" : "Create Blog"}
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
+
+        {isDeleteModalOpen && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+            <div className="w-full max-w-md rounded-lg bg-white p-6 shadow-xl dark:bg-gray-800">
+              <h2 className="mb-4 text-xl font-bold text-gray-900 dark:text-white">
+                Confirm Delete
+              </h2>
+              <p className="mb-6 text-gray-700 dark:text-gray-300">
+                Are you sure you want to delete this blog? This action cannot be undone.
+              </p>
+              <div className="flex justify-end space-x-4">
+                <button
+                  onClick={() => setIsDeleteModalOpen(false)}
+                  className="rounded-lg border border-gray-300 px-4 py-2 text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={confirmDelete}
+                  className="rounded-lg bg-red-600 px-4 py-2 text-white hover:bg-red-700"
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
 };
 
 export default BlogManagement;
