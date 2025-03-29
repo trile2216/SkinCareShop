@@ -73,6 +73,11 @@ const CheckoutResult = () => {
     }
   };
 
+  const handleBackToHome = () => {
+    clearCart();
+    navigate("/");
+  };
+
   const getErrorMessage = (responseCode) => {
     switch (responseCode) {
       case "11":
@@ -89,12 +94,6 @@ const CheckoutResult = () => {
         return "Transaction failed due to unknown error.";
     }
   };
-
-  const handleBackToHome = () => {
-    clearCart();
-    navigate("/");
-  };
-
   if (loading)
     return (
       <div className="flex items-center justify-center min-h-[50vh]">
@@ -109,72 +108,79 @@ const CheckoutResult = () => {
 
   return (
     <>
-      <div className="container mx-auto p-6">
-        {/* Checkout Progress Bar */}
-        <div className="flex items-center justify-center mb-8">
-          <div className="flex items-center">
-            <div className="w-8 h-8 bg-rose-500 text-white flex items-center justify-center rounded-full font-bold">
-              1
+      {/* Thông báo kết quả */}
+      <div className="text-center">
+        {!errorMessage ? (
+          <div className="container mx-auto p-6">
+            {/* Checkout Progress Bar */}
+            <div className="flex items-center justify-center mb-8">
+              <div className="flex items-center">
+                <div className="w-8 h-8 bg-rose-500 text-white flex items-center justify-center rounded-full font-bold">
+                  1
+                </div>
+                <span className="ml-2 text-rose-700 font-semibold">
+                  Your Cart
+                </span>
+              </div>
+              <div className="flex-1 h-px bg-rose-500 mx-4"></div>
+              <div className="flex items-center">
+                <div className="w-8 h-8 bg-rose-500 text-white flex items-center justify-center rounded-full font-bold">
+                  2
+                </div>
+                <span className="ml-2 text-rose-700 font-semibold">
+                  Checkout Details
+                </span>
+              </div>
+              <div className="flex-1 h-px bg-rose-500 mx-4"></div>
+              <div className="flex items-center">
+                <div className="w-8 h-8 bg-rose-500 text-white flex items-center justify-center rounded-full font-bold">
+                  3
+                </div>
+                <span className="ml-2 text-rose-700 font-semibold">
+                  Order Complete
+                </span>
+              </div>
             </div>
-            <span className="ml-2 text-rose-700 font-semibold">Your Cart</span>
-          </div>
-          <div className="flex-1 h-px bg-rose-500 mx-4"></div>
-          <div className="flex items-center">
-            <div className="w-8 h-8 bg-rose-500 text-white flex items-center justify-center rounded-full font-bold">
-              2
-            </div>
-            <span className="ml-2 text-rose-700 font-semibold">
-              Checkout Details
-            </span>
-          </div>
-          <div className="flex-1 h-px bg-rose-500 mx-4"></div>
-          <div className="flex items-center">
-            <div className="w-8 h-8 bg-rose-500 text-white flex items-center justify-center rounded-full font-bold">
-              3
-            </div>
-            <span className="ml-2 text-rose-700 font-semibold">
-              Order Complete
-            </span>
-          </div>
-        </div>
 
-        {/* Thông báo kết quả */}
-        <div className="text-center">
-          {!errorMessage ? (
-            <div className="bg-green-100 p-6 rounded-lg shadow-md">
-              <h2 className="text-2xl font-bold text-green-700 mb-6">
-                🎉 Order successful! 🎉
-              </h2>
-              <p className="text-gray-700 mb-4">
-                Your order has been successfully placed and is being processed.
-              </p>
-              <p className="text-gray-700 mb-4">
-                We will notify you when your order is shipped.
-              </p>
-            </div>
-          ) : (
-            <div className="bg-red-100 p-6 rounded-lg shadow-md">
-              <h2 className="text-2xl font-bold text-red-700 mb-6">
-                Payment failed
-              </h2>
-              <p className="text-gray-700 mb-4">{errorMessage}</p>
-              <p className="text-gray-700 mb-4">
-                Sorry for the inconvenience, please try again or contact
-                customer support.
-              </p>
-            </div>
-          )}
-        </div>
+            {/* Order Success Message */}
+            <h2 className="text-2xl font-bold text-center text-rose-700 mb-6">
+              🎉 Order Placed Successfully! 🎉
+            </h2>
+            <p className="text-center text-gray-600">
+              Your order has been placed successfully and is being processed.
+            </p>
 
-        {/* Nút quay về trang chủ */}
-        <div className="text-center mt-8">
-          <button
-            onClick={handleBackToHome}
-            className="bg-rose-500 text-white py-2 px-6 rounded-lg hover:bg-rose-600"
-          >
-            Back to Home
-          </button>
-        </div>
+            {/* Back to Home Button */}
+            <div className="text-center mt-6">
+              <button
+                onClick={handleBackToHome}
+                className="bg-rose-500 text-white py-2 px-6 rounded-lg hover:bg-rose-600"
+              >
+                Back to Home
+              </button>
+            </div>
+          </div>
+        ) : (
+          <div className="bg-red-100 p-6 rounded-lg shadow-md">
+            <h2 className="text-2xl font-bold text-center text-rose-700 mb-6">
+              Payment failed
+            </h2>
+            <p className="text-center text-gray-600">{errorMessage} </p>
+            <p className="text-center text-gray-600">
+              Sorry for the inconvenience, please try again or contact customer
+              support.{" "}
+            </p>
+            {/* Back to Home Button */}
+            <div className="text-center mt-6">
+              <button
+                onClick={handleBackToHome}
+                className="bg-rose-500 text-white py-2 px-6 rounded-lg hover:bg-rose-600"
+              >
+                Back to Home
+              </button>
+            </div>
+          </div>
+        )}
       </div>
       <ToastContainer position="top-center" autoClose={5000} />
       <Footer />
