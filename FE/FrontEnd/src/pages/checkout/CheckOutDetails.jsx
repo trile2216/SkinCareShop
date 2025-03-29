@@ -1,7 +1,6 @@
 import { Link, useNavigate } from "react-router";
-import { useState } from "react";
+import { useState} from "react";
 import { useCart } from "../../context/CartContext";
-import Footer from "../../components/Footer";
 import { FiArrowLeft } from "react-icons/fi";
 import cityStateMapping from "../checkout/CityStateMapping";
 import { ToastContainer, toast } from "react-toastify";
@@ -189,6 +188,7 @@ const CheckOutDetails = () => {
     clearCart();
     navigate("/");
   };
+
 
   return (
     <>
@@ -472,38 +472,49 @@ const CheckOutDetails = () => {
             </div>
           </form>
 
-          {/* Sub cart total*/}
-          <div className="mt-4 text-right text-lg font-bold">
-            Subtotal: {getTotalPrice().toLocaleString("en-US")}$
+          {/* Sub cart total */}
+          <div className="mt-6 text-right">
+            <div className="text-gray-700 text-lg">
+              <span className="font-medium">Subtotal: </span>
+              <span className="font-bold">
+                {getTotalPrice().toLocaleString("en-US")}$
+              </span>
+            </div>
+
+            {/* Shipping fee */}
+            {formData.city !== "" && formData.state !== "" && (
+              <div className="text-gray-700 text-lg">
+                <span className="font-medium">Shipping Fee: </span>
+                <span className="font-bold">
+                  {getShippingFee(formData.city).toLocaleString("en-US")}$
+                </span>
+              </div>
+            )}
+
+            {/* Total */}
+            {formData.city !== "" && formData.state !== "" && (
+              <div className="mt-2 text-rose-700 text-xl">
+                <span className="font-semibold">Total: </span>
+                <span className="font-extrabold">
+                  {(getTotalPrice() + getShippingFee(formData.city)).toLocaleString(
+                    "en-US"
+                  )}
+                  $
+                </span>
+              </div>
+            )}
           </div>
 
-          {/* Shipping fee */}
-          {formData.city !== "" && formData.state !== "" && (
-            <h3 className="text-rose-700 text-right text-lg font-semibold">
-              Shipping fee:{" "}
-              {getShippingFee(formData.city).toLocaleString("en-US")} $
-            </h3>
-          )}
-
-          {/* Total */}
-          {formData.city !== "" && formData.state !== "" && (
-            <h3 className="text-rose-700 text-right text-lg font-semibold">
-              Total:{" "}
-              {(getTotalPrice() + getShippingFee(formData.city)).toLocaleString(
-                "en-US"
-              )}{" "}
-              $
-            </h3>
-          )}
-
-          {/* Place Order*/}
-          <button
-            type="button"
-            onClick={handleSubmitOrder}
-            className="bg-rose-500 text-white py-1 px-4 rounded-lg hover:bg-rose-600 float-right"
-          >
-            Place Order
-          </button>
+          {/* Place Order */}
+          <div className="mt-6 text-right">
+            <button
+              type="button"
+              onClick={handleSubmitOrder}
+              className="bg-gradient-to-r from-rose-500 to-rose-700 text-white text-lg py-2 px-6 rounded-lg shadow-md hover:shadow-lg hover:from-rose-600 hover:to-rose-800 transition-all duration-300"
+            >
+              Place Order
+            </button>
+          </div>
 
           {/* {formData.paymentMethod === "VNPay" && (
             <VNPayPayment
@@ -664,7 +675,6 @@ const CheckOutDetails = () => {
         </div>
       )}
 
-      {/* Footer */}
     </>
   );
 };
