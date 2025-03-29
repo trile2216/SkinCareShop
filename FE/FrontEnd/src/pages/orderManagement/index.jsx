@@ -182,7 +182,7 @@ const OrderManagement = () => {
       <Tabs activeKey={activeTab} onChange={(key) => setActiveTab(key)} style={{ marginBottom: 16 }}>
         <Tabs.TabPane tab={getTabTitle("All", "all")} key="all" />
         <Tabs.TabPane tab={getTabTitle("Pending", "Pending")} key="Pending" />
-        <Tabs.TabPane tab={getTabTitle("Confirmed", "Confirmed")} key="Confirmed" />
+        <Tabs.TabPane tab={getTabTitle("Comfirmed", "Comfirmed")} key="Comfirmed" />
         <Tabs.TabPane tab={getTabTitle("Shipping", "Shipping")} key="Shipping" />
         <Tabs.TabPane tab={getTabTitle("Delivered", "Delivered")} key="Delivered" />
         <Tabs.TabPane tab={getTabTitle("Cancelled", "Cancelled")} key="Cancelled" />
