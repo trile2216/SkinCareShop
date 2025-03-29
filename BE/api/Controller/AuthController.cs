@@ -74,6 +74,19 @@ namespace api.Controller
                     UserName = registerDTO.UserName
                 };
 
+                // Kiểm tra xem tên người dùng đã tồn tại chưa
+                var existingUser = await _context.Accounts.FirstOrDefaultAsync(a => a.UserName == registerDTO.UserName && a.IsActive == true);
+                if (existingUser != null)
+                {
+                    return BadRequest("Username is already taken");
+                }
+
+                var existingEmail = await _context.Customers.FirstOrDefaultAsync(c => c.Email == registerDTO.Email && c.Account.IsActive == true);
+                if (existingEmail != null)
+                {
+                    return BadRequest("Email is already registered");
+                }
+
                 var result = await _userManager.CreateAsync(user, registerDTO.Password);
 
                 if (!result.Succeeded)
@@ -243,17 +256,17 @@ namespace api.Controller
 
                 // Tạo nội dung email
                 var message = $@"
-                    <h3>Đặt lại mật khẩu</h3>
-                    <p>Vui lòng nhấp vào liên kết dưới đây để đặt lại mật khẩu của bạn:</p>
-                    <p><a href='{resetUrl}'>Đặt lại mật khẩu</a></p>
-                    <p>Liên kết này sẽ hết hạn sau 3 giờ.</p>
-                    <p>Nếu bạn không yêu cầu đặt lại mật khẩu, vui lòng bỏ qua email này.</p>
+                    <h3>Reset Password</h3>
+                    <p>Please click the link below to reset your password:</p>
+                    <p><a href='{resetUrl}'>Reset Password</a></p>
+                    <p>This link will expire in 3 hours.</p>
+                    <p>If you did not request a password reset, please ignore this email.</p>
                 ";
 
                 // Gửi email
-                await _emailService.SendEmailAsync(forgotPasswordDTO.Email, "Đặt lại mật khẩu", message);
+                await _emailService.SendEmailAsync(forgotPasswordDTO.Email, "Reset Password", message);
 
-                return Ok("Nếu email tồn tại, bạn sẽ nhận được hướng dẫn đặt lại mật khẩu");
+                return Ok("If the email exists, you will receive password reset instructions.");
             }
             catch (Exception e)
             {
@@ -272,7 +285,7 @@ namespace api.Controller
                     return BadRequest(ModelState);
                 }
 
-                // Tìm người dùng bằng email
+
                 var customer = await _context.Customers
                     .Include(c => c.Account)
                     .ThenInclude(a => a.IdentityUser)
