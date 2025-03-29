@@ -16,17 +16,20 @@ import {
   Typography,
   Card,
   Divider,
+  Result,
 } from "antd";
 import {
   UploadOutlined,
   DownloadOutlined,
   EyeOutlined,
+  CheckCircleOutlined,
+  CloseCircleOutlined,
 } from "@ant-design/icons";
 import { quizService } from "../../services/quizService";
 
 const { TabPane } = Tabs;
 const { Panel } = Collapse;
-const { Title, Text } = Typography;
+const { Title, Text, Paragraph } = Typography;
 
 const QuizManagement = () => {
   const [fileType, setFileType] = useState("excel");
@@ -36,6 +39,13 @@ const QuizManagement = () => {
   const [detailModalVisible, setDetailModalVisible] = useState(false);
   const [selectedQuiz, setSelectedQuiz] = useState(null);
   const [activeTab, setActiveTab] = useState("1");
+  const [importResultModalVisible, setImportResultModalVisible] =
+    useState(false);
+  const [importResult, setImportResult] = useState({
+    success: false,
+    message: "",
+    details: null,
+  });
 
   // Fetch all quizzes
   const fetchQuizzes = async () => {
@@ -45,7 +55,8 @@ const QuizManagement = () => {
       setQuizzes(data);
     } catch (error) {
       message.error(
-        `Failed to fetch quizzes: ${error.response?.data || error.message}`
+        `Failed to fetch quizzes: ${error.response?.data?.error || error.message
+        }`
       );
     } finally {
       setLoadingQuizzes(false);
@@ -65,12 +76,23 @@ const QuizManagement = () => {
     try {
       const response = await quizService.importQuiz(file, fileType);
 
-      message.success("Quiz imported successfully!");
+      setImportResult({
+        success: true,
+        message: "Quiz imported successfully!",
+        details: response.data,
+      });
+      setImportResultModalVisible(true);
+
       onSuccess(response, file);
-      // Refresh quiz list after successful import
       fetchQuizzes();
     } catch (error) {
-      message.error(`Import failed: ${error.response?.data || error.message}`);
+      setImportResult({
+        success: false,
+        message: "Import failed",
+        details: error.response?.data?.error || error.message,
+      });
+      setImportResultModalVisible(true);
+
       onError(error);
     } finally {
       setLoading(false);
@@ -81,11 +103,13 @@ const QuizManagement = () => {
     try {
       const blobData = await quizService.downloadTemplate();
 
-      // Create URL for blob and download
       const url = window.URL.createObjectURL(new Blob([blobData]));
       const link = document.createElement("a");
       link.href = url;
-      link.setAttribute("download", "quiz_template.xlsx");
+      link.setAttribute(
+        "download",
+        `quiz_template.${fileType === "excel" ? "xlsx" : "csv"}`
+      );
       document.body.appendChild(link);
       link.click();
       link.remove();
@@ -94,13 +118,11 @@ const QuizManagement = () => {
     }
   };
 
-  // Handle viewing quiz details
   const viewQuizDetails = (quiz) => {
     setSelectedQuiz(quiz);
     setDetailModalVisible(true);
   };
 
-  // Handle setting quiz status (active/inactive)
   const handleSetQuizStatus = async (quizId, isActive) => {
     try {
       setLoadingQuizzes(true);
@@ -112,7 +134,8 @@ const QuizManagement = () => {
       fetchQuizzes();
     } catch (error) {
       message.error(
-        `Failed to update quiz status: ${error.response?.data || error.message}`
+        `Failed to update quiz status: ${error.response?.data?.error || error.message
+        }`
       );
     } finally {
       setLoadingQuizzes(false);
@@ -168,7 +191,6 @@ const QuizManagement = () => {
     },
   ];
 
-  // Render quiz details based on the new structure
   const renderQuizDetails = () => {
     if (!selectedQuiz) return null;
 
@@ -198,10 +220,16 @@ const QuizManagement = () => {
                   type="inner"
                   size="small"
                 >
-                  <ul className="pl-5 list-disc">
+                  <ul className="pl-5 list-none w-full">
                     {question.answers?.map((answer) => (
-                      <li key={answer.id} className="mb-2">
-                        {answer.content}
+                      <li
+                        key={answer.id}
+                        className="mb-2 flex justify-between items-center "
+                      >
+                        <div className="answer-content">{answer.content}</div>
+                        <Tag color="blue" className="ml-auto">
+                          Score: {answer.score}
+                        </Tag>
                       </li>
                     ))}
                   </ul>
@@ -211,6 +239,49 @@ const QuizManagement = () => {
           ))}
         </Collapse>
       </div>
+    );
+  };
+
+  const renderImportResultModal = () => {
+    return (
+      <Modal
+        title={importResult.success ? "Import Successful" : "Import Failed"}
+        open={importResultModalVisible}
+        onCancel={() => setImportResultModalVisible(false)}
+        footer={[
+          <Button
+            key="close"
+            type="primary"
+            onClick={() => setImportResultModalVisible(false)}
+          >
+            Close
+          </Button>,
+        ]}
+      >
+        <Result
+          status={importResult.success ? "success" : "error"}
+          title={importResult.message}
+          subTitle={
+            <div className="mt-4">
+              {importResult.success ? (
+                <div>
+                  <Paragraph>
+                    The quiz has been successfully imported and is now available
+                    in the quiz list.
+                  </Paragraph>
+                </div>
+              ) : (
+                <div>
+                  <Paragraph>
+                    There was an error during the import process. Please check
+                    the details below:
+                  </Paragraph>
+                </div>
+              )}
+            </div>
+          }
+        />
+      </Modal>
     );
   };
 
@@ -270,7 +341,6 @@ const QuizManagement = () => {
         </TabPane>
       </Tabs>
 
-      {/* Quiz Detail Modal */}
       <Modal
         title="Quiz Details"
         open={detailModalVisible}
@@ -284,6 +354,8 @@ const QuizManagement = () => {
       >
         {renderQuizDetails()}
       </Modal>
+
+      {renderImportResultModal()}
     </div>
   );
 };
