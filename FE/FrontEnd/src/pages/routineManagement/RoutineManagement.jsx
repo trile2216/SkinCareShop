@@ -163,10 +163,10 @@ const RoutineManagement = () => {
 
     // Lọc & Tìm kiếm
     const filteredRoutines = routines.filter((routine) =>
-        (routine.name.toLowerCase().includes(searchText.toLowerCase()) ||
-            routine.time.toLowerCase().includes(searchText.toLowerCase()) ||
-            routine.skinTypeId.toLowerCase().includes(searchText.toLowerCase())) &&
-        (filterTime ? routine.time === filterTime : true) // Lọc theo time
+        ((routine.name?.toLowerCase() || "").includes(searchText.toLowerCase()) ||
+         (routine.time?.toLowerCase() || "").includes(searchText.toLowerCase()) ||
+         (String(routine.skinTypeId)?.toLowerCase() || "").includes(searchText.toLowerCase())) &&
+        (filterTime ? routine.time === filterTime : true)
     );
 
     return (
