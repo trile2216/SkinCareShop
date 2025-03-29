@@ -1,4 +1,4 @@
-import { useState,  } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FiSearch, FiShoppingCart, FiUser } from "react-icons/fi";
 import Cart from "./Cart";
@@ -17,11 +17,11 @@ const Header = () => {
   const token = localStorage.getItem("token");
   const isLoggedIn = !!token;
   const { logoutUser } = useAuth();
-  const { searchQuery, setSearchQuery } = useSearch(); 
+  const { searchQuery, setSearchQuery } = useSearch();
 
-  // Search 
+  // Search
   const handleSearchChange = (e) => {
-    setSearchQuery(e.target.value); 
+    setSearchQuery(e.target.value);
   };
 
   const handleLogout = () => {
@@ -37,6 +37,25 @@ const Header = () => {
       navigate("/");
     }, 0);
   };
+
+  const [customerTestResults, setCustomerTestResults] = useState(null);
+
+  useEffect(() => {
+    const fetchTestResults = async () => {
+      try {
+        // Thay thế bằng API call thực tế của bạn
+        const response = await fetch("/api/customer-test-results");
+        const data = await response.json();
+        setCustomerTestResults(data);
+      } catch (error) {
+        console.error("Error fetching test results:", error);
+      }
+    };
+
+    if (localStorage.getItem("token")) {
+      fetchTestResults();
+    }
+  }, []);
 
   const categories = [
     { name: "Home", path: "/" },
@@ -70,7 +89,7 @@ const Header = () => {
                 placeholder="Search by name"
                 className="w-full px-5 py-2 border text-sm border-gray-200 rounded-full focus:outline-none focus:ring-2 focus:ring-rose-300 focus:border-transparent transition-all duration-300"
                 value={searchQuery}
-                onChange={handleSearchChange} 
+                onChange={handleSearchChange}
               />
               <button className="absolute right-3 top-2.5 text-gray-400 hover:text-rose-500 transition-colors duration-300">
                 <FiSearch size={20} />
@@ -104,6 +123,18 @@ const Header = () => {
                         className="block w-full text-left px-4 py-3 hover:bg-rose-50 text-gray-700 hover:text-rose-600 transition-colors duration-200"
                       >
                         My Orders
+                      </button>
+                      <button
+                        onClick={() => navigate("/customerTestResults")}
+                        className="block w-full text-left px-4 py-3 hover:bg-rose-50 text-gray-700 hover:text-rose-600 transition-colors duration-200"
+                      >
+                        <div className="flex flex-col">
+                          <span>Test Results</span>
+                          <span className="text-sm text-gray-500">
+                            Skin Type:{" "}
+                            {customerTestResults?.skinType || "Not tested"}
+                          </span>
+                        </div>
                       </button>
                       <div className="border-t border-gray-100 my-1"></div>
                       <button
