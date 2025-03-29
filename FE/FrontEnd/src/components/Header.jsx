@@ -43,8 +43,8 @@ const Header = () => {
   useEffect(() => {
     const fetchTestResults = async () => {
       try {
-        // Thay thế bằng API call thực tế của bạn
-        const response = await fetch("/api/customer-test-results");
+        const userId = localStorage.getItem("userId");
+        const response = await fetch(`/api/quiz/result/${userId}`);
         const data = await response.json();
         setCustomerTestResults(data);
       } catch (error) {
@@ -124,15 +124,11 @@ const Header = () => {
                       >
                         My Orders
                       </button>
-                      <button
-                        onClick={() => navigate("/customerTestResults")}
-                        className="block w-full text-left px-4 py-3 hover:bg-rose-50 text-gray-700 hover:text-rose-600 transition-colors duration-200"
-                      >
+                      <button className="block w-full text-left px-4 py-3 hover:bg-rose-50 text-gray-700 hover:text-rose-600 transition-colors duration-200">
                         <div className="flex flex-col">
-                          <span>Test Results</span>
                           <span className="text-sm text-gray-500">
                             Skin Type:{" "}
-                            {customerTestResults?.skinType || "Not tested"}
+                            {customerTestResults?.symbol || "Not tested"}
                           </span>
                         </div>
                       </button>
