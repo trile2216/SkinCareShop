@@ -155,18 +155,21 @@ function ManageProduct() {
       dataIndex: "name",
       key: "name",
       sorter: (a, b) => a.name.localeCompare(b.name),
+      width: 250, 
     },
     {
       title: "Category",
       dataIndex: "categoryName",
       key: "categoryName",
       sorter: (a, b) => a.categoryName.localeCompare(b.categoryName),
+      width: 110,
     },
     {
       title: "Brand",
       dataIndex: "brandName",
       key: "brandName",
       sorter: (a, b) => a.brandName.localeCompare(b.brandName),
+      width: 150,
     },
     {
       title: "Price",
@@ -174,12 +177,14 @@ function ManageProduct() {
       key: "price",
       render: (price) => `$${price.toFixed(2)}`,
       sorter: (a, b) => a.price - b.price,
+      width: 100,
     },
     {
       title: "Stock",
       dataIndex: "stock",
       key: "stock",
       sorter: (a, b) => a.stock - b.stock,
+      width: 100,
     },
     {
       title: "Sale",
@@ -187,12 +192,14 @@ function ManageProduct() {
       key: "sale",
       render: (sale) => `${sale}%`,
       sorter: (a, b) => a.sale - b.sale,
+      width: 120,
     },
     {
       title: "Image",
       dataIndex: "image",
       key: "image",
       render: (image) => <Image src={image} width={100} />,
+      width: 120,
     },
     {
       title: "Action",
@@ -213,6 +220,7 @@ function ManageProduct() {
           </Popconfirm>
         </Space>
       ),
+      width: 200,
     },
   ];
 
@@ -268,8 +276,7 @@ function ManageProduct() {
       <Input
         placeholder="Search by name or brand..."
         allowClear
-        enterButton={<SearchOutlined />}
-        onSearch={handleSearch}
+        onChange={(e) => handleSearch(e.target.value)}
         style={{
           marginBottom: 16,
           width: 300,
