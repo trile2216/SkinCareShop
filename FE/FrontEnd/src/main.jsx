@@ -31,6 +31,7 @@ import Overview from "./pages/overview/overview.jsx";
 import RoutineManagement from "./pages/routineManagement/RoutineManagement.jsx";
 import BlogDetail from "./pages/blog/BlogDetail.jsx";
 import Blogs from "./pages/blog/Blog.jsx";
+import { SearchProvider } from "./context/SearchContext";
 // document.getElementById('root')
 // 1. Tìm tới root
 // 2. Lấy code ở trong App gắn vào root
@@ -142,12 +143,14 @@ const router = createBrowserRouter([
 
 createRoot(document.getElementById("root")).render(
   <>
+  <SearchProvider>
     <Provider store={store}>
       <CartProvider>
         <RouterProvider router={router} />
         <ToastContainer />
       </CartProvider>
     </Provider>
+    </SearchProvider>
   </>
 );
 

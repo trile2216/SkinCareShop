@@ -1,13 +1,16 @@
+import { useEffect, useState, useMemo } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { useNavigate } from "react-router";
 import "swiper/css";
 import "swiper/css/navigation";
 import { Navigation, Autoplay } from "swiper/modules";
-import { useEffect, useState } from "react";
 import api from "../../config/axios";
 import ProductCard from "../productlist/ProductCard";
+import { useSearch } from "../../context/SearchContext";
 
 const HomePage = () => {
+  const { searchQuery } = useSearch();
+
   // Trending product
   const trendingProducts = [
     {
@@ -110,6 +113,13 @@ const HomePage = () => {
 
   const navigate = useNavigate();
 
+  // Lọc sản phẩm dựa trên search
+  const filteredProducts = useMemo(() => {
+    return product.filter((p) =>
+      p.name.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+  }, [product, searchQuery]);
+
   return (
     <div className="bg-white">
       {/* Body Contain */}
@@ -198,7 +208,7 @@ const HomePage = () => {
             }}
             className="swiper"
           >
-            {product.map((product) => (
+            {filteredProducts.map((product) => (
               <SwiperSlide key={product.id} className="p-2">
                 <div className="scale-90">
                   {" "}

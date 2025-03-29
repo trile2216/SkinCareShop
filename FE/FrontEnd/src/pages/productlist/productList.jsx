@@ -3,11 +3,15 @@ import api from "../../config/axios";
 import ProductCard from "./ProductCard";
 import { Slider } from "antd";
 import { Pagination } from "antd"; 
+import { useSearch } from "../../context/SearchContext";
 
 const ProductList = () => {
   // Phân trang
   const productsPerPage = 9; 
   const [currentPage, setCurrentPage] = useState(1); 
+
+  // Search value
+  const { searchQuery } = useSearch(); 
 
   const [products, setProducts] = useState([]);
   const [filters, setFilters] = useState({
@@ -78,12 +82,18 @@ const ProductList = () => {
             );
           }));
 
+      // Lọc dựa trên searchQuery
+      const searchMatch = product.name
+        .toLowerCase()
+        .includes(searchQuery.toLowerCase());
+
       return (
         product.price >= filters.priceRange[0] &&
         product.price <= filters.priceRange[1] &&
         categoryMatch &&
         brandMatch &&
         skinTypeMatch &&
+        searchMatch &&
         (!filters.onSaleOnly || product.sale > 0) &&
         product.status === true
       );
@@ -113,7 +123,7 @@ const ProductList = () => {
       default:
         return result;
     }
-  }, [filters, products, sortBy]);
+  }, [filters, products, sortBy, searchQuery]);
 
   const handleFilterChange = (filterName, value) => {
     setFilters((prev) => ({ ...prev, [filterName]: value }));
