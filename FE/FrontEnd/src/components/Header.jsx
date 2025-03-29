@@ -7,6 +7,7 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import useAuth from "../context/useAuth";
 import { useSearch } from "../context/SearchContext";
+import { getCustomerTestResult } from "../services/api.customer";
 
 const Header = () => {
   const [isCartOpen, setIsCartOpen] = useState(false);
@@ -44,11 +45,13 @@ const Header = () => {
     const fetchTestResults = async () => {
       try {
         const userId = localStorage.getItem("userId");
-        const response = await fetch(`/api/quiz/result/${userId}`);
-        const data = await response.json();
-        setCustomerTestResults(data);
+        if (userId) {
+          const data = await getCustomerTestResult(userId);
+          setCustomerTestResults(data);
+        }
       } catch (error) {
         console.error("Error fetching test results:", error);
+        // Có thể thêm xử lý lỗi ở đây nếu cần
       }
     };
 
@@ -124,14 +127,17 @@ const Header = () => {
                       >
                         My Orders
                       </button>
-                      <button className="block w-full text-left px-4 py-3 hover:bg-rose-50 text-gray-700 hover:text-rose-600 transition-colors duration-200">
-                        <div className="flex flex-col">
-                          <span className="text-sm text-gray-500">
-                            Skin Type:{" "}
-                            {customerTestResults?.symbol || "Not tested"}
+                      <Link
+                        to="/result"
+                        className="block px-4 py-3 hover:bg-rose-50 text-gray-700 hover:text-rose-600 transition-colors duration-200"
+                      >
+                        My Result
+                        {customerTestResults?.symbol && (
+                          <span className="text-xs text-gray-400 ml-2">
+                            ({customerTestResults.symbol})
                           </span>
-                        </div>
-                      </button>
+                        )}
+                      </Link>
                       <div className="border-t border-gray-100 my-1"></div>
                       <button
                         onClick={() => setShowLogoutConfirm(true)}
