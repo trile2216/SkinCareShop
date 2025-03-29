@@ -8,6 +8,7 @@ import {
   UserOutlined,
   QuestionOutlined,
   FieldTimeOutlined,
+  DeliveredProcedureOutlined,
 } from "@ant-design/icons";
 import { Layout, Menu, theme, Button } from "antd";
 import { Link, Outlet, useNavigate } from "react-router-dom";
@@ -36,6 +37,7 @@ const items = [
   getItem("USER", "user", <UserOutlined />),
   getItem("QUIZ", "quiz", <QuestionOutlined />),
   getItem("ROUTINE", "routine", <FieldTimeOutlined />),
+  getItem("SHIPPING FEE", "shipping-fee", <DeliveredProcedureOutlined />),
   getItem("LOGOUT", "logout", <LogoutOutlined />),
 ];
 
@@ -67,7 +69,7 @@ const AdminLayout = () => {
         collapsible
         collapsed={collapsed}
         onCollapse={setCollapsed}
-        style={{ boxShadow: "2px 0 10px rgba(0,0,0,0.1)"}}
+        style={{ boxShadow: "2px 0 10px rgba(0,0,0,0.1)" }}
       >
         <div style={{ padding: 16, textAlign: "center", paddingLeft: "30px" }}>
           <Avatar size={64} src="https://e7.pngegg.com/pngimages/643/98/png-clipart-computer-icons-avatar-mover-business-flat-design-corporate-elderly-care-microphone-heroes.png" />
@@ -78,7 +80,7 @@ const AdminLayout = () => {
           mode="inline"
           items={items}
           onClick={handleMenuClick}
-          style={{ fontSize: "16px", paddingLeft: "25px"}}
+          style={{ fontSize: "16px", paddingLeft: "25px" }}
         />
       </Sider>
       <Layout>
@@ -93,7 +95,7 @@ const AdminLayout = () => {
           }}
         >
           <Title level={4} style={{ margin: 0 }}>Dashboard</Title>
-          
+
         </Header>
         <Content
           style={{
