@@ -407,27 +407,6 @@ namespace api.Migrations
                     b.ToTable("Category", (string)null);
                 });
 
-            modelBuilder.Entity("api.Models.City", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("Name")
-                        .IsUnique();
-
-                    b.ToTable("Cities");
-                });
-
             modelBuilder.Entity("api.Models.Comment", b =>
                 {
                     b.Property<int>("Id")
@@ -567,32 +546,6 @@ namespace api.Migrations
                         .IsUnique();
 
                     b.ToTable("CustomerTestResult", (string)null);
-                });
-
-            modelBuilder.Entity("api.Models.District", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("CityId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CityId");
-
-                    b.HasIndex("Name", "CityId")
-                        .IsUnique();
-
-                    b.ToTable("Districts");
                 });
 
             modelBuilder.Entity("api.Models.MainQuiz", b =>
@@ -856,41 +809,6 @@ namespace api.Migrations
                         .IsUnique();
 
                     b.ToTable("Question", (string)null);
-                });
-
-            modelBuilder.Entity("api.Models.ShippingFee", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("CityId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("DistrictId")
-                        .HasColumnType("int");
-
-                    b.Property<decimal>("Fee")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime>("LastUpdated")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETDATE()");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CityId");
-
-                    b.HasIndex("DistrictId")
-                        .IsUnique();
-
-                    b.ToTable("ShippingFees");
                 });
 
             modelBuilder.Entity("api.Models.SkinCareRoutine", b =>
@@ -1169,17 +1087,6 @@ namespace api.Migrations
                     b.Navigation("SkinType");
                 });
 
-            modelBuilder.Entity("api.Models.District", b =>
-                {
-                    b.HasOne("api.Models.City", "City")
-                        .WithMany("Districts")
-                        .HasForeignKey("CityId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("City");
-                });
-
             modelBuilder.Entity("api.Models.Order", b =>
                 {
                     b.HasOne("api.Models.Customer", "Customer")
@@ -1259,25 +1166,6 @@ namespace api.Migrations
                     b.Navigation("SkinQuiz");
                 });
 
-            modelBuilder.Entity("api.Models.ShippingFee", b =>
-                {
-                    b.HasOne("api.Models.City", "City")
-                        .WithMany()
-                        .HasForeignKey("CityId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.HasOne("api.Models.District", "District")
-                        .WithMany()
-                        .HasForeignKey("DistrictId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.Navigation("City");
-
-                    b.Navigation("District");
-                });
-
             modelBuilder.Entity("api.Models.SkinCareRoutine", b =>
                 {
                     b.HasOne("api.Models.SkinType", "SkinType")
@@ -1340,11 +1228,6 @@ namespace api.Migrations
                     b.Navigation("Products");
 
                     b.Navigation("SkinCareSteps");
-                });
-
-            modelBuilder.Entity("api.Models.City", b =>
-                {
-                    b.Navigation("Districts");
                 });
 
             modelBuilder.Entity("api.Models.Customer", b =>

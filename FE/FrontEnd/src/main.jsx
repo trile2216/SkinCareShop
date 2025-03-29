@@ -32,7 +32,6 @@ import RoutineManagement from "./pages/routineManagement/RoutineManagement.jsx";
 import BlogDetail from "./pages/blog/BlogDetail.jsx";
 import Blogs from "./pages/blog/Blog.jsx";
 import { SearchProvider } from "./context/SearchContext";
-import ShippingFeeManagement from "./pages/shippingFeeManagement/ShippingFeeManagement.jsx";
 // document.getElementById('root')
 // 1. Tìm tới root
 // 2. Lấy code ở trong App gắn vào root
@@ -61,6 +60,8 @@ const router = createBrowserRouter([
     element: <RegisterPage />,
   },
 
+
+
   // Các trang customer sử dụng MainLayout
   {
     element: <CustomerLayout />,
@@ -68,7 +69,7 @@ const router = createBrowserRouter([
       {
         path: "/",
         element: <HomePage />,
-      },
+      },  
       {
         path: "/skinquiz",
         element: (
@@ -81,9 +82,9 @@ const router = createBrowserRouter([
         path: "/result",
         element: (
           <ProtectedRoute allowedRoles={["Customer"]}>
-            <Result />
+              <Result />
           </ProtectedRoute>
-        ),
+        ) 
       },
       {
         path: "/product/:id",
@@ -99,14 +100,14 @@ const router = createBrowserRouter([
           <ProtectedRoute allowedRoles={["Customer"]}>
             <Checkout />
           </ProtectedRoute>
-        ),
+        ) 
       },
       {
         path: "/checkout-details",
         element: (
           <ProtectedRoute allowedRoles={["Customer"]}>
             <CheckOutDetail />
-          </ProtectedRoute>
+          </ProtectedRoute> 
         ),
       },
       {
@@ -114,7 +115,7 @@ const router = createBrowserRouter([
         element: (
           <ProtectedRoute allowedRoles={["Customer"]}>
             <CheckoutResult />
-          </ProtectedRoute>
+          </ProtectedRoute>  
         ),
       },
       {
@@ -122,7 +123,7 @@ const router = createBrowserRouter([
         element: (
           <ProtectedRoute allowedRoles={["Customer"]}>
             <CustomerProfile />
-          </ProtectedRoute>
+          </ProtectedRoute>  
         ),
       },
       {
@@ -143,7 +144,7 @@ const router = createBrowserRouter([
         element: (
           <ProtectedRoute allowedRoles={["Customer"]}>
             <OrderHistory />
-          </ProtectedRoute>
+          </ProtectedRoute>  
         ),
       },
     ],
@@ -164,20 +165,19 @@ const router = createBrowserRouter([
       { path: "quiz", element: <QuizManagement /> },
       { path: "routine", element: <RoutineManagement /> },
       { path: "user", element: <UserManagement /> },
-      { path: "shipping-fee", element: <ShippingFeeManagement /> },
     ],
   },
 ]);
 
 createRoot(document.getElementById("root")).render(
   <>
-    <SearchProvider>
-      <Provider store={store}>
-        <CartProvider>
-          <RouterProvider router={router} />
-          <ToastContainer />
-        </CartProvider>
-      </Provider>
+  <SearchProvider>
+    <Provider store={store}>
+      <CartProvider>
+        <RouterProvider router={router} />
+        <ToastContainer />
+      </CartProvider>
+    </Provider>
     </SearchProvider>
   </>
 );
