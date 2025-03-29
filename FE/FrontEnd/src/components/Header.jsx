@@ -6,7 +6,6 @@ import { useCart } from "../context/CartContext";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import useAuth from "../context/useAuth";
-import { useSearch } from "../context/SearchContext";
 import { getCustomerTestResult } from "../services/api.customer";
 
 const Header = () => {
@@ -18,12 +17,6 @@ const Header = () => {
   const token = localStorage.getItem("token");
   const isLoggedIn = !!token;
   const { logoutUser } = useAuth();
-  const { searchQuery, setSearchQuery } = useSearch();
-
-  // Search
-  const handleSearchChange = (e) => {
-    setSearchQuery(e.target.value);
-  };
 
   const handleLogout = () => {
     logoutUser();
@@ -51,7 +44,6 @@ const Header = () => {
         }
       } catch (error) {
         console.error("Error fetching test results:", error);
-        // Có thể thêm xử lý lỗi ở đây nếu cần
       }
     };
 
@@ -83,22 +75,6 @@ const Header = () => {
               alt="Logo"
             />
           </Link>
-
-          {/* Search Bar */}
-          <div className="hidden md:flex flex-1 justify-center mx-8">
-            <div className="relative w-2/5">
-              <input
-                type="text"
-                placeholder="Search by name"
-                className="w-full px-5 py-2 border text-sm border-gray-200 rounded-full focus:outline-none focus:ring-2 focus:ring-rose-300 focus:border-transparent transition-all duration-300"
-                value={searchQuery}
-                onChange={handleSearchChange}
-              />
-              <button className="absolute right-3 top-2.5 text-gray-400 hover:text-rose-500 transition-colors duration-300">
-                <FiSearch size={20} />
-              </button>
-            </div>
-          </div>
 
           <div className="flex items-center space-x-8">
             <div className="relative">

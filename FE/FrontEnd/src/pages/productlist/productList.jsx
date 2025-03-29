@@ -2,16 +2,17 @@ import { useState, useEffect, useMemo } from "react";
 import api from "../../config/axios";
 import ProductCard from "./ProductCard";
 import { Slider } from "antd";
-import { Pagination } from "antd"; 
+import { Pagination } from "antd";
 import { useSearch } from "../../context/SearchContext";
+import { FiSearch } from "react-icons/fi";
 
 const ProductList = () => {
   // Phân trang
-  const productsPerPage = 9; 
-  const [currentPage, setCurrentPage] = useState(1); 
+  const productsPerPage = 9;
+  const [currentPage, setCurrentPage] = useState(1);
 
   // Search value
-  const { searchQuery } = useSearch(); 
+  const { searchQuery, setSearchQuery } = useSearch();
 
   const [products, setProducts] = useState([]);
   const [filters, setFilters] = useState({
@@ -129,7 +130,7 @@ const ProductList = () => {
     setFilters((prev) => ({ ...prev, [filterName]: value }));
   };
 
-   // Lấy danh sách sản phẩm cho trang hiện tại
+  // Lấy danh sách sản phẩm cho trang hiện tại
   const currentProducts = useMemo(() => {
     const startIndex = (currentPage - 1) * productsPerPage;
     const endIndex = startIndex + productsPerPage;
@@ -184,7 +185,7 @@ const ProductList = () => {
         onChange={(e) => setSortBy(e.target.value)}
         trackStyle={[{ backgroundColor: "#fb7185" }]} // Thanh trượt màu rose-400
         handleStyle={[
-          { borderColor: "#fb7185", backgroundColor: "#fb7185" }, 
+          { borderColor: "#fb7185", backgroundColor: "#fb7185" },
           { borderColor: "#fb7185", backgroundColor: "#fb7185" }
         ]}
       >
@@ -215,6 +216,21 @@ const ProductList = () => {
   return (
     <>
       <div className="container mx-auto px-4 py-8">
+        <div className="mb-8 flex justify-center">
+          <div className="relative w-2/5">
+            <input
+              type="text"
+              placeholder="Search by name"
+              className="w-full px-5 py-2 border text-sm border-gray-200 rounded-full focus:outline-none focus:ring-2 focus:ring-rose-300 focus:border-transparent transition-all duration-300"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+            <button className="absolute right-3 top-2.5 text-gray-400 hover:text-rose-500 transition-colors duration-300">
+              <FiSearch size={20} />
+            </button>
+          </div>
+        </div>
+
         <div className="flex flex-col md:flex-row gap-8">
           <div className="w-full md:w-1/4 bg-white p-6 rounded-lg shadow-md h-fit">
             <h2 className="text-xl font-semibold mb-6">Filters</h2>
@@ -232,12 +248,12 @@ const ProductList = () => {
                 onChange={(value) => handleFilterChange("priceRange", value)}
                 trackStyle={[{ backgroundColor: "#fb7185" }]} // Thanh trượt màu rose-400
                 handleStyle={[
-                  { borderColor: "#fb7185", backgroundColor: "#fb7185" }, 
+                  { borderColor: "#fb7185", backgroundColor: "#fb7185" },
                   { borderColor: "#fb7185", backgroundColor: "#fb7185" }
-                ]} 
+                ]}
               />
               <div className="flex justify-between text-sm text-gray-600">
-                <span  className="text-rose-600">{filters.priceRange[0].toLocaleString("vi-VN")} $</span>
+                <span className="text-rose-600">{filters.priceRange[0].toLocaleString("vi-VN")} $</span>
                 <span className="text-rose-600">{filters.priceRange[1].toLocaleString("vi-VN")} $</span>
               </div>
             </div>
@@ -272,14 +288,14 @@ const ProductList = () => {
             {/* Phân trang */}
             <div className="mt-8 flex justify-center">
               <Pagination
-                        current={currentPage}
-                        pageSize={productsPerPage}
-                        total={filteredAndSortedProducts.length}
-                        onChange={(page) => setCurrentPage(page)}
-                      />
-              </div>
+                current={currentPage}
+                pageSize={productsPerPage}
+                total={filteredAndSortedProducts.length}
+                onChange={(page) => setCurrentPage(page)}
+              />
+            </div>
+          </div>
         </div>
-      </div>
       </div>
     </>
   );
