@@ -1,12 +1,14 @@
-import React, { useState, useEffect, useMemo } from "react";
-import { useCart } from "../../context/CartContext";
+import { useState, useEffect, useMemo } from "react";
 import api from "../../config/axios";
 import ProductCard from "./ProductCard";
-import Header from "../../components/Header";
-import Footer from "../../components/Footer";
 import { Slider } from "antd";
+import { Pagination } from "antd"; 
 
 const ProductList = () => {
+  // Phân trang
+  const productsPerPage = 9; 
+  const [currentPage, setCurrentPage] = useState(1); 
+
   const [products, setProducts] = useState([]);
   const [filters, setFilters] = useState({
     priceRange: [0, 50],
@@ -55,6 +57,7 @@ const ProductList = () => {
 
     fetchData();
   }, []);
+
 
   const filteredAndSortedProducts = useMemo(() => {
     let result = products.filter((product) => {
@@ -116,6 +119,13 @@ const ProductList = () => {
     setFilters((prev) => ({ ...prev, [filterName]: value }));
   };
 
+   // Lấy danh sách sản phẩm cho trang hiện tại
+  const currentProducts = useMemo(() => {
+    const startIndex = (currentPage - 1) * productsPerPage;
+    const endIndex = startIndex + productsPerPage;
+    return filteredAndSortedProducts.slice(startIndex, endIndex);
+  }, [filteredAndSortedProducts, currentPage]);
+
   const renderBrandsSelect = () => (
     <div className="mb-6">
       <h3 className="font-medium mb-2">Brands</h3>
@@ -161,12 +171,12 @@ const ProductList = () => {
       <h3 className="font-medium mb-2">Sort By</h3>
       <select
         value={sortBy}
-        onChange={(value) => handleFilterChange("priceRange", value)}
-  trackStyle={[{ backgroundColor: "#fb7185" }]} // Thanh trượt màu rose-400
-  handleStyle={[
-    { borderColor: "#fb7185", backgroundColor: "#fb7185" }, 
-    { borderColor: "#fb7185", backgroundColor: "#fb7185" }
-  ]}
+        onChange={(e) => setSortBy(e.target.value)}
+        trackStyle={[{ backgroundColor: "#fb7185" }]} // Thanh trượt màu rose-400
+        handleStyle={[
+          { borderColor: "#fb7185", backgroundColor: "#fb7185" }, 
+          { borderColor: "#fb7185", backgroundColor: "#fb7185" }
+        ]}
       >
         <option value="default">Default Sorting</option>
         <option value="priceLowToHigh">Price: Low to High</option>
@@ -204,18 +214,18 @@ const ProductList = () => {
             <div className="mb-6">
               <h3 className="font-medium mb-2">Price Range</h3>
               <Slider
-  range
-  min={0}
-  max={50}
-  step={5}
-  value={filters.priceRange}
-  onChange={(value) => handleFilterChange("priceRange", value)}
-  trackStyle={[{ backgroundColor: "#fb7185" }]} // Thanh trượt màu rose-400
-  handleStyle={[
-    { borderColor: "#fb7185", backgroundColor: "#fb7185" }, 
-    { borderColor: "#fb7185", backgroundColor: "#fb7185" }
-  ]} 
-/>
+                range
+                min={0}
+                max={50}
+                step={5}
+                value={filters.priceRange}
+                onChange={(value) => handleFilterChange("priceRange", value)}
+                trackStyle={[{ backgroundColor: "#fb7185" }]} // Thanh trượt màu rose-400
+                handleStyle={[
+                  { borderColor: "#fb7185", backgroundColor: "#fb7185" }, 
+                  { borderColor: "#fb7185", backgroundColor: "#fb7185" }
+                ]} 
+              />
               <div className="flex justify-between text-sm text-gray-600">
                 <span  className="text-rose-600">{filters.priceRange[0].toLocaleString("vi-VN")} $</span>
                 <span className="text-rose-600">{filters.priceRange[1].toLocaleString("vi-VN")} $</span>
@@ -244,12 +254,22 @@ const ProductList = () => {
 
           <div className="w-full md:w-3/4">
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredAndSortedProducts.map((product) => (
+              {currentProducts.map((product) => (
                 <ProductCard key={product.id} product={product} />
               ))}
             </div>
-          </div>
+
+            {/* Phân trang */}
+            <div className="mt-8 flex justify-center">
+              <Pagination
+                        current={currentPage}
+                        pageSize={productsPerPage}
+                        total={filteredAndSortedProducts.length}
+                        onChange={(page) => setCurrentPage(page)}
+                      />
+              </div>
         </div>
+      </div>
       </div>
     </>
   );
