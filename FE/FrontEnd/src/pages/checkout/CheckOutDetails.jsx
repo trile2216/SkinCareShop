@@ -1,10 +1,10 @@
 import { Link, useNavigate } from "react-router";
-import { useState} from "react";
+import { useState, useEffect } from "react";
 import { useCart } from "../../context/CartContext";
 import { FiArrowLeft } from "react-icons/fi";
-import cityStateMapping from "../checkout/CityStateMapping";
 import { ToastContainer, toast } from "react-toastify";
 import axios from "../../config/axios";
+import shippingFeeService from "../../services/api.shippingFee";
 
 const CheckOutDetails = () => {
   const [formData, setFormData] = useState({
@@ -23,6 +23,77 @@ const CheckOutDetails = () => {
   const { cartItems, getTotalPrice, clearCart } = useCart();
   const navigate = useNavigate();
   const [isPlaceOrder, setIsPlaceOrder] = useState(false);
+
+  const [cities, setCities] = useState([]);
+  const [districts, setDistricts] = useState([]);
+  const [shippingFee, setShippingFee] = useState(0);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const fetchCities = async () => {
+      try {
+        setLoading(true);
+        const citiesData = await shippingFeeService.getAllCities();
+        setCities(citiesData);
+      } catch (error) {
+        console.error("Error fetching cities:", error);
+        toast.error("Could not load cities. Please try again later.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCities();
+  }, []);
+
+  useEffect(() => {
+    if (formData.city) {
+      const fetchDistricts = async () => {
+        try {
+          setLoading(true);
+          const districtsData = await shippingFeeService.getDistrictsByCity(
+            formData.city
+          );
+          setDistricts(districtsData);
+          setFormData((prev) => ({ ...prev, state: "" }));
+        } catch (error) {
+          console.error("Error fetching districts:", error);
+          toast.error("Could not load districts for the selected city.");
+        } finally {
+          setLoading(false);
+        }
+      };
+
+      fetchDistricts();
+    } else {
+      setDistricts([]);
+    }
+  }, [formData.city]);
+
+  useEffect(() => {
+    if (formData.city && formData.state) {
+      const fetchShippingFee = async () => {
+        try {
+          setLoading(true);
+          const feeData = await shippingFeeService.getShippingFee(
+            formData.city,
+            formData.state
+          );
+          setShippingFee(feeData.fee || 0);
+        } catch (error) {
+          console.error("Error fetching shipping fee:", error);
+          toast.error("Could not load shipping fee for the selected location.");
+          setShippingFee(0);
+        } finally {
+          setLoading(false);
+        }
+      };
+
+      fetchShippingFee();
+    } else {
+      setShippingFee(0);
+    }
+  }, [formData.city, formData.state]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -97,16 +168,17 @@ const CheckOutDetails = () => {
     setFormData({ ...formData, paymentMethod: e.target.value });
     console.log("Selected Payment Method:", e.target.value);
   };
+
   const customerId = parseInt(localStorage.getItem("customerId"));
   console.log("Customer ID:", customerId);
-  const cities = Object.keys(cityStateMapping).sort();
 
-  const getShippingFee = (city) => {
-    return cityStateMapping[city]?.shippingFee || 0;
+  const getShippingFee = () => {
+    return shippingFee;
   };
 
   const handleSubmitOrder = async (e) => {
     e.preventDefault();
+    // Check form validation
 
     // Check form validation
     if (!formData.firstName) {
@@ -156,7 +228,7 @@ const CheckOutDetails = () => {
             productPrice: item.price,
           })),
           totalPrice: getTotalPrice(),
-          shippingFee: getShippingFee(formData.city),
+          shippingFee: getShippingFee(),
           paymentMethod: formData.paymentMethod,
           street: formData.street,
           city: formData.city,
@@ -181,6 +253,7 @@ const CheckOutDetails = () => {
         console.error("Order submission error:", error);
       }
     }
+    //Back to home -> Clear cart
   };
 
   //Back to home -> Clear cart
@@ -189,12 +262,10 @@ const CheckOutDetails = () => {
     navigate("/");
   };
 
-
   return (
     <>
       {!isPlaceOrder && (
         <div className="container mx-auto p-6">
-          {/* Checkout Progress Bar */}
           <div className="flex items-center justify-center mb-8">
             <div className="flex items-center">
               <div className="w-8 h-8 bg-rose-500 text-white flex items-center justify-center rounded-full font-bold">
@@ -224,7 +295,6 @@ const CheckOutDetails = () => {
             </div>
           </div>
 
-          {/* "Keep Shopping" */}
           <Link
             to="/checkout"
             className="flex items-center text-gray-600 hover:text-gray-900 mb-4"
@@ -241,7 +311,6 @@ const CheckOutDetails = () => {
             onSubmit={handleSubmit}
             className="grid grid-cols-1 lg:grid-cols-2 gap-6"
           >
-            {/* First Name*/}
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
@@ -259,7 +328,6 @@ const CheckOutDetails = () => {
                   />
                 </div>
 
-                {/* Last Name */}
                 <div>
                   <label className="block text-sm font-medium mb-1">
                     Last Name <span className="text-red-500">*</span>
@@ -276,7 +344,6 @@ const CheckOutDetails = () => {
                 </div>
               </div>
 
-              {/* Phone/ Mail */}
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium mb-1">
@@ -308,7 +375,6 @@ const CheckOutDetails = () => {
                 </div>
               </div>
 
-              {/* Street Address*/}
               <div>
                 <label className="block text-sm font-medium mb-1">
                   Street Address <span className="text-red-500">*</span>
@@ -324,7 +390,6 @@ const CheckOutDetails = () => {
                 />
               </div>
 
-              {/* City*/}
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium mb-1">
@@ -336,17 +401,17 @@ const CheckOutDetails = () => {
                     onChange={handleInputChange}
                     required
                     className="border p-2 rounded w-full"
+                    disabled={loading}
                   >
                     <option value="">Select City</option>
                     {cities.map((city) => (
-                      <option key={city} value={city}>
-                        {city}
+                      <option key={city.id} value={city.id}>
+                        {city.name}
                       </option>
                     ))}
                   </select>
                 </div>
 
-                {/* States */}
                 <div>
                   <label className="block text-sm font-medium mb-1">
                     State <span className="text-red-500">*</span>
@@ -357,22 +422,18 @@ const CheckOutDetails = () => {
                     onChange={handleInputChange}
                     required
                     className="border p-2 rounded w-full"
-                    disabled={!formData.city}
+                    disabled={!formData.city || loading}
                   >
                     <option value="">Select State</option>
-                    {formData.city &&
-                      cityStateMapping[formData.city]?.states
-                        ?.sort()
-                        .map((state) => (
-                          <option key={state} value={state}>
-                            {state}
-                          </option>
-                        ))}
+                    {districts.map((district) => (
+                      <option key={district.id} value={district.id}>
+                        {district.name}
+                      </option>
+                    ))}
                   </select>
                 </div>
               </div>
 
-              {/* Payment Options */}
               <div className="mb-6">
                 <h3 className="font-medium mb-2">
                   Payment Method <span className="text-red-500">*</span>{" "}
@@ -417,7 +478,6 @@ const CheckOutDetails = () => {
               </div>
             </div>
 
-            {/* Cart Detail */}
             <div className="space-y-4">
               <div className="flex justify-between items-center">
                 <h2 className="text-xl font-bold mt-5 mb-4">Your Cart</h2>
@@ -433,9 +493,8 @@ const CheckOutDetails = () => {
               </div>
 
               <div
-                className={`overflow-hidden transition-all duration-500 ${
-                  showAllItems ? "max-h" : "max-h-[450px]"
-                }`}
+                className={`overflow-hidden transition-all duration-500 ${showAllItems ? "max-h" : "max-h-[450px]"
+                  }`}
               >
                 <table className="w-full border-collapse">
                   <thead>
@@ -472,7 +531,6 @@ const CheckOutDetails = () => {
             </div>
           </form>
 
-          {/* Sub cart total */}
           <div className="mt-6 text-right">
             <div className="text-gray-700 text-lg">
               <span className="font-medium">Subtotal: </span>
@@ -481,31 +539,30 @@ const CheckOutDetails = () => {
               </span>
             </div>
 
-            {/* Shipping fee */}
             {formData.city !== "" && formData.state !== "" && (
               <div className="text-gray-700 text-lg">
                 <span className="font-medium">Shipping Fee: </span>
-                <span className="font-bold">
-                  {getShippingFee(formData.city).toLocaleString("en-US")}$
-                </span>
+                {loading ? (
+                  <span>Calculating...</span>
+                ) : (
+                  <span className="font-bold">
+                    {getShippingFee().toLocaleString("en-US")}$
+                  </span>
+                )}
               </div>
             )}
 
-            {/* Total */}
-            {formData.city !== "" && formData.state !== "" && (
+            {formData.city !== "" && formData.state !== "" && !loading && (
               <div className="mt-2 text-rose-700 text-xl">
                 <span className="font-semibold">Total: </span>
                 <span className="font-extrabold">
-                  {(getTotalPrice() + getShippingFee(formData.city)).toLocaleString(
-                    "en-US"
-                  )}
+                  {(getTotalPrice() + getShippingFee()).toLocaleString("en-US")}
                   $
                 </span>
               </div>
             )}
           </div>
 
-          {/* Place Order */}
           <div className="mt-6 text-right">
             <button
               type="button"
@@ -515,20 +572,6 @@ const CheckOutDetails = () => {
               Place Order
             </button>
           </div>
-
-          {/* {formData.paymentMethod === "VNPay" && (
-            <VNPayPayment
-              amount={getTotalPrice() + getShippingFee(formData.city)}
-              orderId={Date.now()}
-              onSuccess={(response) => {
-                console.log("Payment success:", response);
-              }}
-              onError={(error) => {
-                console.error("Payment error:", error);
-                toast.error(error);
-              }}
-            />
-          )} */}
 
           <ToastContainer position="top-center" autoClose={3000} />
         </div>
@@ -577,38 +620,6 @@ const CheckOutDetails = () => {
 
           {/* Order Details */}
           <div className="bg-gray-100 p-6 mt-6 rounded-lg">
-            <h3 className="text-xl font-semibold mb-4">Order Details</h3>
-
-            {/* Customer Information */}
-            <div className="mb-4">
-              <h4 className="text-lg font-medium">Recipient Information</h4>
-              <p>
-                <strong>Name:</strong> {formData.firstName} {formData.lastName}
-              </p>
-              <p>
-                <strong>Address:</strong> {formData.street}, {formData.state},{" "}
-                {formData.city}
-              </p>
-              <p>
-                <strong>Phone:</strong> {formData.phone}
-              </p>
-              {formData.email && (
-                <p>
-                  <strong>Email:</strong> {formData.email}
-                </p>
-              )}
-            </div>
-
-            {/* Payment Method */}
-            <div className="mb-4">
-              <h4 className="text-lg font-medium">Payment Method</h4>
-              <p>
-                {formData.paymentMethod === "COD"
-                  ? "Cash on Delivery"
-                  : "VN-Pay"}
-              </p>
-            </div>
-
             {/* Order Status */}
             <div className="mb-4">
               <h4 className="text-lg font-medium">Order Status</h4>
@@ -674,8 +685,8 @@ const CheckOutDetails = () => {
           </div>
         </div>
       )}
-
     </>
   );
 };
+
 export default CheckOutDetails;
