@@ -49,7 +49,15 @@ public partial class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     public virtual DbSet<SkinQuiz> SkinQuizzes { get; set; }
 
     public virtual DbSet<SkinType> SkinTypes { get; set; }
+
     public virtual DbSet<Blog> Blogs { get; set; }
+
+    public virtual DbSet<City> Cities { get; set; }
+
+    public virtual DbSet<District> Districts { get; set; }
+
+    public virtual DbSet<ShippingFee> ShippingFees { get; set; }
+
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         => optionsBuilder.UseSqlServer("Name=DefaultConnection");
 
@@ -503,6 +511,38 @@ public partial class ApplicationDbContext : IdentityDbContext<ApplicationUser>
                 .HasMaxLength(10)
                 .IsUnicode(false)
                 .HasColumnName("symbol");
+        });
+        modelBuilder.Entity<City>(entity =>
+        {
+            entity.HasIndex(e => e.Name).IsUnique();
+        });
+
+        modelBuilder.Entity<District>(entity =>
+        {
+            entity.HasIndex(e => new { e.Name, e.CityId }).IsUnique();
+
+            entity.HasOne(d => d.City)
+                .WithMany(c => c.Districts)
+                .HasForeignKey(d => d.CityId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<ShippingFee>(entity =>
+        {
+            entity.Property(e => e.Fee).HasColumnType("decimal(18,2)");
+            entity.Property(e => e.LastUpdated).HasDefaultValueSql("GETDATE()");
+
+            entity.HasOne(sf => sf.City)
+                .WithMany()
+                .HasForeignKey(sf => sf.CityId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            entity.HasOne(sf => sf.District)
+                .WithMany()
+                .HasForeignKey(sf => sf.DistrictId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            entity.HasIndex(e => e.DistrictId).IsUnique();
         });
 
         OnModelCreatingPartial(modelBuilder);

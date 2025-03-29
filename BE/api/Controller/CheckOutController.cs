@@ -25,19 +25,26 @@ namespace api.Controller
 
         private readonly IProductRepository _productRepo;
 
+        private readonly ICityRepository _cityRepository;
+
+        private readonly IDistrictRepository _districtRepository;
+
         public CheckOutController(
             IVnPayService vnPayService,
             ICartService cartService,
             IOrderRepository orderRepo,
             IOrderItemRepository orderItemRepo,
-            IProductRepository productRepo
-            )
+            IProductRepository productRepo,
+            ICityRepository cityRepository,
+            IDistrictRepository districtRepository)
         {
             _vnPayService = vnPayService;
             _cartService = cartService;
             _orderRepo = orderRepo;
             _orderItemRepo = orderItemRepo;
             _productRepo = productRepo;
+            _cityRepository = cityRepository;
+            _districtRepository = districtRepository;
         }
 
         [HttpPost]
@@ -70,8 +77,23 @@ namespace api.Controller
                         return BadRequest("Số lượng sản phẩm không đủ");
                     }
                 }
+                var cityId = int.Parse(checkOutDTO.City);
+                var districtId = int.Parse(checkOutDTO.State);
 
-                var deliveryAddress = $"{checkOutDTO.Street}, {checkOutDTO.State}, {checkOutDTO.City}";
+                var city = await _cityRepository.GetCityByIdAsync(cityId);
+                if (city == null)
+                {
+                    return BadRequest("Thành phố không tồn tại");
+                }
+
+                var district = await _districtRepository.GetDistrictByIdAsync(districtId);
+
+                if (district == null)
+                {
+                    return BadRequest("Quận huyện không tồn tại");
+                }
+
+                var deliveryAddress = $"{checkOutDTO.Street}, {district.Name}, {city.Name}";
                 var order = new Order();
                 switch (checkOutDTO.PaymentMethod)
                 {

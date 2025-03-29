@@ -149,7 +149,9 @@ builder.Services.AddScoped<IQuizImportService, QuizImportService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IDashBoardRepository, DashboardRepository>();
 builder.Services.AddScoped<IBlogRepository, BlogRepository>();
-
+builder.Services.AddScoped<ICityRepository, CityRepository>();
+builder.Services.AddScoped<IDistrictRepository, DistrictRepository>();
+builder.Services.AddScoped<IShippingFeeRepository, ShippingFeeRepository>();
 
 
 var app = builder.Build();
