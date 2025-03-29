@@ -1,33 +1,24 @@
 import { useNavigate, Navigate, Outlet } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
-import { useState, useEffect } from "react";
-
-const showLoginToast = () => {
-  toast.warn({
-    autoClose: 3000,
-    closeOnClick: false,
-    closeButton: true,
-    position: "top-center",
-  });
-};
+import { useEffect } from "react";
 
 const ProtectedRoute = ({ allowedRoles, children }) => {
   const token = useSelector((state) => state.user.token);
   const role = useSelector((state) => state.user.role);
   const navigate = useNavigate();
 
-  const [toastShown, setToastShown] = useState(false);
-
   useEffect(() => {
-    if (!token && !toastShown) {
-      showLoginToast();
-      setToastShown(true);
-      setTimeout(() => {
-        navigate("/login", { replace: true });
-      }, 0);
+    if (!token) {
+      toast.warn("You must login!", {
+        autoClose: 3000,
+        closeOnClick: true,
+        closeButton: true,
+        position: "top-center",
+      });
+      navigate("/login", { replace: true });
     }
-  }, [token, toastShown, navigate]);
+  }, [token, navigate]);
 
   // Not logged in
   if (!token) {

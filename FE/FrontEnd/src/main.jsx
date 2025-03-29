@@ -69,18 +69,22 @@ const router = createBrowserRouter([
       {
         path: "/",
         element: <HomePage />,
-      },
+      },  
       {
         path: "/skinquiz",
-        element: <SkinQuiz />,
+        element: (
+          <ProtectedRoute allowedRoles={["Customer"]}>
+            <SkinQuiz />
+          </ProtectedRoute>
+        ),
       },
       {
         path: "/result",
-        element: <Result />,
-      },
-      {
-        path: "/productlist",
-        element: <ProductList />,
+        element: (
+          <ProtectedRoute allowedRoles={["Customer"]}>
+              <Result />
+          </ProtectedRoute>
+        ) 
       },
       {
         path: "/product/:id",
@@ -88,19 +92,35 @@ const router = createBrowserRouter([
       },
       {
         path: "/checkout",
-        element: <Checkout />,
+        element: (
+          <ProtectedRoute allowedRoles={["Customer"]}>
+            <Checkout />
+          </ProtectedRoute>
+        ) 
       },
       {
         path: "/checkout-details",
-        element: <CheckOutDetail />,
+        element: (
+          <ProtectedRoute allowedRoles={["Customer"]}>
+            <CheckOutDetail />
+          </ProtectedRoute> 
+        ),
       },
       {
         path: "/payment-result",
-        element: <CheckoutResult />,
+        element: (
+          <ProtectedRoute allowedRoles={["Customer"]}>
+            <CheckoutResult />
+          </ProtectedRoute>  
+        ),
       },
       {
         path: "/customerProfile",
-        element: <CustomerProfile />,
+        element: (
+          <ProtectedRoute allowedRoles={["Customer"]}>
+            <CustomerProfile />
+          </ProtectedRoute>  
+        ),
       },
       {
         path: "/sale",
@@ -117,7 +137,11 @@ const router = createBrowserRouter([
 
       {
         path: "/order-history",
-        element: <OrderHistory />,
+        element: (
+          <ProtectedRoute allowedRoles={["Customer"]}>
+            <OrderHistory />
+          </ProtectedRoute>  
+        ),
       },
     ],
   },
