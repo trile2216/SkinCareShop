@@ -50,6 +50,7 @@ const customerService = {
             throw error;
         }
     },
+
 };
 
 export default customerService;
@@ -64,4 +65,29 @@ export const changePassword = async (id, passwordData) => {
         toast.error(error.response?.data || "Failed to change password");
         throw error;
     }
+};
+
+const getCustomerTestResult = async (userId) => {
+    try {
+        const response = await fetch(`/api/quiz/result/${userId}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            }
+        });
+        if (!response.ok) {
+            throw new Error('Failed to fetch test results');
+        }
+        return await response.json();
+    } catch (error) {
+        console.error('Error fetching test results:', error);
+        throw error;
+    }
+};
+
+// Export thêm hàm mới
+export {
+    // ... existing exports ...
+    getCustomerTestResult
 };
