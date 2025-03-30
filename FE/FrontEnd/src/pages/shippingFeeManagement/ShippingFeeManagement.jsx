@@ -213,12 +213,7 @@ const ShippingFeeManagement = () => {
   };
 
   const columns = [
-    {
-      title: "ID",
-      dataIndex: "id",
-      key: "id",
-      width: 80,
-    },
+
     {
       title: "City",
       dataIndex: "cityName",
@@ -250,13 +245,7 @@ const ShippingFeeManagement = () => {
         </Tag>
       ),
     },
-    {
-      title: "Last Updated",
-      dataIndex: "lastUpdated",
-      key: "lastUpdated",
-      render: (date) => new Date(date).toLocaleString(),
-      sorter: (a, b) => new Date(a.lastUpdated) - new Date(b.lastUpdated),
-    },
+
     {
       title: "Actions",
       key: "actions",
