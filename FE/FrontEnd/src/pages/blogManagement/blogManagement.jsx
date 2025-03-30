@@ -171,12 +171,26 @@ const BlogManagement = () => {
 
 
   const filteredBlogs = useMemo(() => {
-    return blogs.filter(blog =>
-      blog.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      blog.category.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      blog.skinType.toLowerCase().includes(searchTerm.toLowerCase())
+    return (blogs || []).filter(blog =>
+      (blog.title?.toLowerCase() || "").includes(searchTerm.toLowerCase().trim()) ||
+      (blog.category?.toLowerCase() || "").includes(searchTerm.toLowerCase().trim()) ||
+      (blog.skinType?.toLowerCase() || "").includes(searchTerm.toLowerCase().trim())
     );
   }, [blogs, searchTerm]);
+
+
+  const highlightText = (text, highlight) => {
+    if (!highlight || !text) return text;
+    const parts = text.split(new RegExp(`(${highlight})`, "gi")); // Tách nội dung theo từ khóa
+    return parts.map((part, index) =>
+      part.toLowerCase() === highlight.toLowerCase() ? (
+        <span key={index} className="font-bold text-red-500">{part}</span>
+      ) : (
+        part
+      )
+    );
+  };
+
 
   const itemsPerPage = 5;
   const totalPages = Math.ceil(filteredBlogs.length / itemsPerPage);
@@ -186,30 +200,41 @@ const BlogManagement = () => {
   );
 
   return (
-    <div className="min-h-screen bg-gray-100 p-4 dark:bg-gray-900">
+    <div className="min-h-screen bg-rose-100 p-4 dark:bg-rose-900">
       <div className="mx-auto max-w-7xl">
         <div className="mb-6 flex items-center justify-between">
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Blog Management</h1>
+          <h1 className="text-2xl font-bold text-rose-400 dark:text-white">Blog Management</h1>
           <button
             onClick={() => setIsModalOpen(true)}
-            className="flex items-center rounded-lg bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
+            className="flex items-center rounded-lg bg-rose-400 px-4 py-2 text-white hover:bg-blue-700"
           >
             <FiPlus className="mr-2" /> Add New Blog
           </button>
         </div>
 
-        <div className="mb-4">
-          <div className="relative">
+        <div className="flex justify-center items-center my-4 gap-1">
+          <div className="relative w-1/3">
             <FiSearch className="absolute left-3 top-3 text-gray-400" />
             <input
               type="text"
               placeholder="Search blogs..."
-              className="w-full rounded-lg border pl-10 pr-4 py-2 focus:border-blue-500 focus:outline-none dark:bg-gray-800 dark:border-gray-700 dark:text-white"
+              className="w-full rounded-lg border pl-10 pr-4 py-2 focus:border-rose-500 focus:outline-none dark:bg-rose-800 dark:border-rose-700 dark:text-white"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
+            {searchTerm && (
+              <button
+                className="absolute right-2 top-2 text-gray-500 text-sm scale-75"
+                onClick={() => setSearchTerm("")}
+              >
+                ❌
+              </button>
+            )}
+
           </div>
+
         </div>
+
 
         <div className="overflow-x-auto rounded-lg bg-white shadow-md dark:bg-gray-800">
           <table className="w-full table-auto">
@@ -260,7 +285,7 @@ const BlogManagement = () => {
                 key={page}
                 onClick={() => setCurrentPage(page)}
                 className={`mx-1 px-4 py-2 rounded ${currentPage === page
-                  ? "bg-blue-600 text-white"
+                  ? "bg-rose-500 text-white"
                   : "bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-300"}`}
               >
                 {page}
