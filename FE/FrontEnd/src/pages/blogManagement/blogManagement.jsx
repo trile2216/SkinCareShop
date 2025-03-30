@@ -2,10 +2,9 @@ import React, { useState, useCallback, useMemo, useEffect } from "react";
 import { FiEdit2, FiTrash2, FiPlus, FiSearch, FiX, FiCheck, FiImage } from "react-icons/fi";
 import Swal from "sweetalert2";
 import "sweetalert2/dist/sweetalert2.min.css";
-import { getBlogs } from "../../services/blogs";
+import { getBlogs, updateBlog, createBlog, deleteBlog } from "../../services/blogs";
 
 const BlogManagement = () => {
-  const [blogs, setBlogs] = useState([]);
   const [blogs, setBlogs] = useState([]);
   const categories = [
     "Cleanser",
@@ -20,7 +19,7 @@ const BlogManagement = () => {
     "Face Oil"
   ];
 
-  const skinTypes = [
+  const skintypes = [
     "OSPW", "OSPT", "OSNW", "OSNT",
     "ORPW", "ORPT", "ORNW", "ORNT",
     "DSPW", "DSPT", "DSNW", "DSNT",
@@ -40,7 +39,7 @@ const BlogManagement = () => {
     action: "",
     summary: "",
     category: "",
-    skinType: "",
+    skintype: "",
     imgURL: "",
   });
   const [selectedFile, setSelectedFile] = useState(null);
@@ -50,7 +49,7 @@ const BlogManagement = () => {
   const fetchBlogs = async () => {
     try {
       const response = await getBlogs();
-      setBlogs(response.data);
+      setBlogs(response);
     } catch (error) {
       console.error("Error fetching blogs:", error);
     }
@@ -75,53 +74,68 @@ const BlogManagement = () => {
     if (!newBlog.category) {
       newErrors.category = "Please select a category";
     }
-    if (!newBlog.skinType) {
-      newErrors.skinType = "Please select a skin type";
+    if (!newBlog.skintype) {
+      newErrors.skintype = "Please select a skin type";
     }
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = async () => {
-    try {
-      if (!newBlog.title.trim() || !newBlog.content.trim()) {
-        Swal.fire("Error", "Enter full information!", "error");
-        return;
-      }
+const handleSubmit = async (e) => {
+  e.preventDefault();
 
-      const requestBody = {
-        title: newBlog.title.trim(),
-        content: newBlog.content.trim(),
-        imageUrl: newBlog.imgURL || "",
-        summary: newBlog.summary || "",
-        skintype: newBlog.skinType || "All",
-        category: newBlog.category || "General",
-      };
+  if (!validateForm()) {
+    const errorMessages = Object.values(errors).map((err) => `<li>${err}</li>`).join("");
+    Swal.fire({
+      title: "Validation Errors",
+      html: `<ul>${errorMessages}</ul>`,
+      icon: "error",
+    });
+    return;
+  }
 
-      const response = await fetch("http://localhost:5286/api/blog/create", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(requestBody),
-      });
-
-      const data = await response.json();
-      console.log("API Response:", data);
-
-      if (response.status === 201) {
-        await fetchBlogs();
-        setNewBlog({ title: "", content: "", skinType: "", category: "", imgURL: "" });
-        Swal.fire("Success", "Add blog successfully", "success");
-      } else {
-        Swal.fire("Error", data.message || "Failed to add blog", "error");
-      }
-    } catch (error) {
-      console.error("Error adding blog:", error);
-      Swal.fire("Error", "Error adding blog", "error");
-    }
+  const requestBody = {
+    title: newBlog.title.trim(),
+    content: newBlog.content.trim(),
+    imageUrl: newBlog.imgURL || "",
+    summary: newBlog.summary || "",
+    skintype: newBlog.skintype || "All",
+    category: newBlog.category || "General",
   };
 
+  try {
+    let response;
+
+    if (selectedBlog) {
+      // Gọi hàm updateBlog
+      response = await updateBlog(selectedBlog.id, requestBody);
+
+      if (response) {
+        await fetchBlogs(); // Lấy lại danh sách blogs sau khi cập nhật
+        Swal.fire("Success", "Blog updated successfully!", "success");
+      } else {
+        throw new Error("Failed to update blog");
+      }
+    } else {
+      // Gọi hàm createBlog
+      response = await createBlog(requestBody);
+
+      if (response) {
+        await fetchBlogs(); // Lấy lại danh sách blogs sau khi tạo mới
+        Swal.fire("Success", "Blog created successfully!", "success");
+      } else {
+        throw new Error("Failed to create blog");
+      }
+    }
+
+    // Đặt lại form sau khi submit
+    if (typeof resetForm === "function") resetForm();
+    if (typeof setIsModalOpen === "function") setIsModalOpen(false);
+  } catch (error) {
+    console.error("Error submitting blog:", error);
+    Swal.fire("Error", error.message || "Something went wrong. Please try again.", "error");
+  }
+};
 
   const resetForm = () => {
     setNewBlog({
@@ -130,7 +144,7 @@ const BlogManagement = () => {
       action: "",
       summary: "",
       category: "",
-      skinType: "",
+      skintype: "",
       imgURL: "",
     });
     setSelectedBlog(null);
@@ -143,10 +157,30 @@ const BlogManagement = () => {
     setIsModalOpen(true);
   };
 
-  const handleDelete = (blog) => {
-    setSelectedBlog(blog);
-    setIsDeleteModalOpen(true);
-  };
+  const handleDelete = async () => {
+  if (!selectedBlog || !selectedBlog.id) {
+    console.error("No blog selected for deletion");
+    return;
+  }
+
+  try {
+    // Gọi API xóa bài viết
+    await deleteBlog(selectedBlog.id);
+
+    // Cập nhật danh sách blogs sau khi xóa
+    setBlogs((prev) => prev.filter((blog) => blog.id !== selectedBlog.id));
+
+    // Thông báo thành công
+    Swal.fire("Deleted!", "Blog has been deleted successfully.", "success");
+
+    // Đóng modal
+    setIsDeleteModalOpen(false);
+    setSelectedBlog(null);
+  } catch (error) {
+    console.error("Error deleting blog:", error);
+    Swal.fire("Error", "Failed to delete blog. Please try again.", "error");
+  }
+}
 
   const confirmDelete = () => {
     setBlogs(prev => prev.filter(blog => blog.id !== selectedBlog.id));
@@ -167,7 +201,7 @@ const BlogManagement = () => {
     return (blogs || []).filter(blog =>
       (blog.title?.toLowerCase() || "").includes(searchTerm.toLowerCase().trim()) ||
       (blog.category?.toLowerCase() || "").includes(searchTerm.toLowerCase().trim()) ||
-      (blog.skinType?.toLowerCase() || "").includes(searchTerm.toLowerCase().trim())
+      (blog.skintype?.toLowerCase() || "").includes(searchTerm.toLowerCase().trim())
     );
   }, [blogs, searchTerm]);
 
@@ -193,13 +227,13 @@ const BlogManagement = () => {
   );
 
   return (
-    <div className="min-h-screen bg-rose-100 p-4 dark:bg-rose-900">
+    <div className="min-h-screen bg-gray-100 p-4 dark:bg-gray-900">
       <div className="mx-auto max-w-7xl">
         <div className="mb-6 flex items-center justify-between">
-          <h1 className="text-2xl font-bold text-rose-400 dark:text-white">Blog Management</h1>
+          <h1 className="text-2xl font-bold text-black-400 dark:text-white">Blog Management</h1>
           <button
             onClick={() => setIsModalOpen(true)}
-            className="flex items-center rounded-lg bg-rose-400 px-4 py-2 text-white hover:bg-blue-700"
+            className="flex items-center rounded-lg bg-rose-400 px-4 py-2 text-white hover:bg-rose-700"
           >
             <FiPlus className="mr-2" /> Add New Blog
           </button>
@@ -249,7 +283,7 @@ const BlogManagement = () => {
                   <td className="px-6 py-4 text-sm text-gray-900 dark:text-white">{blog.content}</td>
                   <td className="px-6 py-4 text-sm text-gray-900 dark:text-white">{blog.imgURL}</td>
                   <td className="px-6 py-4 text-sm text-gray-900 dark:text-white">{blog.category}</td>
-                  <td className="px-6 py-4 text-sm text-gray-900 dark:text-white">{blog.skinType}</td>
+                  <td className="px-6 py-4 text-sm text-gray-900 dark:text-white">{blog.skintype}</td>
                   <td className="px-6 py-4 text-sm text-gray-900 dark:text-white">{blog.createdAt}</td>
                   <td className="px-6 py-4 text-sm">
                     <button
@@ -259,7 +293,10 @@ const BlogManagement = () => {
                       <FiEdit2 className="h-5 w-5" />
                     </button>
                     <button
-                      onClick={() => handleDelete(blog)}
+                      onClick={() => {
+                        setSelectedBlog(blog); // Gán blog hiện tại làm blog được chọn
+                        setIsDeleteModalOpen(true); // Mở modal xóa
+                      }}
                       className="text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300"
                     >
                       <FiTrash2 className="h-5 w-5" />
@@ -318,6 +355,9 @@ const BlogManagement = () => {
                       className="w-full rounded-lg border border-gray-300 p-3 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
                       placeholder="Enter blog title"
                     />
+                    <div className="absolute top-3 right-3 text-sm text-gray-500 dark:text-gray-400">
+                      {newBlog.title.trim().split(/\s+/).filter(Boolean).length} words
+                    </div>
                     {errors.title && (
                       <p className="mt-1 text-sm text-red-600">{errors.title}</p>
                     )}
@@ -351,25 +391,25 @@ const BlogManagement = () => {
                       Skin Type *
                     </label>
                     <select
-                      value={newBlog.skinType}
-                      onChange={(e) => setNewBlog({ ...newBlog, skinType: e.target.value })}
+                      value={newBlog.skintype}
+                      onChange={(e) => setNewBlog({ ...newBlog, skintype: e.target.value })}
                       className="w-full rounded-lg border border-gray-300 p-3 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
                     >
                       <option value="">Select skin type</option>
-                      {skinTypes.map((type) => (
+                      {skintypes.map((type) => (
                         <option key={type} value={type}>
                           {type}
                         </option>
                       ))}
                     </select>
-                    {errors.skinType && (
-                      <p className="mt-1 text-sm text-red-600">{errors.skinType}</p>
+                    {errors.skintype && (
+                      <p className="mt-1 text-sm text-red-600">{errors.skintype}</p>
                     )}
                   </div>
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      <i className="fas fa-image mr-1"></i> Hình ảnh
+                      <i className="fas fa-image mr-1"></i> Image
                     </label>
                     <input
                       type="file"
@@ -405,7 +445,29 @@ const BlogManagement = () => {
                       setNewBlog({ ...newBlog, content: e.target.value })
                     }
                   />
+                  <div className="absolute top-3 right-3 text-sm text-gray-500 dark:text-gray-400">
+                      {newBlog.content.trim().split(/\s+/).filter(Boolean).length} words
+                    </div>
                 </div>
+
+                <div>
+            <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
+              Summary *
+            </label>
+            <textarea
+              value={newBlog.summary}
+              onChange={(e) => setNewBlog({ ...newBlog, summary: e.target.value })}
+              className="w-full rounded-lg border border-gray-300 p-3 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+              placeholder="Enter blog summary"
+              rows={4}
+            />
+            <div className="absolute top-3 right-3 text-sm text-gray-500 dark:text-gray-400">
+                      {newBlog.summary.trim().split(/\s+/).filter(Boolean).length} words
+                    </div>
+            {errors.summary && (
+              <p className="mt-1 text-sm text-red-600">{errors.summary}</p>
+            )}
+          </div>
 
 
                 <div className="flex justify-end space-x-4 pt-4">
@@ -421,7 +483,7 @@ const BlogManagement = () => {
                   </button>
                   <button
                     type="submit"
-                    className="rounded-lg bg-blue-600 px-6 py-2.5 text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                    className="rounded-lg bg-rose-400 px-6 py-2.5 text-white hover:bg-rose-700 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:ring-offset-2"
                   >
                     {selectedBlog ? "Update Blog" : "Create Blog"}
                   </button>

@@ -14,6 +14,6 @@ namespace api.DTOs.ShippingFee
         public string DistrictName { get; set; }
         public decimal Fee { get; set; }
         public bool IsActive { get; set; }
-        public DateTime LastUpdated { get; set; }
+        public string LastUpdated { get; set; }
     }
 }

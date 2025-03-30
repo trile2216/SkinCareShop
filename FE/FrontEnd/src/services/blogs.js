@@ -74,6 +74,28 @@ export const searchBlogs = async (query) => {
     }
 };
 
+export const updateBlog = async (id, blogData) => {
+    try {
+        // Gửi request PUT đến API
+        const response = await api.put(`/blog/update/${id}`, blogData, {
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
+
+        // Thông báo thành công
+        toast.success("Blog updated successfully");
+        return response.data;
+    } catch (error) {
+        // Xử lý lỗi và thông báo rõ ràng cho người dùng
+        const errorMessage =
+            error.response?.data?.message || "Error updating blog";
+        console.error("Error updating blog:", errorMessage);
+        toast.error(errorMessage);
+        throw error; // Ném lỗi để bên gọi hàm xử lý thêm nếu cần
+    }
+};
+
 
 
 

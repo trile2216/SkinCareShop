@@ -20,7 +20,7 @@ namespace api.Mappers
                 DistrictName = shippingFee.District.Name,
                 Fee = shippingFee.Fee,
                 IsActive = shippingFee.IsActive,
-                LastUpdated = shippingFee.LastUpdated
+                LastUpdated = shippingFee.LastUpdated.ToString(),
             };
         }
 
@@ -28,10 +28,12 @@ namespace api.Mappers
         {
             return new ShippingFee()
             {
+
                 CityId = createShippingFeeDTO.CityId,
                 DistrictId = createShippingFeeDTO.DistrictId,
                 Fee = createShippingFeeDTO.Fee,
-                IsActive = true
+                IsActive = true,
+                LastUpdated = DateTime.UtcNow
             };
         }
 
