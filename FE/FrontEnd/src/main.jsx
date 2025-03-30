@@ -35,6 +35,7 @@ import { SearchProvider } from "./context/SearchContext";
 import ShippingFeeManagement from "./pages/shippingFeeManagement/ShippingFeeManagement.jsx";
 import ForgotPassword from "./pages/login/ForgotPassword.jsx";
 import ResetPassword from "./pages/login/ResetPassword.jsx";
+import BlogManagement from "./pages/blogManagement/blogManagement.jsx";
 // document.getElementById('root')
 // 1. Tìm tới root
 // 2. Lấy code ở trong App gắn vào root
@@ -70,6 +71,7 @@ const router = createBrowserRouter([
     path: "/register",
     element: <RegisterPage />,
   },
+
 
   // Các trang customer sử dụng MainLayout
   {
@@ -175,6 +177,7 @@ const router = createBrowserRouter([
       { path: "routine", element: <RoutineManagement /> },
       { path: "user", element: <UserManagement /> },
       { path: "shipping-fee", element: <ShippingFeeManagement /> },
+      { path: "blog", element: <BlogManagement /> },
     ],
   },
 ]);

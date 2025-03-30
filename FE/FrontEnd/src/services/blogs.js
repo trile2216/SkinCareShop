@@ -3,7 +3,7 @@ import api from "../config/axios";
 
 export const getBlogs = async () => {
     try {
-        const response = await api.get("http://localhost:5286/api/blog/all");
+        const response = await api.get("blog/all");
         return response.data;
     } catch (error) {
         toast.error(error);
@@ -13,7 +13,7 @@ export const getBlogs = async () => {
 
 export const getAllBlogCategories = async () => {
     try {
-        const response = await api.get("http://localhost:5286/api/blog/categories");
+        const response = await api.get("blog/categories");
         return response.data;
     } catch (error) {
         toast.error(error);
@@ -21,7 +21,7 @@ export const getAllBlogCategories = async () => {
 };
 export const getAllBlogSkintypes = async () => {
     try {
-        const response = await api.get("http://localhost:5286/api/blog/skintypes");
+        const response = await api.get("blog/skintypes");
         return response.data;
     } catch (error) {
         toast.error(error);
@@ -29,7 +29,7 @@ export const getAllBlogSkintypes = async () => {
 };
 export const createBlog = async (formData) => {
     try {
-        const response = await api.post("http://localhost:5286/api/blog/create", formData, {
+        const response = await api.post("blog/create", formData, {
             headers: {
                 "Content-Type": "multipart/form-data",
             },
@@ -53,7 +53,16 @@ export const blogService = {
     },
 };
 
-
+export const deleteBlog = async (id) => {
+    try {
+        console.log("Deleting blog with ID:", id); 
+        await api.delete(`/blog/delete/${id}`);
+    } catch (error) {
+        console.error("Error deleting blog:", error.response?.data || error.message);
+        toast.error(error.response?.data?.message || "Error deleting blog");
+        throw error;
+    }
+};
 
 
 
