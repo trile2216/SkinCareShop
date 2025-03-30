@@ -183,9 +183,6 @@ const HomePage = () => {
                   <div className="p-4">
                     <h4 className="text-lg font-bold">{product.title}</h4>
                     <p className="text-gray-600 mt-2">{product.description}</p>
-                    <button className="mt-3 text-rose-500 font-semibold">
-                      Shop Now
-                    </button>
                   </div>
                 </div>
               </SwiperSlide>

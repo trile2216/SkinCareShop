@@ -33,6 +33,8 @@ import BlogDetail from "./pages/blog/BlogDetail.jsx";
 import Blogs from "./pages/blog/Blog.jsx";
 import { SearchProvider } from "./context/SearchContext";
 import ShippingFeeManagement from "./pages/shippingFeeManagement/ShippingFeeManagement.jsx";
+import ForgotPassword from "./pages/login/ForgotPassword.jsx";
+import ResetPassword from "./pages/login/ResetPassword.jsx";
 // document.getElementById('root')
 // 1. Tìm tới root
 // 2. Lấy code ở trong App gắn vào root
@@ -55,6 +57,14 @@ const router = createBrowserRouter([
   {
     path: "/changePassword",
     element: <ChangePassword />,
+  },
+  {
+    path: "/forgot-password",
+    element: <ForgotPassword />,
+  },
+  {
+    path: "/reset-password",
+    element: <ResetPassword />,
   },
   {
     path: "/register",

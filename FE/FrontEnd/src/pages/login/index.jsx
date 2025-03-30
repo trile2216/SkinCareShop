@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { FaEye, FaEyeSlash, FaLock, FaUser } from "react-icons/fa";
-import { FcGoogle } from "react-icons/fc";
 // import api from "../../config/axios";
 // import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
@@ -160,7 +159,7 @@ const LoginPage = () => {
           <div className="flex items-center justify-between">
             <div className="text-sm">
               <a
-                href="/changePassword"
+                href="/forgot-password"
                 className="font-medium text-rose-400 hover:text-rose-300"
               >
                 Forgot your password?
