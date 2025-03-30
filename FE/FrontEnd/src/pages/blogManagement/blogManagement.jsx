@@ -2,9 +2,10 @@ import React, { useState, useCallback, useMemo, useEffect } from "react";
 import { FiEdit2, FiTrash2, FiPlus, FiSearch, FiX, FiCheck, FiImage } from "react-icons/fi";
 import Swal from "sweetalert2";
 import "sweetalert2/dist/sweetalert2.min.css";
-import { getBlogs, deleteBlog } from "../../services/blogs";
+import { getBlogs } from "../../services/blogs";
 
 const BlogManagement = () => {
+  const [blogs, setBlogs] = useState([]);
   const [blogs, setBlogs] = useState([]);
   const categories = [
     "Cleanser",
@@ -49,7 +50,7 @@ const BlogManagement = () => {
   const fetchBlogs = async () => {
     try {
       const response = await getBlogs();
-      setBlogs(response || []);
+      setBlogs(response.data);
     } catch (error) {
       console.error("Error fetching blogs:", error);
     }
@@ -82,9 +83,6 @@ const BlogManagement = () => {
   };
 
   const handleSubmit = async () => {
-    event.preventDefault();
-    console.log("Image URL before sending:", newBlog.imgURL);
-    console.log("SkinType before sending:", newBlog.skinType);
     try {
       if (!newBlog.title.trim() || !newBlog.content.trim()) {
         Swal.fire("Error", "Enter full information!", "error");
@@ -145,14 +143,9 @@ const BlogManagement = () => {
     setIsModalOpen(true);
   };
 
-  const handleDelete = async (blog) => {
-    try {
-      await deleteBlog(blog.id); // Xóa blog trên server
-      setBlogs((prevBlogs) => prevBlogs.filter((b) => b.id !== blog.id)); // Cập nhật state blogs
-      Swal.fire("Deleted!", "Blog has been deleted.", "success");
-    } catch (error) {
-      Swal.fire("Error", "Failed to delete blog.", "error");
-    }
+  const handleDelete = (blog) => {
+    setSelectedBlog(blog);
+    setIsDeleteModalOpen(true);
   };
 
   const confirmDelete = () => {
@@ -256,7 +249,7 @@ const BlogManagement = () => {
                   <td className="px-6 py-4 text-sm text-gray-900 dark:text-white">{blog.content}</td>
                   <td className="px-6 py-4 text-sm text-gray-900 dark:text-white">{blog.imgURL}</td>
                   <td className="px-6 py-4 text-sm text-gray-900 dark:text-white">{blog.category}</td>
-                  <td className="px-6 py-4 text-sm text-gray-900 dark:text-white">{blog.skintype}</td>
+                  <td className="px-6 py-4 text-sm text-gray-900 dark:text-white">{blog.skinType}</td>
                   <td className="px-6 py-4 text-sm text-gray-900 dark:text-white">{blog.createdAt}</td>
                   <td className="px-6 py-4 text-sm">
                     <button
