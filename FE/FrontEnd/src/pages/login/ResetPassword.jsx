@@ -10,18 +10,8 @@ import {
   Button,
   Box,
   Container,
-  LinearProgress,
-  IconButton,
-  InputAdornment,
 } from "@mui/material";
-import {
-  Visibility,
-  VisibilityOff,
-  LockReset,
-  Check,
-  Close,
-  ArrowBack,
-} from "@mui/icons-material";
+import { LockReset, Check, ArrowBack } from "@mui/icons-material";
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
 
@@ -29,6 +19,7 @@ const ResetPassword = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState({});
   const [resetSuccess, setResetSuccess] = useState(false);
   const [formData, setFormData] = useState({
     email: "",

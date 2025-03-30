@@ -159,7 +159,7 @@ const LoginPage = () => {
           <div className="flex items-center justify-between">
             <div className="text-sm">
               <a
-                href="/forgot-password"
+                onClick={() => navigate("/forgot-password")}
                 className="font-medium text-rose-400 hover:text-rose-300"
               >
                 Forgot your password?
@@ -203,7 +203,7 @@ const LoginPage = () => {
             <p className="mt-4 text-center text-sm text-gray-600">
               Don't have an account?{" "}
               <a
-                href="/register"
+                onClick={() => navigate("/register")}
                 className="font-medium text-rose-500 hover:text-rose-500"
               >
                 Register here
