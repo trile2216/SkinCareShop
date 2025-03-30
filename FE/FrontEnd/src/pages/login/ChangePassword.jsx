@@ -7,8 +7,6 @@ import { Visibility, VisibilityOff, ArrowBack } from "@mui/icons-material";
 import {
     Card, CardContent, Typography, TextField, Button, IconButton, InputAdornment
 } from "@mui/material";
-import Header from "../../components/Header";
-import Footer from "../../components/Footer";
 
 const ChangePassword = () => {
     const navigate = useNavigate();
@@ -66,81 +64,79 @@ const ChangePassword = () => {
     };
 
     return (
-        <>
-            <Header />
+        <div className="relative min-h-screen flex items-center justify-center bg-cover bg-center">
+            {/* Ảnh nền bị làm mờ */}
+            <div className="absolute inset-0 bg-[url('https://i.imgur.com/xP1xJCq.jpg')] bg-cover bg-center blur-md opacity-90"></div>
 
-            <div className="flex flex-col items-center justify-center min-h-[70vh] py-10 px-6">
-                <Card sx={{ maxWidth: 400, width: "100%", padding: 2, boxShadow: "none", border: "none" }}>
-                    <CardContent sx={{ textAlign: "left" }}>
-                        {/* Nút Back */}
-                        <Button
-                            startIcon={<ArrowBack />}
-                            sx={{ mb: 2, textTransform: "none", fontSize: 16 }}
-                            onClick={() => navigate("/customerProfile")}
-                        >
-                            Back
-                        </Button>
+            {/* Khung đăng nhập */}
+            <div className="relative z-10 max-w-md w-full space-y-8 bg-rose-100 bg-opacity-70 backdrop-blur-lg p-8 rounded-xl shadow-lg">
+                <div className="text-center">
+                    <h2 className="mt-6 text-3xl font-extrabold text-rose-400">
+                        Change Password
+                    </h2>
+                </div>
 
-                        <Typography variant="h5" fontWeight="bold" gutterBottom>
-                            Change Password
-                        </Typography>
-
-                        <form onSubmit={handleSubmit}>
-                            {["currentPassword", "newPassword", "confirmPassword"].map((field, index) => (
-                                <TextField
-                                    key={index}
-                                    label={
-                                        field === "currentPassword"
-                                            ? "Current Password"
-                                            : field === "newPassword"
-                                                ? "New Password"
-                                                : "Confirm New Password"
-                                    }
-                                    type={showPassword[field] ? "text" : "password"}
-                                    name={field}
-                                    value={formData[field]}
-                                    onChange={handleChange}
-                                    fullWidth
-                                    required
-                                    margin="normal"
-                                    variant="outlined"
-                                    sx={{
-                                        "& .MuiOutlinedInput-root": {
-                                            borderRadius: 8,
-                                        },
-                                    }}
-                                    InputProps={{
-                                        endAdornment: (
-                                            <InputAdornment position="end">
-                                                <IconButton onClick={() => togglePasswordVisibility(field)} edge="end">
-                                                    {showPassword[field] ? <VisibilityOff /> : <Visibility />}
-                                                </IconButton>
-                                            </InputAdornment>
-                                        ),
-                                    }}
-                                />
-                            ))}
-                            <Button
-                                type="submit"
-                                fullWidth
-                                variant="contained"
-                                sx={{
-                                    mt: 2,
-                                    bgcolor: "#E11D48",
-                                    "&:hover": { bgcolor: "#BE123C" },
-                                    borderRadius: 8
-                                }}
-                                disabled={loading}
-                            >
-                                {loading ? "Changing..." : "Change Password"}
-                            </Button>
-                        </form>
-                    </CardContent>
-                </Card>
+                <form onSubmit={handleSubmit}>
+                    {["currentPassword", "newPassword", "confirmPassword"].map((field, index) => (
+                        <TextField
+                            key={index}
+                            label={
+                                field === "currentPassword"
+                                    ? "Current Password"
+                                    : field === "newPassword"
+                                        ? "New Password"
+                                        : "Confirm New Password"
+                            }
+                            type={showPassword[field] ? "text" : "password"}
+                            name={field}
+                            value={formData[field]}
+                            onChange={handleChange}
+                            fullWidth
+                            required
+                            margin="normal"
+                            variant="outlined"
+                            sx={{
+                                "& .MuiOutlinedInput-root": {
+                                    borderRadius: 8,
+                                },
+                            }}
+                            InputProps={{
+                                endAdornment: (
+                                    <InputAdornment position="end">
+                                        <IconButton onClick={() => togglePasswordVisibility(field)} edge="end">
+                                            {showPassword[field] ? <VisibilityOff /> : <Visibility />}
+                                        </IconButton>
+                                    </InputAdornment>
+                                ),
+                            }}
+                        />
+                    ))}
+                    <Button
+                        type="submit"
+                        fullWidth
+                        variant="contained"
+                        sx={{
+                            mt: 2,
+                            bgcolor: "#E11D48",
+                            "&:hover": { bgcolor: "#BE123C" },
+                            borderRadius: 8
+                        }}
+                        disabled={loading}
+                    >
+                        {loading ? "Changing..." : "Change Password"}
+                    </Button>
+                </form>
             </div>
 
-            <Footer />
-        </>
+            <div className="absolute top-4 left-4">
+                <Button
+                    startIcon={<ArrowBack />}
+                    onClick={() => navigate("/customerProfile")}
+                >
+                    Back
+                </Button>
+            </div>
+        </div>
     );
 };
 
