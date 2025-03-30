@@ -23,7 +23,6 @@ import ProtectedRoute from "../src/context/ProtectedRoute.jsx";
 import QuizManagement from "./pages/quizManagement/QuizManagement.jsx";
 import Result from "./pages/quiz/Result.jsx";
 import CheckoutResult from "./pages/paymentResult/CheckoutResult.jsx";
-import ChangePassword from "./pages/customerProfile/ChangePassword.jsx";
 import OrderHistory from "./pages/orderHistory/orderHistory.jsx";
 import UserManagement from "./pages/userManagement/UserManagement.jsx";
 import CustomerProfile from "./pages/customerProfile/CustomerProfile.jsx";
@@ -54,10 +53,6 @@ const router = createBrowserRouter([
   {
     path: "/login",
     element: <LoginPage />,
-  },
-  {
-    path: "/changePassword",
-    element: <ChangePassword />,
   },
   {
     path: "/forgot-password",
