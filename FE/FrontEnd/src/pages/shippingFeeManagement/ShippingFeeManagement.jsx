@@ -39,6 +39,7 @@ const ShippingFeeManagement = () => {
   const [currentFee, setCurrentFee] = useState(null);
   const [districts, setDistricts] = useState([]);
   const [submitting, setSubmitting] = useState(false);
+  const [loadingCities, setLoadingCities] = useState(false);
 
   // Fetch all shipping fees and cities on component mount
   useEffect(() => {
@@ -49,18 +50,28 @@ const ShippingFeeManagement = () => {
     try {
       setLoading(true);
 
-      const feesData = await shippingFeeService.getAllShippingFees();
-      const citiesData = await shippingFeeService.getAllCities();
+      // Gọi API lấy cities
+      const citiesResponse = await shippingFeeService.getAllCities();
+      console.log('Cities response:', citiesResponse);
 
-      setShippingFees(feesData);
-      setFilteredFees(feesData);
-      setCities(citiesData);
+      // Vì response trả về trực tiếp là array nên không cần .data
+      if (Array.isArray(citiesResponse)) {
+        setCities(citiesResponse);
+      } else {
+        console.error('Invalid cities data:', citiesResponse);
+        message.error('Failed to load cities data');
+      }
+
+      // Lấy shipping fees
+      const feesResponse = await shippingFeeService.getAllShippingFees();
+      setShippingFees(feesResponse);
+      setFilteredFees(feesResponse);
+
     } catch (error) {
       console.error("Error fetching data:", error);
-      message.error("Failed to load shipping fees. Please try again later.");
+      message.error("Failed to load data. Please try again later.");
 
-      // Check if unauthorized (likely not admin)
-      if (error.response && error.response.status === 401) {
+      if (error.response?.status === 401) {
         message.error("You are not authorized to access this page");
         navigate("/login");
       }
@@ -100,11 +111,19 @@ const ShippingFeeManagement = () => {
 
     try {
       const districtsData = await shippingFeeService.getDistrictsByCity(cityId);
-      setDistricts(districtsData);
+      console.log('Districts data:', districtsData);
+
+      if (Array.isArray(districtsData)) {
+        setDistricts(districtsData);
+      } else {
+        console.error('Invalid districts data:', districtsData);
+        message.error('Error loading districts data');
+      }
       form.resetFields(["districtId"]);
     } catch (error) {
       console.error("Error fetching districts:", error);
       message.error("Could not load districts for the selected city.");
+      setDistricts([]);
     }
   };
 
@@ -256,19 +275,7 @@ const ShippingFeeManagement = () => {
 
   return (
     <div>
-      <div className="flex justify-between items-center mb-6">
-        <Title style={{ fontWeight: "bold" }} level={3}>
-          Shipping Fee Management
-        </Title>
-        <Button
-          type="primary"
-          icon={<ReloadOutlined />}
-          onClick={fetchData}
-          style={{ marginLeft: 8 }}
-        >
-          Refresh
-        </Button>
-      </div>
+
 
       {/* Search and Filter Controls */}
       <div style={{ marginBottom: 16 }}>
@@ -342,8 +349,11 @@ const ShippingFeeManagement = () => {
               placeholder="Select City"
               onChange={handleCityChange}
               disabled={isEditing}
+              loading={loading}
+              showSearch
+              optionFilterProp="children"
             >
-              {cities.map((city) => (
+              {Array.isArray(cities) && cities.map((city) => (
                 <Option key={city.id} value={city.id}>
                   {city.name}
                 </Option>
@@ -358,9 +368,12 @@ const ShippingFeeManagement = () => {
           >
             <Select
               placeholder="Select District"
-              disabled={!form.getFieldValue("cityId") || isEditing}
+              disabled={!form.getFieldValue("cityId")}
+              loading={loading}
+              showSearch
+              optionFilterProp="children"
             >
-              {districts.map((district) => (
+              {Array.isArray(districts) && districts.map((district) => (
                 <Option key={district.id} value={district.id}>
                   {district.name}
                 </Option>
