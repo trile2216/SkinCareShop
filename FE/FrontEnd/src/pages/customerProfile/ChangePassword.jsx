@@ -15,14 +15,14 @@ const ChangePassword = () => {
     const [formData, setFormData] = useState({
         currentPassword: "",
         newPassword: "",
-        comfirmPassword: "",
+        confirmPassword: "",
     });
 
     const [loading, setLoading] = useState(false);
     const [showPassword, setShowPassword] = useState({
         current: false,
         new: false,
-        comfirm: false,
+        confirm: false,
     });
 
     useEffect(() => {
@@ -46,22 +46,15 @@ const ChangePassword = () => {
             return;
         }
 
-        if (formData.newPassword !== formData.comfirmPassword) {
-            toast.error("New password and comfirmation password do not match");
+        if (formData.newPassword !== formData.confirmPassword) {
+            toast.error("New password and confirmation password do not match");
             return;
         }
-
-        console.log("🔍 Data sent to API:", {
-            customerId,
-            currentPassword: formData.currentPassword,
-            newPassword: formData.newPassword,
-            comfirmPassword: formData.comfirmPassword,
-        });
 
         setLoading(true);
         try {
             await changePassword(customerId, formData);
-            setFormData({ currentPassword: "", newPassword: "", comfirmPassword: "" });
+            setFormData({ currentPassword: "", newPassword: "", confirmPassword: "" });
             toast.success("Password changed successfully");
             navigate("/customerProfile");
         } catch (error) {
@@ -71,88 +64,79 @@ const ChangePassword = () => {
     };
 
     return (
-        <>
-            <div className="flex flex-col items-start justify-center  py-10 px-6">
-                <Card sx={{ maxWidth: 400, width: "100%", padding: 2, boxShadow: "none", border: "none" }}>
-                    <CardContent sx={{ textAlign: "left" }}>
-                    <Typography variant="h5" fontWeight="bold" gutterBottom sx={{ color: "#e11d48" }}>
-                        Change Password
-                    </Typography>
+        <div className="relative min-h-screen flex items-center justify-center bg-cover bg-center">
+            {/* Ảnh nền bị làm mờ */}
+            <div className="absolute inset-0 bg-[url('https://i.imgur.com/xP1xJCq.jpg')] bg-cover bg-center blur-md opacity-90"></div>
 
-                        <form onSubmit={handleSubmit}>
-                            {["currentPassword", "newPassword", "comfirmPassword"].map((field, index) => (
-                                <TextField
-                                    key={index}
-                                    label={
-                                        field === "currentPassword"
-                                            ? "Current  Password"
-                                            : field === "newPassword"
-                                            ? "New Password"
-                                            : "comfirm New Password"
-                                    }
-                                    type={showPassword[field] ? "text" : "password"}
-                                    name={field}
-                                    value={formData[field]}
-                                    onChange={handleChange}
-                                    fullWidth
-                                    required
-                                    margin="normal"
-                                    variant="outlined"
-                                    sx={{
-                                        "& .MuiInputLabel-root": {
-                                            color: "#e11d48", 
-                                        },
-                                        "& .MuiInputLabel-root.Mui-focused": {
-                                            color: "#be123c", 
-                                        },
-                                        "& .MuiOutlinedInput-root": {
-                                            borderRadius: 8,
-                                            "& fieldset": {
-                                                borderColor: "#fda4af", 
-                                            },
-                                            "&:hover fieldset": {
-                                                borderColor: "#fda4af", 
-                                            },
-                                            "&.Mui-focused fieldset": {
-                                                borderColor: "#be123c", 
-                                                borderWidth: "2px",
-                                            },
-                                        },
-                                    }}
-                                    InputProps={{
-                                        endAdornment: (
-                                            <InputAdornment position="end">
-                                                <IconButton onClick={() => togglePasswordVisibility(field)} edge="end">
-                                                    {showPassword[field] ? <VisibilityOff /> : <Visibility />}
-                                                </IconButton>
-                                            </InputAdornment>
-                                        ),
-                                    }}
-                                />
-                            ))}
-                            <Button
-                                type="submit"
-                                fullWidth
-                                variant="contained"
-                                sx={{
-                                    mt: 2,
-                                    bgcolor: "#E11D48",
-                                    "&:hover": {
-                                        bgcolor: "#BE123C",
-                                        transform: "scale(1.05)",
-                                        transition: "0.2s",
-                                    },
-                                    borderRadius: 8
-                                }}
-                                disabled={loading}
-                            >
-                                {loading ? "Changing..." : "Change Password"}
-                            </Button>
-                        </form>
-                    </CardContent>
-                </Card>
+            {/* Khung đăng nhập */}
+            <div className="relative z-10 max-w-md w-full space-y-8 bg-rose-100 bg-opacity-70 backdrop-blur-lg p-8 rounded-xl shadow-lg">
+                <div className="text-center">
+                    <h2 className="mt-6 text-3xl font-extrabold text-rose-400">
+                        Change Password
+                    </h2>
+                </div>
+
+                <form onSubmit={handleSubmit}>
+                    {["currentPassword", "newPassword", "confirmPassword"].map((field, index) => (
+                        <TextField
+                            key={index}
+                            label={
+                                field === "currentPassword"
+                                    ? "Current Password"
+                                    : field === "newPassword"
+                                        ? "New Password"
+                                        : "Confirm New Password"
+                            }
+                            type={showPassword[field] ? "text" : "password"}
+                            name={field}
+                            value={formData[field]}
+                            onChange={handleChange}
+                            fullWidth
+                            required
+                            margin="normal"
+                            variant="outlined"
+                            sx={{
+                                "& .MuiOutlinedInput-root": {
+                                    borderRadius: 8,
+                                },
+                            }}
+                            InputProps={{
+                                endAdornment: (
+                                    <InputAdornment position="end">
+                                        <IconButton onClick={() => togglePasswordVisibility(field)} edge="end">
+                                            {showPassword[field] ? <VisibilityOff /> : <Visibility />}
+                                        </IconButton>
+                                    </InputAdornment>
+                                ),
+                            }}
+                        />
+                    ))}
+                    <Button
+                        type="submit"
+                        fullWidth
+                        variant="contained"
+                        sx={{
+                            mt: 2,
+                            bgcolor: "#E11D48",
+                            "&:hover": { bgcolor: "#BE123C" },
+                            borderRadius: 8
+                        }}
+                        disabled={loading}
+                    >
+                        {loading ? "Changing..." : "Change Password"}
+                    </Button>
+                </form>
             </div>
-        </>
+
+            <div className="absolute top-4 left-4">
+                <Button
+                    startIcon={<ArrowBack />}
+                    onClick={() => navigate("/customerProfile")}
+                >
+                    Back
+                </Button>
+            </div>
+        </div>
     );
 };
 
