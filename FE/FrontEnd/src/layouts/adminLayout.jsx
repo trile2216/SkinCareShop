@@ -9,6 +9,7 @@ import {
   QuestionOutlined,
   FieldTimeOutlined,
   DeliveredProcedureOutlined,
+  BookOutlined,
 } from "@ant-design/icons";
 import { Layout, Menu, theme, Button } from "antd";
 import { Link, Outlet, useNavigate } from "react-router-dom";
@@ -38,6 +39,7 @@ const items = [
   getItem("QUIZ", "quiz", <QuestionOutlined />),
   getItem("ROUTINE", "routine", <FieldTimeOutlined />),
   getItem("SHIPPING FEE", "shipping-fee", <DeliveredProcedureOutlined />),
+  getItem("BLOG", "blog", <BookOutlined />),
   getItem("LOGOUT", "logout", <LogoutOutlined />),
 ];
 
