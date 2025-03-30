@@ -1,9 +1,22 @@
 import { useEffect, useState } from "react";
 import { orderService } from "../../services/orderService";
 import "./styles.css";
-import { Tabs, Table, Tag, Space, Button, Modal, message, Select, Input } from "antd";
+import {
+  Tabs,
+  Table,
+  Tag,
+  Space,
+  Button,
+  Modal,
+  message,
+  Select,
+  Input,
+} from "antd";
 import { SearchOutlined, EyeOutlined } from "@ant-design/icons";
-import { SortAscendingOutlined, SortDescendingOutlined } from "@ant-design/icons";
+import {
+  SortAscendingOutlined,
+  SortDescendingOutlined,
+} from "@ant-design/icons";
 
 const OrderManagement = () => {
   // Lưu dữ liệu search Customer ID
@@ -74,10 +87,12 @@ const OrderManagement = () => {
 
   // State quản lý Tab theo Status
   const [activeTab, setActiveTab] = useState("all");
-  // Lọc danh sách order 
+  // Lọc danh sách order
   const filteredOrders = orders.filter((order) => {
     if (activeTab !== "all" && order.status !== activeTab) return false;
-    return searchCustomerId ? order.customerId.toString().startsWith(searchCustomerId) : true;
+    return searchCustomerId
+      ? order.customerId.toString().startsWith(searchCustomerId)
+      : true;
   });
 
   // Sort
@@ -90,18 +105,29 @@ const OrderManagement = () => {
   };
   const sortedOrders = [...filteredOrders].sort((a, b) => {
     if (!sortConfig.key) return 0;
-  
+
     let valA = a[sortConfig.key];
     let valB = b[sortConfig.key];
-  
+
     if (sortConfig.key === "totalPrice") {
       valA = parseFloat(valA);
       valB = parseFloat(valB);
     } else if (sortConfig.key === "orderDate") {
-      valA = new Date(valA);
-      valB = new Date(valB);
+      valA = new String(valA);
+      valB = new String(valB);
+      const [dateA, timeA] = valA.split(" ");
+      const [dayA, monthA, yearA] = dateA.split("/");
+      const dateStringA = `${yearA}-${monthA}-${dayA} ${timeA}`;
+
+      const [dateB, timeB] = valB.split(" ");
+      const [dayB, monthB, yearB] = dateB.split("/");
+      const dateStringB = `${yearB}-${monthB}-${dayB} ${timeB}`;
+
+      return sortConfig.order === "asc"
+        ? new Date(dateStringA) - new Date(dateStringB)
+        : new Date(dateStringB) - new Date(dateStringA);
     }
-  
+
     return sortConfig.order === "asc" ? valA - valB : valB - valA;
   });
 
@@ -113,7 +139,10 @@ const OrderManagement = () => {
   // Hiển thị số Order kế bên tab
   const getTabTitle = (label, key) => (
     <span>
-      {label} <Tag color="#f9c6d1">{key === "all" ? orders.length : orderCounts[key] || 0}</Tag> 
+      {label}{" "}
+      <Tag color="#f9c6d1">
+        {key === "all" ? orders.length : orderCounts[key] || 0}
+      </Tag>
     </span>
   );
 
@@ -127,7 +156,7 @@ const OrderManagement = () => {
       title: "Order Date",
       dataIndex: "orderDate",
       key: "orderDate",
-      render: (date) => new Date(date).toLocaleDateString(),
+      render: (date) => date || "N/A",
     },
     {
       title: "Total Amount",
@@ -146,7 +175,6 @@ const OrderManagement = () => {
       key: "actions",
       render: (_, record) => (
         <Space>
-          
           <Button
             onClick={() => {
               setOrderToUpdate(record);
@@ -162,7 +190,9 @@ const OrderManagement = () => {
           <Button
             type="ghost"
             shape="circle"
-            icon={<EyeOutlined style={{ fontSize: "18px", color: "#eb2f96" }} />} 
+            icon={
+              <EyeOutlined style={{ fontSize: "18px", color: "#eb2f96" }} />
+            }
             onClick={() => {
               setSelectedOrder(record);
               setIsModalVisible(true);
@@ -179,38 +209,85 @@ const OrderManagement = () => {
         <h1>Order Management</h1>
       </div>
       {/* Tabs lọc đơn hàng */}
-      <Tabs activeKey={activeTab} onChange={(key) => setActiveTab(key)} style={{ marginBottom: 16 }}>
+      <Tabs
+        activeKey={activeTab}
+        onChange={(key) => setActiveTab(key)}
+        style={{ marginBottom: 16 }}
+      >
         <Tabs.TabPane tab={getTabTitle("All", "all")} key="all" />
         <Tabs.TabPane tab={getTabTitle("Pending", "Pending")} key="Pending" />
-        <Tabs.TabPane tab={getTabTitle("Comfirmed", "Comfirmed")} key="Comfirmed" />
-        <Tabs.TabPane tab={getTabTitle("Shipping", "Shipping")} key="Shipping" />
-        <Tabs.TabPane tab={getTabTitle("Delivered", "Delivered")} key="Delivered" />
-        <Tabs.TabPane tab={getTabTitle("Cancelled", "Cancelled")} key="Cancelled" />
+        <Tabs.TabPane
+          tab={getTabTitle("Comfirmed", "Comfirmed")}
+          key="Comfirmed"
+        />
+        <Tabs.TabPane
+          tab={getTabTitle("Shipping", "Shipping")}
+          key="Shipping"
+        />
+        <Tabs.TabPane
+          tab={getTabTitle("Delivered", "Delivered")}
+          key="Delivered"
+        />
+        <Tabs.TabPane
+          tab={getTabTitle("Cancelled", "Cancelled")}
+          key="Cancelled"
+        />
       </Tabs>
       {/* --- */}
-      <div style={{ display: "flex", gap: "10px", alignItems: "center", marginBottom: 16 }}>
-      <Input
-        className="custom-search"
-        placeholder="Search by Customer ID"
-        value={searchCustomerId}
-        onChange={(e) => setSearchCustomerId(e.target.value)}
-        style={{ width: 200 }}
-        suffix={<SearchOutlined style={{ color: "rgba(0,0,0,.45)" }} />}
-      />
+      <div
+        style={{
+          display: "flex",
+          gap: "10px",
+          alignItems: "center",
+          marginBottom: 16,
+        }}
+      >
+        <Input
+          className="custom-search"
+          placeholder="Search by Customer ID"
+          value={searchCustomerId}
+          onChange={(e) => setSearchCustomerId(e.target.value)}
+          style={{ width: 200 }}
+          suffix={<SearchOutlined style={{ color: "rgba(0,0,0,.45)" }} />}
+        />
 
-      <Button className="custom-button" onClick={() => handleSort("id")}>
-        Order ID {sortConfig.key === "id" && (sortConfig.order === "asc" ? <SortAscendingOutlined /> : <SortDescendingOutlined />)}
-      </Button>
+        <Button className="custom-button" onClick={() => handleSort("id")}>
+          Order ID{" "}
+          {sortConfig.key === "id" &&
+            (sortConfig.order === "asc" ? (
+              <SortAscendingOutlined />
+            ) : (
+              <SortDescendingOutlined />
+            ))}
+        </Button>
 
-      <Button className="custom-button" onClick={() => handleSort("totalPrice")}>
-        Total Amount {sortConfig.key === "totalPrice" && (sortConfig.order === "asc" ? <SortAscendingOutlined /> : <SortDescendingOutlined />)}
-      </Button>
+        <Button
+          className="custom-button"
+          onClick={() => handleSort("totalPrice")}
+        >
+          Total Amount{" "}
+          {sortConfig.key === "totalPrice" &&
+            (sortConfig.order === "asc" ? (
+              <SortAscendingOutlined />
+            ) : (
+              <SortDescendingOutlined />
+            ))}
+        </Button>
 
-      <Button className="custom-button" onClick={() => handleSort("orderDate")}>
-        Order Date {sortConfig.key === "orderDate" && (sortConfig.order === "asc" ? <SortAscendingOutlined /> : <SortDescendingOutlined />)}
-      </Button>
-    </div>
-       
+        <Button
+          className="custom-button"
+          onClick={() => handleSort("orderDate")}
+        >
+          Order Date{" "}
+          {sortConfig.key === "orderDate" &&
+            (sortConfig.order === "asc" ? (
+              <SortAscendingOutlined />
+            ) : (
+              <SortDescendingOutlined />
+            ))}
+        </Button>
+      </div>
+
       <div className="order-management__content">
         {/* <Table
           columns={columns}
@@ -220,7 +297,12 @@ const OrderManagement = () => {
           rowKey="id"
         /> */}
         {/* Table hiển thị đơn hàng */}
-        <Table columns={columns} dataSource={sortedOrders} loading={loading} rowKey="id" />
+        <Table
+          columns={columns}
+          dataSource={sortedOrders}
+          loading={loading}
+          rowKey="id"
+        />
 
         <Modal
           title="Order Details"
@@ -261,7 +343,7 @@ const OrderManagement = () => {
               <div className="order-items">
                 <h3>Order Items</h3>
                 <Table
-                  sortedOrders={selectedOrder.orderItems}
+                  dataSource={selectedOrder.orderItems}
                   columns={[
                     {
                       title: "Product",
