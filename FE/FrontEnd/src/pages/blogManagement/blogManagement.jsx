@@ -6,7 +6,6 @@ import { getBlogs } from "../../services/blogs";
 
 const BlogManagement = () => {
   const [blogs, setBlogs] = useState([]);
-  const [blogs, setBlogs] = useState([]);
   const categories = [
     "Cleanser",
     "Moisturizer",
@@ -50,7 +49,7 @@ const BlogManagement = () => {
   const fetchBlogs = async () => {
     try {
       const response = await getBlogs();
-      setBlogs(response.data);
+      setBlogs(response);
     } catch (error) {
       console.error("Error fetching blogs:", error);
     }
@@ -193,13 +192,13 @@ const BlogManagement = () => {
   );
 
   return (
-    <div className="min-h-screen bg-rose-100 p-4 dark:bg-rose-900">
+    <div className="min-h-screen bg-gray-100 p-4 dark:bg-gray-900">
       <div className="mx-auto max-w-7xl">
         <div className="mb-6 flex items-center justify-between">
-          <h1 className="text-2xl font-bold text-rose-400 dark:text-white">Blog Management</h1>
+          <h1 className="text-2xl font-bold text-black-400 dark:text-white">Blog Management</h1>
           <button
             onClick={() => setIsModalOpen(true)}
-            className="flex items-center rounded-lg bg-rose-400 px-4 py-2 text-white hover:bg-blue-700"
+            className="flex items-center rounded-lg bg-rose-400 px-4 py-2 text-white hover:bg-rose-700"
           >
             <FiPlus className="mr-2" /> Add New Blog
           </button>
@@ -369,7 +368,7 @@ const BlogManagement = () => {
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      <i className="fas fa-image mr-1"></i> Hình ảnh
+                      <i className="fas fa-image mr-1"></i> Image
                     </label>
                     <input
                       type="file"
@@ -421,7 +420,7 @@ const BlogManagement = () => {
                   </button>
                   <button
                     type="submit"
-                    className="rounded-lg bg-blue-600 px-6 py-2.5 text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                    className="rounded-lg bg-rose-400 px-6 py-2.5 text-white hover:bg-rose-700 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:ring-offset-2"
                   >
                     {selectedBlog ? "Update Blog" : "Create Blog"}
                   </button>
