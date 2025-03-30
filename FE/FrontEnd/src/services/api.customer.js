@@ -51,6 +51,30 @@ const customerService = {
         }
     },
 
+    // Quên mật khẩu - gửi email khôi phục
+    forgotPassword: async (email) => {
+        try {
+            const response = await api.post('/auth/forgot-password', { email });
+            toast.success("If this email is registered, you will receive password reset instructions");
+            return response.data;
+        } catch (error) {
+            console.error("Error requesting password reset:", error);
+            // Không hiển thị toast lỗi để bảo vệ thông tin người dùng
+            throw error;
+        }
+    },
+
+    // Đặt lại mật khẩu sau khi nhận được email
+    resetPassword: async (resetData) => {
+        try {
+            const response = await api.post('/auth/reset-password', resetData);
+            toast.success("Password reset successful!");
+            return response.data;
+        } catch (error) {
+            toast.error(error.response?.data || "Failed to reset password. Please try again.");
+            throw error;
+        }
+    }
 };
 
 export default customerService;
@@ -65,6 +89,23 @@ export const changePassword = async (id, passwordData) => {
         toast.error(error.response?.data || "Failed to change password");
         throw error;
     }
+};
+
+// Quên mật khẩu - gửi email khôi phục
+export const forgotPassword = async (email) => {
+    try {
+        const response = await api.post('/auth/forgot-password', { email });
+        return response.data;
+    } catch (error) {
+        console.error("Error requesting password reset:", error);
+        throw error;
+    }
+};
+
+// Đặt lại mật khẩu
+export const resetPassword = async (resetData) => {
+        const response = await api.post('/auth/reset-password', resetData);
+        return response.data;
 };
 
 const getCustomerTestResult = async (userId) => {
