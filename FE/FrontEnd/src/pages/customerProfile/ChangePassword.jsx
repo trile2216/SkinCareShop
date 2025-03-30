@@ -7,8 +7,6 @@ import { Visibility, VisibilityOff, ArrowBack } from "@mui/icons-material";
 import {
     Card, CardContent, Typography, TextField, Button, IconButton, InputAdornment
 } from "@mui/material";
-import Header from "../../components/Header";
-import Footer from "../../components/Footer";
 
 const ChangePassword = () => {
     const navigate = useNavigate();
@@ -17,14 +15,14 @@ const ChangePassword = () => {
     const [formData, setFormData] = useState({
         currentPassword: "",
         newPassword: "",
-        confirmPassword: "",
+        comfirmPassword: "",
     });
 
     const [loading, setLoading] = useState(false);
     const [showPassword, setShowPassword] = useState({
         current: false,
         new: false,
-        confirm: false,
+        comfirm: false,
     });
 
     useEffect(() => {
@@ -48,15 +46,22 @@ const ChangePassword = () => {
             return;
         }
 
-        if (formData.newPassword !== formData.confirmPassword) {
-            toast.error("New password and confirmation password do not match");
+        if (formData.newPassword !== formData.comfirmPassword) {
+            toast.error("New password and comfirmation password do not match");
             return;
         }
+
+        console.log("🔍 Data sent to API:", {
+            customerId,
+            currentPassword: formData.currentPassword,
+            newPassword: formData.newPassword,
+            comfirmPassword: formData.comfirmPassword,
+        });
 
         setLoading(true);
         try {
             await changePassword(customerId, formData);
-            setFormData({ currentPassword: "", newPassword: "", confirmPassword: "" });
+            setFormData({ currentPassword: "", newPassword: "", comfirmPassword: "" });
             toast.success("Password changed successfully");
             navigate("/customerProfile");
         } catch (error) {
@@ -67,34 +72,23 @@ const ChangePassword = () => {
 
     return (
         <>
-            <Header />
-
-            <div className="flex flex-col items-center justify-center min-h-[70vh] py-10 px-6">
+            <div className="flex flex-col items-start justify-center  py-10 px-6">
                 <Card sx={{ maxWidth: 400, width: "100%", padding: 2, boxShadow: "none", border: "none" }}>
                     <CardContent sx={{ textAlign: "left" }}>
-                        {/* Nút Back */}
-                        <Button
-                            startIcon={<ArrowBack />}
-                            sx={{ mb: 2, textTransform: "none", fontSize: 16 }}
-                            onClick={() => navigate("/customerProfile")}
-                        >
-                            Back
-                        </Button>
-
-                        <Typography variant="h5" fontWeight="bold" gutterBottom>
-                            Change Password
-                        </Typography>
+                    <Typography variant="h5" fontWeight="bold" gutterBottom sx={{ color: "#e11d48" }}>
+                        Change Password
+                    </Typography>
 
                         <form onSubmit={handleSubmit}>
-                            {["currentPassword", "newPassword", "confirmPassword"].map((field, index) => (
+                            {["currentPassword", "newPassword", "comfirmPassword"].map((field, index) => (
                                 <TextField
                                     key={index}
                                     label={
                                         field === "currentPassword"
-                                            ? "Current Password"
+                                            ? "Current  Password"
                                             : field === "newPassword"
-                                                ? "New Password"
-                                                : "Confirm New Password"
+                                            ? "New Password"
+                                            : "comfirm New Password"
                                     }
                                     type={showPassword[field] ? "text" : "password"}
                                     name={field}
@@ -105,8 +99,24 @@ const ChangePassword = () => {
                                     margin="normal"
                                     variant="outlined"
                                     sx={{
+                                        "& .MuiInputLabel-root": {
+                                            color: "#e11d48", 
+                                        },
+                                        "& .MuiInputLabel-root.Mui-focused": {
+                                            color: "#be123c", 
+                                        },
                                         "& .MuiOutlinedInput-root": {
                                             borderRadius: 8,
+                                            "& fieldset": {
+                                                borderColor: "#fda4af", 
+                                            },
+                                            "&:hover fieldset": {
+                                                borderColor: "#fda4af", 
+                                            },
+                                            "&.Mui-focused fieldset": {
+                                                borderColor: "#be123c", 
+                                                borderWidth: "2px",
+                                            },
                                         },
                                     }}
                                     InputProps={{
@@ -127,7 +137,11 @@ const ChangePassword = () => {
                                 sx={{
                                     mt: 2,
                                     bgcolor: "#E11D48",
-                                    "&:hover": { bgcolor: "#BE123C" },
+                                    "&:hover": {
+                                        bgcolor: "#BE123C",
+                                        transform: "scale(1.05)",
+                                        transition: "0.2s",
+                                    },
                                     borderRadius: 8
                                 }}
                                 disabled={loading}
@@ -138,8 +152,6 @@ const ChangePassword = () => {
                     </CardContent>
                 </Card>
             </div>
-
-            <Footer />
         </>
     );
 };

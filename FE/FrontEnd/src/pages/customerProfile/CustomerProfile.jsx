@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import axios from "axios";
-import Footer from "../../components/Footer";
-import Header from "../../components/Header";
+import { Tabs, Tab, Box, Slide  } from "@mui/material";
+import ChangePassword from "../customerProfile/ChangePassword";
+import { Person, Lock } from "@mui/icons-material";
 
 const CustomerProfile = () => {
   const [customerData, setCustomerData] = useState({
@@ -16,6 +17,7 @@ const CustomerProfile = () => {
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState(false);
   const [errors, setErrors] = useState({});
+  const [tabIndex, setTabIndex] = useState(0);
 
   const [formData, setFormData] = useState({
     firstName: "",
@@ -112,189 +114,230 @@ const CustomerProfile = () => {
   };
 
   const buttonStyle = {
-    backgroundColor: "#f43f5e", // Màu rose-500
+    backgroundColor: "#e11d48",
     color: "white",
-    padding: "10px 20px",
-    border: "none",
-    borderRadius: "5px",
+    padding: "12px 24px",
+    borderRadius: "8px",
     cursor: "pointer",
     fontSize: "16px",
     fontWeight: "bold",
-    transition: "0.3s",
+    border: "none",
+    transition: "all 0.3s",
+    "&:hover": {
+      backgroundColor: "#be123c"
+    }
   };
 
   if (loading) return <p>Loading...</p>;
   if (!customerData) return <p>No customer data found.</p>;
 
   return (
-    <>
-      <div
-        style={{
-          maxWidth: "1000px",
-          margin: "auto",
-          padding: "70px",
-          backgroundColor: "#fff1f2",
-          borderRadius: "5px",
-          boxShadow: "0 6px 12px rgba(0, 0, 0, 0.3)",
+    <> 
+      <Box 
+        sx={{
+          display: "flex", 
+          maxWidth: "1100px", 
+          margin: "auto", 
+          padding: "40px", 
+          backgroundColor: "#fff", 
+          borderRadius: "10px", 
+          boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+          marginTop: "15px",
+          height: "700px"
         }}
       >
-        <h2
-          style={{
-            textAlign: "center",
-            color: "#e11d48",
-            fontSize: "28px", // Tăng kích thước chữ
-            fontWeight: "bold", // In đậm
-            marginBottom: "20px",
+       {/* Tabs Navigation */}
+       <Tabs
+          orientation="vertical"
+          value={tabIndex}
+          onChange={(e, newValue) => setTabIndex(newValue)}
+          sx={{
+            minWidth: "220px",
+            borderRight: 1,
+            marginRight: "10px",
+            borderColor: "divider",
+            "& .MuiTabs-indicator": { backgroundColor: "#e11d48" }, // Đổi màu thanh chỉ báo
+            "& .MuiTab-root": { 
+              color: "#333", 
+              fontSize: "16px", 
+              fontWeight: "bold", 
+              textAlign: "left", 
+              justifyContent: "flex-start",  
+              paddingLeft: "10px",
+              "&:hover": { color: "#e11d48" }, // Khi hover đổi màu
+            },
+            "& .Mui-selected": { color: "#e11d48" }, // Màu tab khi được chọn
           }}
         >
-          My Profile
-        </h2>
+          <Tab icon={<Person />} iconPosition="start" label="My Profile" />
+          <Tab icon={<Lock />} iconPosition="start" label="Change Password" />
+        </Tabs>
 
-        {editing ? (
-          <form
-            onSubmit={handleSubmit}
+        <Box sx={{ flex: 1, paddingLeft: "20px" }}>
+        {/* Tab Panels */}
+        {tabIndex === 0 && (
+          <div>
+          <h2
             style={{
-              backgroundColor: "#fff", // Màu rose-100
-              padding: "20px",
-              borderRadius: "10px",
-              boxShadow: "0 2px 4px rgba(0, 0, 0, 0.3)",
+              textAlign: "center",
+              color: "#e11d48",
+              fontSize: "28px", 
+              fontWeight: "bold", 
+              marginBottom: "20px",
             }}
           >
-            <table style={{ width: "100%", borderCollapse: "collapse" }}>
-              <tbody>
-                {Object.keys(formData).map((field) => (
-                  <tr
-                    key={field}
-                    style={{ borderBottom: "1px solid #ddd", height: "50px" }}
-                  >
-                    <th
-                      style={{
-                        padding: "15px",
-                        textAlign: "left",
-                        width: "30%",
-                      }}
-                    >
-                      {field.charAt(0).toUpperCase() + field.slice(1)}
-                    </th>
-                    <td style={{ padding: "15px" }}>
-                      <input
-                        type="text"
-                        name={field}
-                        value={formData[field]}
-                        onChange={handleChange}
-                        required
-                        style={{
-                          width: "100%",
-                          padding: "10px",
-                          borderRadius: "5px",
-                          border: "1px solid #ddd",
-                          outline: "none",
-                          fontSize: "16px",
-                        }}
-                      />
-                      {errors[field] && (
-                        <p
-                          style={{
-                            color: "red",
-                            fontSize: "14px",
-                            marginTop: "5px",
-                          }}
-                        >
-                          {errors[field]}
-                        </p>
-                      )}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+            My Profile
+          </h2>
 
-            <div style={{ textAlign: "center", marginTop: "20px" }}>
-              <button type="submit" style={buttonStyle}>
-                Save
-              </button>
-              <button
-                type="button"
-                onClick={() => setEditing(false)}
-                style={{
-                  ...buttonStyle,
-                  backgroundColor: "#ddd",
-                  color: "#333",
-                  marginLeft: "10px",
-                }}
-              >
-                Cancel
-              </button>
-            </div>
-          </form>
-        ) : (
-          <div>
-            <table
+          {editing ? (
+            <form
+              onSubmit={handleSubmit}
               style={{
-                width: "100%",
-                borderCollapse: "collapse",
-                backgroundColor: "#fff",
+                backgroundColor: "#fff", 
                 padding: "20px",
                 borderRadius: "10px",
-                boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
+                boxShadow: "0 2px 4px rgba(0, 0, 0, 0.3)",
               }}
             >
-              <tbody>
-                <tr style={{ borderBottom: "1px solid #ddd", height: "50px" }}>
-                  <th
-                    style={{ padding: "15px", textAlign: "left", width: "30%" }}
-                  >
-                    First Name
-                  </th>
-                  <td style={{ padding: "15px" }}>{customerData.firstName}</td>
-                </tr>
-                <tr style={{ borderBottom: "1px solid #ddd", height: "50px" }}>
-                  <th
-                    style={{ padding: "15px", textAlign: "left", width: "30%" }}
-                  >
-                    Last Name
-                  </th>
-                  <td style={{ padding: "15px" }}>{customerData.lastName}</td>
-                </tr>
-                <tr style={{ borderBottom: "1px solid #ddd", height: "50px" }}>
-                  <th
-                    style={{ padding: "15px", textAlign: "left", width: "30%" }}
-                  >
-                    Email
-                  </th>
-                  <td style={{ padding: "15px" }}>{customerData.email}</td>
-                </tr>
-                <tr style={{ borderBottom: "1px solid #ddd", height: "50px" }}>
-                  <th
-                    style={{ padding: "15px", textAlign: "left", width: "30%" }}
-                  >
-                    Phone
-                  </th>
-                  <td style={{ padding: "15px" }}>
-                    {customerData.phone || "N/A"}
-                  </td>
-                </tr>
-                <tr style={{ height: "50px" }}>
-                  <th
-                    style={{ padding: "15px", textAlign: "left", width: "30%" }}
-                  >
-                    Address
-                  </th>
-                  <td style={{ padding: "15px" }}>
-                    {customerData.address || "N/A"}
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+              <table style={{ width: "100%", borderCollapse: "collapse" }}>
+                <tbody>
+                  {Object.keys(formData).map((field) => (
+                    <tr
+                      key={field}
+                      style={{ borderBottom: "1px solid #ddd", height: "50px" }}
+                    >
+                      <th
+                        style={{
+                          padding: "15px",
+                          textAlign: "left",
+                          width: "30%",
+                        }}
+                      >
+                        {field.charAt(0).toUpperCase() + field.slice(1)}
+                      </th>
+                      <td style={{ padding: "15px" }}>
+                        <input
+                          type="text"
+                          name={field}
+                          value={formData[field]}
+                          onChange={handleChange}
+                          required
+                          style={{
+                            width: "100%",
+                            padding: "10px",
+                            borderRadius: "5px",
+                            border: "1px solid #ddd",
+                            outline: "none",
+                            fontSize: "16px",
+                          }}
+                        />
+                        {errors[field] && (
+                          <p
+                            style={{
+                              color: "red",
+                              fontSize: "14px",
+                              marginTop: "5px",
+                            }}
+                          >
+                            {errors[field]}
+                          </p>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
 
-            <div style={{ textAlign: "center", marginTop: "20px" }}>
-              <button onClick={() => setEditing(true)} style={buttonStyle}>
-                Edit
-              </button>
+              <div style={{ textAlign: "center", marginTop: "20px" }}>
+                <button type="submit" style={buttonStyle}>
+                  Save
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setEditing(false)}
+                  style={{
+                    ...buttonStyle,
+                    backgroundColor: "#ddd",
+                    color: "#333",
+                    marginLeft: "10px",
+                  }}
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
+          ) : (
+            <div>
+              <table
+                style={{
+                  width: "100%",
+                  borderCollapse: "collapse",
+                  backgroundColor: "#fff",
+                  padding: "20px",
+                  borderRadius: "10px",
+                  boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
+                }}
+              >
+                <tbody>
+                  <tr style={{ borderBottom: "1px solid #ddd", height: "50px" }}>
+                    <th
+                      style={{ padding: "15px", textAlign: "left", width: "30%" }}
+                    >
+                      First Name
+                    </th>
+                    <td style={{ padding: "15px" }}>{customerData.firstName}</td>
+                  </tr>
+                  <tr style={{ borderBottom: "1px solid #ddd", height: "50px" }}>
+                    <th
+                      style={{ padding: "15px", textAlign: "left", width: "30%" }}
+                    >
+                      Last Name
+                    </th>
+                    <td style={{ padding: "15px" }}>{customerData.lastName}</td>
+                  </tr>
+                  <tr style={{ borderBottom: "1px solid #ddd", height: "50px" }}>
+                    <th
+                      style={{ padding: "15px", textAlign: "left", width: "30%" }}
+                    >
+                      Email
+                    </th>
+                    <td style={{ padding: "15px" }}>{customerData.email}</td>
+                  </tr>
+                  <tr style={{ borderBottom: "1px solid #ddd", height: "50px" }}>
+                    <th
+                      style={{ padding: "15px", textAlign: "left", width: "30%" }}
+                    >
+                      Phone
+                    </th>
+                    <td style={{ padding: "15px" }}>
+                      {customerData.phone || "N/A"}
+                    </td>
+                  </tr>
+                  <tr style={{ height: "50px" }}>
+                    <th
+                      style={{ padding: "15px", textAlign: "left", width: "30%" }}
+                    >
+                      Address
+                    </th>
+                    <td style={{ padding: "15px" }}>
+                      {customerData.address || "N/A"}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+
+              <div style={{ textAlign: "center", marginTop: "20px" }}>
+                <button onClick={() => setEditing(true)} style={buttonStyle}>
+                  Edit
+                </button>
+              </div>
             </div>
-          </div>
-        )}
-      </div>
+          )}
+        </div>
+      )}
+      {tabIndex === 1 && <ChangePassword />}
+      </Box>
+      </Box>
     </>
   );
 };
