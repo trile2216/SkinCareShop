@@ -6,6 +6,7 @@ using api.Data;
 using api.Interface;
 using api.Models;
 using Microsoft.EntityFrameworkCore;
+using OfficeOpenXml.Packaging.Ionic.Zip;
 
 namespace api.Repository
 {
@@ -26,7 +27,10 @@ namespace api.Repository
 
         public async Task<List<ShippingFee>> GetAllShippingFeesAsync()
         {
-            return await _context.ShippingFees.ToListAsync();
+            return await _context.ShippingFees
+                .Include(sf => sf.City)
+                .Include(sf => sf.District)
+                .ToListAsync();
 
         }
 
@@ -42,6 +46,8 @@ namespace api.Repository
         {
             return await _context.ShippingFees
                 .Where(sf => sf.Id == id)
+                .Include(sf => sf.City)
+                .Include(sf => sf.District)
                 .FirstOrDefaultAsync();
         }
 

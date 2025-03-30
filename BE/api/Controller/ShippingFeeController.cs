@@ -70,7 +70,7 @@ namespace api.Controller
                 {
                     CityId = cityId,
                     DistrictId = districtId,
-                    Fee = 5.000M,
+                    Fee = 15.000M,
                 };
                 return Ok(defaultFeeDTO);
             }
@@ -122,9 +122,9 @@ namespace api.Controller
 
             var shippingFee = createShippingFeeDTO.ToShippingFeeFromCreateDTO();
 
-            var createdShippingFee = await _shippingFeeRepository.CreateShippingFeeAsync(shippingFee);
+            await _shippingFeeRepository.CreateShippingFeeAsync(shippingFee);
 
-            return CreatedAtAction(nameof(GetShippingFeeById), new { id = createdShippingFee.Id }, createdShippingFee.ToShippingFeeDTO());
+            return CreatedAtAction(nameof(GetShippingFeeById), new { id = shippingFee.Id }, shippingFee);
         }
 
         [HttpPut]
