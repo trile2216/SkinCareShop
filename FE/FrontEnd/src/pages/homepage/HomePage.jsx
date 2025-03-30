@@ -23,16 +23,16 @@ const HomePage = () => {
     {
       id: 2,
       image:
-        "https://alastin.com.au/cdn/shop/files/Alastin_logo.jpg?v=1715578197",
-      title: "Alastin Skincare",
+        "https://paulaschoice.vn/wp-content/uploads/2019/10/paulaschoice.jpg",
+      title: "Paula's Choice",
       description:
         "Innovative skincare scientifically proven to rejuvenate skin.",
     },
     {
       id: 3,
       image:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSq2B0R_LcUolRXXqwtFCB6Wb_NUJq6Bv5BZw&s",
-      title: "Murad",
+        "https://file.hstatic.net/200000346975/collection/logo_efa7eef91f3a4594a90f502a2f47f2a7.jpg",
+      title: "Cosrx",
       description: "Hydration solutions for radiant and youthful appearance.",
     },
     {
@@ -56,6 +56,20 @@ const HomePage = () => {
         "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSFcnAOQyG76dYNlJvVJ9AE2NMRRVI-7-WQyg&s",
       title: "Neutrogena",
       description: "Clinically proven skincare for clear and radiant skin.",
+    },
+    {
+      id: 7,
+      image:
+        "https://nassifmedspa.co.uk/wp-content/uploads/2023/11/Obagi_2019_Logo_for_block_colour_or_visionary_image-910x512.png",
+      title: "Obagi",
+      description: "The deepest range of clinical testing (in-vitro and in-vivo) to assess the truly transformative and skin tolerated results on all skin types and tones.",
+    },
+    {
+      id: 8,
+      image:
+        "https://vcdn.valiram.com/wp-content/themes/valiram/images/logo_big/kiehls.png",
+      title: "Kiehl's",
+      description: "Kiehl's LLC is an American cosmetics brand retailer that specializes in skin, hair, and body care products.",
     },
   ];
   const [product, setProduct] = useState([]);
