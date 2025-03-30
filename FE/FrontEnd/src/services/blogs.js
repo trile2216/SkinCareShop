@@ -55,7 +55,7 @@ export const blogService = {
 
 export const deleteBlog = async (id) => {
     try {
-        console.log("Deleting blog with ID:", id); 
+        console.log("Deleting blog with ID:", id);
         await api.delete(`/blog/delete/${id}`);
     } catch (error) {
         console.error("Error deleting blog:", error.response?.data || error.message);
@@ -63,6 +63,17 @@ export const deleteBlog = async (id) => {
         throw error;
     }
 };
+
+export const searchBlogs = async (query) => {
+    try {
+        const response = await api.get(`/blog/search?query=${query}`);
+        return response.data;
+    } catch (error) {
+        toast.error("Error searching blogs");
+        throw error;
+    }
+};
+
 
 
 
