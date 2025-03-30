@@ -104,7 +104,7 @@ export const forgotPassword = async (email) => {
 
 // Đặt lại mật khẩu
 export const resetPassword = async (resetData) => {
-        const response = await api.post('/auth/change-password', resetData);
+        const response = await api.post('/auth/reset-password', resetData);
         return response.data;
 };
 
