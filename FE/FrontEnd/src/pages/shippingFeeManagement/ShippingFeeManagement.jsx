@@ -10,18 +10,12 @@ import {
   Form,
   InputNumber,
   Modal,
-  Tag,
   Typography,
-  Spin,
   message,
   Popconfirm,
 } from "antd";
-import {
-  SearchOutlined,
-  EditOutlined,
-  PlusOutlined,
-  ReloadOutlined,
-} from "@ant-design/icons";
+import { SearchOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
+import { toast } from "react-toastify";
 
 const { Title } = Typography;
 const { Option } = Select;
@@ -152,7 +146,14 @@ const ShippingFeeManagement = () => {
       fee: fee.fee,
     });
 
-    handleCityChange(fee.cityId);
+    handleCityChange(fee.cityId).then(() => {
+      // Sau khi có districts mới set form values
+      form.setFieldsValue({
+        cityId: fee.cityId,
+        districtId: fee.districtId,
+        fee: fee.fee,
+      });
+    });
     setIsModalVisible(true);
   };
 
@@ -185,7 +186,7 @@ const ShippingFeeManagement = () => {
           }
         );
 
-        message.success("Shipping fee updated successfully");
+        toast.success("Shipping fee updated successfully");
 
         // Refresh data to show updated information
         fetchData();
@@ -197,7 +198,7 @@ const ShippingFeeManagement = () => {
           fee: values.fee,
         });
 
-        message.success("Shipping fee created successfully");
+        toast.success("Shipping fee created successfully");
 
         // Refresh data to show the new fee
         fetchData();
@@ -242,13 +243,7 @@ const ShippingFeeManagement = () => {
       },
       sorter: (a, b) => a.fee - b.fee,
     },
-    {
-      title: "Last Updated",
-      dataIndex: "lastUpdated",
-      key: "lastUpdated",
-      render: (date) => new Date(date).toLocaleString(),
-      sorter: (a, b) => new Date(a.lastUpdated) - new Date(b.lastUpdated),
-    },
+
     {
       title: "Actions",
       key: "actions",
@@ -370,14 +365,19 @@ const ShippingFeeManagement = () => {
           >
             <Select
               placeholder="Select District"
-              disabled={!form.getFieldValue("cityId")}
+              disabled={isEditing}
               loading={loading}
               showSearch
               optionFilterProp="children"
+              defaultValue={currentFee?.districtId}
             >
               {Array.isArray(districts) &&
                 districts.map((district) => (
-                  <Option key={district.id} value={district.id}>
+                  <Option
+                    key={district.id}
+                    value={district.id}
+                    selected={district.id === currentFee?.districtId}
+                  >
                     {district.name}
                   </Option>
                 ))}
@@ -398,7 +398,7 @@ const ShippingFeeManagement = () => {
           >
             <InputNumber
               min={0}
-              step={1000}
+              step={1}
               style={{ width: "100%" }}
               formatter={(value) =>
                 `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
