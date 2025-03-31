@@ -6,8 +6,9 @@ import api from "../../config/axios";
 
 const OrderHistory = () => {
   const [orders, setOrders] = useState([]);
-  const [expandedOrder, setExpandedOrder] = useState(null);
+  const [expandedOrder, setExpandedOrder] = useState(null); 
 
+  //api lấy danh sách đơn hàng
   useEffect(() => {
     const fetchOrderHistory = async () => {
       try {
@@ -37,6 +38,7 @@ const OrderHistory = () => {
     fetchOrderHistory();
   }, []);
 
+ // Đóng, mở chi tiết đơn hàng
   const toggleOrderDetails = (orderId) => {
     if (expandedOrder === orderId) {
       setExpandedOrder(null);
