@@ -120,8 +120,8 @@ const BlogManagement = () => {
         );
         
         Swal.fire({
-          title: "Thành công",
-          text: "Cập nhật bài viết thành công!",
+          title: "Success",
+          text: "Update success!",
           icon: "success"
         });
       } else {
@@ -130,8 +130,8 @@ const BlogManagement = () => {
         setBlogs(prev => [...prev, response]);
         
         Swal.fire({
-          title: "Thành công",
-          text: "Tạo bài viết mới thành công!",
+          title: "Success",
+          text: "Create new blog success!",
           icon: "success"
         });
       }
@@ -145,7 +145,7 @@ const BlogManagement = () => {
       
       Swal.fire({
         title: "Lỗi",
-        text: error.message || "Đã xảy ra lỗi. Vui lòng thử lại.",
+        text: error.message || "Error",
         icon: "error"
       });
     } finally {
@@ -161,7 +161,7 @@ const BlogManagement = () => {
     );
   }, [blogs, searchTerm]);
 
-  const itemsPerPage = 5;
+  const itemsPerPage = 8;
   const totalPages = Math.ceil(filteredBlogs.length / itemsPerPage);
   const paginatedBlogs = filteredBlogs.slice(
     (currentPage - 1) * itemsPerPage,
