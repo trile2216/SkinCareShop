@@ -27,7 +27,7 @@ const BlogForm = ({ blog, categories, skintypes, onSubmit, onCancel }) => {
         skintype: blog.skintype || "",
         imageUrl: blog.imageUrl || "",
       });
-      
+
       if (blog.imageUrl) {
         setPreviewImage(blog.imageUrl);
       }
@@ -80,7 +80,7 @@ const BlogForm = ({ blog, categories, skintypes, onSubmit, onCancel }) => {
 
     try {
       let imageUrl = formData.imageUrl;
-      
+
       if (selectedFile) {
         setIsUploading(true);
         imageUrl = await uploadFileCloudinary(selectedFile);
@@ -92,7 +92,7 @@ const BlogForm = ({ blog, categories, skintypes, onSubmit, onCancel }) => {
       };
 
       onSubmit(finalData);
-      
+
     } catch (error) {
       console.error("Error uploading image:", error);
       setErrors(prev => ({
@@ -105,8 +105,11 @@ const BlogForm = ({ blog, categories, skintypes, onSubmit, onCancel }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
-      <div className="grid gap-6 md:grid-cols-2">
+    <form onSubmit={handleSubmit} className="space-y-4 max-w-md mx-auto">
+
+      <div className="grid gap-4 grid-cols-2">
+
+
         <div>
           <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
             Title *
@@ -173,7 +176,8 @@ const BlogForm = ({ blog, categories, skintypes, onSubmit, onCancel }) => {
 
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
-            <FiImage className="inline mr-2" /> Hình ảnh
+            <FiImage className="inline mr-2" /> Image
+
           </label>
           <input
             type="file"
@@ -181,15 +185,15 @@ const BlogForm = ({ blog, categories, skintypes, onSubmit, onCancel }) => {
             onChange={handleFileChange}
             className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
           />
-          
+
           {errors.imageUrl && (
             <p className="mt-1 text-sm text-red-600">{errors.imageUrl}</p>
           )}
-          
+
           <div className="mt-3 border rounded-lg p-2 bg-gray-50">
             {isUploading ? (
               <div className="h-40 flex items-center justify-center text-gray-400">
-                <div className="animate-pulse">Đang tải ảnh lên...</div>
+                <div className="animate-pulse">Loading...</div>
               </div>
             ) : previewImage ? (
               <img
@@ -236,7 +240,7 @@ const BlogForm = ({ blog, categories, skintypes, onSubmit, onCancel }) => {
           onChange={handleChange}
           className="w-full rounded-lg border border-gray-300 p-3 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
           placeholder="Enter blog summary"
-          rows={4}
+          rows={1}
         />
         <div className="text-sm text-gray-500 dark:text-gray-400">
           {formData.summary.trim().split(/\s+/).filter(Boolean).length} words
