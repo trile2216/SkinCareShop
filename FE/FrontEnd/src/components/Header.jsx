@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { FiSearch, FiShoppingCart, FiUser } from "react-icons/fi";
+import { FiShoppingCart, FiUser } from "react-icons/fi";
 import Cart from "./Cart";
 import { useCart } from "../context/CartContext";
 import { toast } from "react-toastify";
@@ -18,6 +18,7 @@ const Header = () => {
   const isLoggedIn = !!token;
   const { logoutUser } = useAuth();
 
+  // Log out
   const handleLogout = () => {
     logoutUser();
     setShowLogoutConfirm(false);

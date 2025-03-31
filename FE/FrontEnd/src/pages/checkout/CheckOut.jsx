@@ -1,7 +1,6 @@
 import { Link } from "react-router";
 import { FiArrowLeft, FiPlus, FiMinus } from "react-icons/fi";
 import { useCart } from "../../context/CartContext";
-import Footer from "../../components/Footer";
 
 const Checkout = () => {
   const { cartItems, getTotalPrice, updateQuantity } = useCart();

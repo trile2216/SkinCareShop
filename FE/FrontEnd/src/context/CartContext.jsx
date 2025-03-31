@@ -1,17 +1,6 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import api from "../config/axios";
 
-// //
-// import { useSelector, useDispatch } from "react-redux";
-// import {
-//   setCartItems as setCartItemsAction,
-//   addToCart as addToCartAction,
-//   removeFromCart as removeFromCartAction,
-//   updateQuantity as updateQuantityAction,
-//   clearCart as clearCartAction,
-// } from "../context/CartSlice";
-// //
-
 const CartContext = createContext();
 
 export const useCart = () => useContext(CartContext);
@@ -21,17 +10,6 @@ export const CartProvider = ({ children }) => {
   const [cartCount, setCartCount] = useState(0);
   const [loading, setLoading] = useState(true);
 
-  // //
-  // const dispatch = useDispatch();
-  // const cartItems = useSelector((state) => state.cart.cartItems);
-  // const cartCount = useSelector((state) =>
-  //   state.cart.cartItems.reduce((total, item) => total + item.quantity, 0)
-  // );
-  // const totalPrice = useSelector((state) =>
-  //   state.cart.cartItems.reduce((total, item) => total + item.price * item.quantity, 0)
-  // );
-
-  // //
   useEffect(() => {
     fetchCartData();
   }, []);
@@ -48,23 +26,17 @@ export const CartProvider = ({ children }) => {
   const fetchCartData = async () => {
     try {
       const response = await api.get("/cart");
-      console.log("✅ API Response:", response.data);
-
-      // if (response.data === null) {
-      //   setCartItems([]);
-      // }
-      // setCartItems(response.data);
-      // dispatch(setCartItemsAction(response.data));
+      console.log("API Response:", response.data);
       if (Array.isArray(response.data)) {
         setCartItems(response.data.map(item => ({
-          productId: item.productId ?? item.id, // Đồng nhất key
+          productId: item.productId ?? item.id, 
           productName: item.productName ?? item.name,
           productImage: item.productImage ?? item.image,
-          productPrice: item.productPrice ?? item.price ?? 0,  // ✅ Đảm bảo giá trị hợp lệ
-          quantity: item.quantity ?? 1, // ✅ Nếu quantity bị thiếu, mặc định là 1
+          productPrice: item.productPrice ?? item.price ?? 0,  
+          quantity: item.quantity ?? 1, 
         })));
       } else {
-        setCartItems([]); // Nếu dữ liệu lỗi, đặt giỏ hàng rỗng
+        setCartItems([]);
       }
   
       setLoading(false);
@@ -74,6 +46,7 @@ export const CartProvider = ({ children }) => {
     }
   };
 
+  // Add
   const addToCart = async (product) => {
     const response = await api.post("/cart/add", {
       productId: product.productId || product.id,
@@ -102,38 +75,33 @@ export const CartProvider = ({ children }) => {
 
         return [...prevCart, { ...product, quantity: product.quantity || 1 }];
       });
-      // dispatch(addToCartAction(product));
-       // Fetch lại giỏ hàng để đảm bảo đồng bộ với server
-    await fetchCartData();
+      await fetchCartData();
     } catch (error) {
       console.error("Error adding to cart:", error);
     }
   };
 
+  // Remove
   const removeFromCart = async (productId) => {
-    console.log(`Xóa sản phẩm: Product ID = ${productId}`);
+    console.log(`Delete product ID = ${productId}`);
     try {
-      const response = await api.delete(`/cart/${productId}`);
-      // Cập nhật state giỏ hàng
+      await api.delete(`/cart/${productId}`);
       setCartItems((prevCart) => prevCart.filter((item) => item.id !== productId));
-
-      // Fetch lại dữ liệu từ API để đảm bảo đồng bộ
-      await fetchCartData();
-      // dispatch(removeFromCartAction(productId));
     } catch (error) {
       console.error("Error removing from cart:", error);
     }
   };
 
+  // Update quantity
   const updateQuantity = async (productId, newQuantity) => {
-    console.log(`Cập nhật số lượng: Product ID = ${productId}, New Quantity = ${newQuantity}`);
+    console.log(`Update quantity Product ID :  = ${productId}, New Quantity = ${newQuantity}`);
   
     if (newQuantity < 1) {
       return removeFromCart(productId);
     }
   
     try {
-      const response = await api.post("/cart/update-quantity", {
+      await api.post("/cart/update-quantity", {
         productId, 
         quantity: newQuantity
       });
@@ -146,14 +114,14 @@ export const CartProvider = ({ children }) => {
         )
       );
   
-      // Gọi API để đồng bộ dữ liệu
       await fetchCartData();
     } catch (error) {
-      console.error("Lỗi khi cập nhật số lượng:", error);
+      console.error("Error update quantity:", error);
     }
   };
   
 
+  // Clear cart
   const clearCart = async () => {
     try {
       setCartItems([]);
@@ -163,6 +131,7 @@ export const CartProvider = ({ children }) => {
     }
   };
 
+  // Total price
   const getTotalPrice = () =>
     cartItems.reduce((total, item) => total + (item.productPrice || 0) * (item.quantity || 1), 0);
   

@@ -1,24 +1,8 @@
 import { Link } from "react-router";
 import { FiTrash, FiPlus, FiMinus, FiX } from "react-icons/fi";
-// import { useDispatch, useSelector } from "react-redux";
-// import { removeFromCartAndSync, updateQuantityAndSync, fetchCartData } from "../context/CartSlice";
 import { useCart } from "../context/CartContext";
-import { useEffect } from "react";
 
 const Cart = ({ isCartOpen, onClose }) => {
-  // const dispatch = useDispatch();
-  // const cartItems = useSelector((state) => state.cart.cartItems);
-
-  // // Total Price
-  // const getTotalPrice = () =>
-  //   cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
-
-  // // Gọi API để lấy dữ liệu giỏ hàng khi mở cart
-  // useEffect(() => {
-  //   if (isCartOpen) {
-  //     dispatch(fetchCartData());
-  //   }
-  // }, [isCartOpen, dispatch]);
 
   const { cartItems, removeFromCart, updateQuantity } = useCart();
 
@@ -64,7 +48,6 @@ const Cart = ({ isCartOpen, onClose }) => {
                     {/* Increase/Decrease Quantity */}
                     <div className="flex items-center space-x-2 mt-1">
                       <button
-                        //  onClick={() => dispatch(updateQuantityAndSync({ id: item.id, quantity: item.quantity - 1 }))}
                         onClick={() =>
                           updateQuantity(item.productId, item.quantity - 1)
                         }
@@ -76,7 +59,6 @@ const Cart = ({ isCartOpen, onClose }) => {
                         {item.quantity}
                       </span>
                       <button
-                        // onClick={() => dispatch(updateQuantityAndSync({ id: item.id, quantity: item.quantity + 1 }))}
                         onClick={() =>
                           updateQuantity(item.productId, item.quantity + 1)
                         }
@@ -89,7 +71,6 @@ const Cart = ({ isCartOpen, onClose }) => {
 
                   {/* Remove*/}
                   <button
-                    // onClick={() => dispatch(removeFromCartAndSync(item.id))}
                     onClick={() => removeFromCart(item.productId)}
                     className="text-rose-500 hover:text-rose-700"
                   >

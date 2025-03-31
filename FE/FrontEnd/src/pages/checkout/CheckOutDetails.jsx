@@ -164,11 +164,6 @@ const CheckOutDetails = () => {
     }
   };
 
-  const handlePaymentChange = (e) => {
-    setFormData({ ...formData, paymentMethod: e.target.value });
-    console.log("Selected Payment Method:", e.target.value);
-  };
-
   const customerId = parseInt(localStorage.getItem("customerId"));
   console.log("Customer ID:", customerId);
 
