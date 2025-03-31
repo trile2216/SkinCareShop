@@ -33,7 +33,7 @@ namespace api.Mappers
                 DistrictId = createShippingFeeDTO.DistrictId,
                 Fee = createShippingFeeDTO.Fee,
                 IsActive = true,
-                LastUpdated = DateTime.UtcNow
+                LastUpdated = DateTime.Now
             };
         }
 
@@ -42,7 +42,6 @@ namespace api.Mappers
             return new ShippingFee()
             {
                 Fee = updateShippingFeeDTO.Fee,
-                IsActive = updateShippingFeeDTO.IsActive ?? true
             };
         }
     }

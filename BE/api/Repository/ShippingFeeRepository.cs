@@ -61,7 +61,7 @@ namespace api.Repository
             }
 
             existingShippingFee.Fee = shippingFee.Fee;
-            existingShippingFee.LastUpdated = DateTime.UtcNow;
+            existingShippingFee.LastUpdated = DateTime.Now;
 
 
             _context.ShippingFees.Update(existingShippingFee);
@@ -79,12 +79,27 @@ namespace api.Repository
             }
 
             shippingFee.IsActive = isActive;
-            shippingFee.LastUpdated = DateTime.UtcNow;
+            shippingFee.LastUpdated = DateTime.Now;
 
             _context.ShippingFees.Update(shippingFee);
             await _context.SaveChangesAsync();
             return shippingFee;
 
+        }
+
+        public async Task<ShippingFee?> DeleteShippingFeeAsync(int id)
+        {
+            var existingShippingFee = await GetShippingFeeByIdAsync(id);
+
+            if (existingShippingFee == null)
+            {
+                return null;
+            }
+
+            _context.ShippingFees.Remove(existingShippingFee);
+            await _context.SaveChangesAsync();
+
+            return existingShippingFee;
         }
     }
 }

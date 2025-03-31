@@ -96,7 +96,7 @@ namespace api.Controller
         }
 
         [HttpGet]
-        [Route("districts/{cityId}")]
+        [Route("districts-by-city/{cityId}")]
         public async Task<IActionResult> GetDistrictsByCityId(int cityId)
         {
             var districts = await _districtRepository.GetDistrictByCityIdAsync(cityId);
@@ -107,6 +107,20 @@ namespace api.Controller
             }
 
             return Ok(districts);
+        }
+
+        [HttpGet]
+        [Route("district-by-id/{districtId}")]
+        public async Task<IActionResult> GetDistrictById(int districtId)
+        {
+            var district = await _districtRepository.GetDistrictByIdAsync(districtId);
+
+            if (district == null)
+            {
+                return NotFound($"No district found for ID {districtId}.");
+            }
+
+            return Ok(district);
         }
 
         [HttpPost]
@@ -147,6 +161,24 @@ namespace api.Controller
             }
 
             return Ok(updatedShippingFee.ToShippingFeeDTO());
+        }
+
+
+        [HttpDelete]
+        [Route("delete/{id}")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> DeleteShippingFee([FromRoute] int id)
+        {
+            var shippingFee = await _shippingFeeRepository.DeleteShippingFeeAsync(id);
+
+            if (shippingFee == null)
+            {
+                return NotFound($"Shipping fee with ID {id} not found.");
+            }
+
+            var shippingFeeDTO = shippingFee.ToShippingFeeDTO();
+
+            return Ok(shippingFeeDTO);
         }
     }
 }
