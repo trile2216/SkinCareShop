@@ -26,7 +26,7 @@ export const CartProvider = ({ children }) => {
   const fetchCartData = async () => {
     try {
       const response = await api.get("/cart");
-      console.log("API Response:", response.data);
+      console.log("✅ API Response:", response.data);
       if (Array.isArray(response.data)) {
         setCartItems(response.data.map(item => ({
           productId: item.productId ?? item.id, 
@@ -36,7 +36,7 @@ export const CartProvider = ({ children }) => {
           quantity: item.quantity ?? 1, 
         })));
       } else {
-        setCartItems([]);
+        setCartItems([]); 
       }
   
       setLoading(false);
@@ -46,7 +46,6 @@ export const CartProvider = ({ children }) => {
     }
   };
 
-  // Add
   const addToCart = async (product) => {
     const response = await api.post("/cart/add", {
       productId: product.productId || product.id,
@@ -75,53 +74,47 @@ export const CartProvider = ({ children }) => {
 
         return [...prevCart, { ...product, quantity: product.quantity || 1 }];
       });
-      await fetchCartData();
+    await fetchCartData();
     } catch (error) {
       console.error("Error adding to cart:", error);
     }
   };
 
-  // Remove
   const removeFromCart = async (productId) => {
     console.log(`Delete product ID = ${productId}`);
     try {
       await api.delete(`/cart/${productId}`);
       setCartItems((prevCart) => prevCart.filter((item) => item.id !== productId));
+      await fetchCartData();
     } catch (error) {
       console.error("Error removing from cart:", error);
     }
   };
 
-  // Update quantity
   const updateQuantity = async (productId, newQuantity) => {
     console.log(`Update quantity Product ID :  = ${productId}, New Quantity = ${newQuantity}`);
-  
+    
     if (newQuantity < 1) {
       return removeFromCart(productId);
     }
   
     try {
-      await api.post("/cart/update-quantity", {
-        productId, 
-        quantity: newQuantity
-      });
+      await api.post("/cart/update-quantity", { productId, quantity: newQuantity });
   
       setCartItems((prevCart) =>
         prevCart.map((item) =>
           item.productId === productId
-            ? { ...item, quantity: Math.min(newQuantity, item.stock) }
+            ? { ...item, quantity: newQuantity } 
             : item
         )
       );
   
       await fetchCartData();
     } catch (error) {
-      console.error("Error update quantity:", error);
+      console.error("Error updating quantity:", error);
     }
   };
   
-
-  // Clear cart
   const clearCart = async () => {
     try {
       setCartItems([]);
@@ -131,7 +124,6 @@ export const CartProvider = ({ children }) => {
     }
   };
 
-  // Total price
   const getTotalPrice = () =>
     cartItems.reduce((total, item) => total + (item.productPrice || 0) * (item.quantity || 1), 0);
   
