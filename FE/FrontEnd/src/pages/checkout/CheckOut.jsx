@@ -59,7 +59,6 @@ const Checkout = () => {
                   <tr className="bg-gray-100 text-gray-600 uppercase text-sm leading-normal">
                     <th className="py-2 px-4 text-left">Image</th>
                     <th className="py-2 px-4 text-left">Product Name</th>
-                    <th className="py-2 px-4 text-left">Brand</th>
                     <th className="py-2 px-4 text-center">Quantity</th>
                     <th className="py-2 px-4 text-right">Total</th>
                   </tr>
@@ -75,9 +74,6 @@ const Checkout = () => {
                         />
                       </td>
                       <td className="py-2 px-4 font-semibold">{item.productName}</td>
-                      <td className="py-2 px-4 text-gray-600">
-                        {item.brandName}
-                      </td>
                       <td className="py-2 px-4 text-center">
                         <div className="flex items-center justify-center">
                           <button
