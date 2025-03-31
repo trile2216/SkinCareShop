@@ -13,7 +13,7 @@ const shippingFeeService = {
   
     getDistrictsByCity: async (cityId) => {
       try {
-        const response = await api.get(`/shipping-fee/districts/${cityId}`);
+        const response = await api.get(`/shipping-fee/districts-by-city/${cityId}`);
         return response.data;
       } catch (error) {
         console.error(`Error fetching districts for city ${cityId}:`, error);
@@ -60,7 +60,28 @@ const shippingFeeService = {
         console.error(`Error updating shipping fee ${id}:`, error);
         throw error;
       }
+    },
+
+    deleteShippingFee: async (id) => {
+      try {
+        const response = await api.delete(`/shipping-fee/delete/${id}`);
+        return response.data;
+      } catch (error) {
+        console.error(`Error deleting shipping fee ${id}:`, error);
+        throw error;
+      }
+    },
+
+    getDistrictsById: async (id) => {
+      try {
+        const response = await api.get(`/shipping-fee/districts-by-id/${id}`);
+        return response.data;
+      } catch (error) {
+        console.error(`Error fetching districts for ID ${id}:`, error);
+        throw error;
+      }
     }
+
   };
   
   export default shippingFeeService;
