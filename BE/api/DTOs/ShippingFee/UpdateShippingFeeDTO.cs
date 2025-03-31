@@ -12,6 +12,5 @@ namespace api.DTOs.ShippingFee
         [Range(0, 10000000)]
         public decimal Fee { get; set; }
 
-        public bool? IsActive { get; set; }
     }
 }

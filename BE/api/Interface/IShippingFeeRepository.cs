@@ -13,5 +13,6 @@ namespace api.Interface
         Task<ShippingFee?> GetActiveShippingFeeByCityAndDistrictAsync(int cityId, int districtId);
         Task<ShippingFee> CreateShippingFeeAsync(ShippingFee shippingFee);
         Task<ShippingFee?> UpdateShippingFeeAsync(int id, ShippingFee shippingFee); Task<ShippingFee?> ChangeStatus(int id, bool isActive);
+        Task<ShippingFee?> DeleteShippingFeeAsync(int id);
     }
 }
