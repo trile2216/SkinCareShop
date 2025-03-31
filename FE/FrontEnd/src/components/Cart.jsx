@@ -22,9 +22,12 @@ const Cart = ({ isCartOpen, onClose }) => {
 
   const { cartItems, removeFromCart, updateQuantity } = useCart();
 
+  console.log("Checkout cartItems:", cartItems);
+
   // Total Price
-  const getTotalPrice = () =>
-    cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
+ const getTotalPrice = () =>
+  cartItems.reduce((total, item) => total + (item.productPrice || 0) * (item.quantity || 1), 0);
+
 
   return (
     isCartOpen && (
@@ -44,18 +47,18 @@ const Cart = ({ isCartOpen, onClose }) => {
             <div className="max-h-80 overflow-y-auto px-4">
               {cartItems.map((item) => (
                 <div
-                  key={item.id}
+                  key={item.productId}
                   className="flex items-center justify-between py-3 border-b border-gray-200"
                 >
                   <img
-                    src={item.image}
-                    alt={item.name}
+                    src={item.productImage}
+                    alt={item.productName}
                     className="w-16 h-16 object-cover rounded-md"
                   />
                   <div className="flex-1 px-4">
-                    <p className="font-medium text-sm">{item.name}</p>
+                    <p className="font-medium text-sm">{item.productName}</p>
                     <p className="text-gray-600 text-xs">
-                      {(item.price * item.quantity).toLocaleString("vi-VN")} $
+                      {(item.productPrice * item.quantity).toLocaleString("vi-VN")} $
                     </p>
 
                     {/* Increase/Decrease Quantity */}
@@ -63,7 +66,7 @@ const Cart = ({ isCartOpen, onClose }) => {
                       <button
                         //  onClick={() => dispatch(updateQuantityAndSync({ id: item.id, quantity: item.quantity - 1 }))}
                         onClick={() =>
-                          updateQuantity(item.id, item.quantity - 1)
+                          updateQuantity(item.productId, item.quantity - 1)
                         }
                         className="p-1 rounded-full bg-rose-200 hover:bg-rose-300"
                       >
@@ -75,7 +78,7 @@ const Cart = ({ isCartOpen, onClose }) => {
                       <button
                         // onClick={() => dispatch(updateQuantityAndSync({ id: item.id, quantity: item.quantity + 1 }))}
                         onClick={() =>
-                          updateQuantity(item.id, item.quantity + 1)
+                          updateQuantity(item.productId, item.quantity + 1)
                         }
                         className="p-1 rounded-full bg-rose-200 hover:bg-rose-300"
                       >
@@ -87,7 +90,7 @@ const Cart = ({ isCartOpen, onClose }) => {
                   {/* Remove*/}
                   <button
                     // onClick={() => dispatch(removeFromCartAndSync(item.id))}
-                    onClick={() => removeFromCart(item.id)}
+                    onClick={() => removeFromCart(item.productId)}
                     className="text-rose-500 hover:text-rose-700"
                   >
                     <FiTrash size={20} />

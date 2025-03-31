@@ -66,15 +66,15 @@ const Checkout = () => {
                 </thead>
                 <tbody>
                   {cartItems.map((item) => (
-                    <tr key={item.id} className="border-b">
+                    <tr key={item.productId} className="border-b">
                       <td className="py-2 px-4">
                         <img
-                          src={item.image}
-                          alt={item.name}
+                          src={item.productImage}
+                          alt={item.productName}
                           className="w-20 h-20 object-cover rounded-md"
                         />
                       </td>
-                      <td className="py-2 px-4 font-semibold">{item.name}</td>
+                      <td className="py-2 px-4 font-semibold">{item.productName}</td>
                       <td className="py-2 px-4 text-gray-600">
                         {item.brandName}
                       </td>
@@ -82,7 +82,7 @@ const Checkout = () => {
                         <div className="flex items-center justify-center">
                           <button
                             onClick={() =>
-                              updateQuantity(item.id, item.quantity - 1)
+                              updateQuantity(item.productId, item.quantity - 1)
                             }
                             className="p-1 rounded-full bg-rose-200 hover:bg-rose-300"
                           >
@@ -91,7 +91,7 @@ const Checkout = () => {
                           <span className="px-3">{item.quantity}</span>
                           <button
                             onClick={() =>
-                              updateQuantity(item.id, item.quantity + 1)
+                              updateQuantity(item.productId, item.quantity + 1)
                             }
                             className="p-1 rounded-full bg-rose-200 hover:bg-rose-300"
                           >
@@ -100,7 +100,7 @@ const Checkout = () => {
                         </div>
                       </td>
                       <td className="py-2 px-4 text-right font-semibold">
-                        {(item.price * item.quantity).toLocaleString("en-US")} $
+                        {(item.productPrice * item.quantity).toLocaleString("en-US")} $
                       </td>
                     </tr>
                   ))}

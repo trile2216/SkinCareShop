@@ -178,7 +178,6 @@ const CheckOutDetails = () => {
 
   const handleSubmitOrder = async (e) => {
     e.preventDefault();
-    // Check form validation
 
     // Check form validation
     if (!formData.firstName) {
@@ -223,9 +222,9 @@ const CheckOutDetails = () => {
         const orderData = {
           customerId: parseInt(localStorage.getItem("customerId")),
           cartItems: cartItems.map((item) => ({
-            productId: item.id,
+            productId: item.productId,
             quantity: item.quantity,
-            productPrice: item.price,
+            productPrice: item.productPrice,
           })),
           totalPrice: getTotalPrice(),
           shippingFee: getShippingFee(),
@@ -253,7 +252,6 @@ const CheckOutDetails = () => {
         console.error("Order submission error:", error);
       }
     }
-    //Back to home -> Clear cart
   };
 
   //Back to home -> Clear cart
@@ -507,20 +505,20 @@ const CheckOutDetails = () => {
                   </thead>
                   <tbody>
                     {cartItems.map((item) => (
-                      <tr key={item.id} className="border-b">
+                      <tr key={item.productId} className="border-b">
                         <td className="py-2 px-4">
                           <img
-                            src={item.image}
-                            alt={item.name}
+                            src={item.productImage}
+                            alt={item.productName}
                             className="w-20 h-20 object-cover rounded-md"
                           />
                         </td>
-                        <td className="py-2 px-4 font-semibold">{item.name}</td>
+                        <td className="py-2 px-4 font-semibold">{item.productName}</td>
                         <td className="py-2 px-4 text-center">
                           {item.quantity}
                         </td>
                         <td className="py-2 px-4 text-right font-semibold">
-                          {(item.price * item.quantity).toLocaleString("en-US")}{" "}
+                          {(item.productPrice * item.quantity).toLocaleString("en-US")}{" "}
                           $
                         </td>
                       </tr>
@@ -639,18 +637,18 @@ const CheckOutDetails = () => {
               </thead>
               <tbody>
                 {cartItems.map((item) => (
-                  <tr key={item.id} className="border-b">
+                  <tr key={item.productId} className="border-b">
                     <td className="py-2 px-4">
                       <img
-                        src={item.image}
-                        alt={item.name}
+                        src={item.productImage}
+                        alt={item.productName}
                         className="w-20 h-20 object-cover rounded-md"
                       />
                     </td>
-                    <td className="py-2 px-4 font-semibold">{item.name}</td>
+                    <td className="py-2 px-4 font-semibold">{item.productName}</td>
                     <td className="py-2 px-4 text-center">{item.quantity}</td>
                     <td className="py-2 px-4 text-right font-semibold">
-                      {(item.price * item.quantity).toLocaleString("en-US")} $
+                      {(item.productPrice * item.quantity).toLocaleString("en-US")} $
                     </td>
                   </tr>
                 ))}
