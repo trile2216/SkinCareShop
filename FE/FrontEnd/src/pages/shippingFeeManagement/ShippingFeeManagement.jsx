@@ -14,6 +14,7 @@ import {
   Typography,
   Spin,
   message,
+  Popconfirm,
 } from "antd";
 import {
   SearchOutlined,
@@ -52,21 +53,20 @@ const ShippingFeeManagement = () => {
 
       // Gọi API lấy cities
       const citiesResponse = await shippingFeeService.getAllCities();
-      console.log('Cities response:', citiesResponse);
+      console.log("Cities response:", citiesResponse);
 
       // Vì response trả về trực tiếp là array nên không cần .data
       if (Array.isArray(citiesResponse)) {
         setCities(citiesResponse);
       } else {
-        console.error('Invalid cities data:', citiesResponse);
-        message.error('Failed to load cities data');
+        console.error("Invalid cities data:", citiesResponse);
+        message.error("Failed to load cities data");
       }
 
       // Lấy shipping fees
       const feesResponse = await shippingFeeService.getAllShippingFees();
       setShippingFees(feesResponse);
       setFilteredFees(feesResponse);
-
     } catch (error) {
       console.error("Error fetching data:", error);
       message.error("Failed to load data. Please try again later.");
@@ -111,13 +111,13 @@ const ShippingFeeManagement = () => {
 
     try {
       const districtsData = await shippingFeeService.getDistrictsByCity(cityId);
-      console.log('Districts data:', districtsData);
+      console.log("Districts data:", districtsData);
 
       if (Array.isArray(districtsData)) {
         setDistricts(districtsData);
       } else {
-        console.error('Invalid districts data:', districtsData);
-        message.error('Error loading districts data');
+        console.error("Invalid districts data:", districtsData);
+        message.error("Error loading districts data");
       }
       form.resetFields(["districtId"]);
     } catch (error) {
@@ -154,6 +154,14 @@ const ShippingFeeManagement = () => {
 
     handleCityChange(fee.cityId);
     setIsModalVisible(true);
+  };
+
+  const handleDeteleFee = async (id) => {
+    const response = await shippingFeeService.deleteShippingFee(id);
+
+    if (response) {
+      fetchData();
+    }
   };
 
   const handleCancel = () => {
@@ -213,7 +221,6 @@ const ShippingFeeManagement = () => {
   };
 
   const columns = [
-
     {
       title: "City",
       dataIndex: "cityName",
@@ -227,7 +234,7 @@ const ShippingFeeManagement = () => {
       sorter: (a, b) => a.districtName.localeCompare(b.districtName),
     },
     {
-      title: "Fee (VND)",
+      title: "Fee ($)",
       dataIndex: "fee",
       key: "fee",
       render: (fee) => {
@@ -236,36 +243,41 @@ const ShippingFeeManagement = () => {
       sorter: (a, b) => a.fee - b.fee,
     },
     {
-      title: "Status",
-      dataIndex: "isActive",
-      key: "isActive",
-      render: (isActive) => (
-        <Tag color={isActive ? "green" : "red"}>
-          {isActive ? "Active" : "Inactive"}
-        </Tag>
-      ),
+      title: "Last Updated",
+      dataIndex: "lastUpdated",
+      key: "lastUpdated",
+      render: (date) => new Date(date).toLocaleString(),
+      sorter: (a, b) => new Date(a.lastUpdated) - new Date(b.lastUpdated),
     },
-
     {
       title: "Actions",
       key: "actions",
       render: (_, record) => (
-        <Button
-          type="primary"
-          icon={<EditOutlined />}
-          onClick={() => handleEdit(record)}
-          style={{ backgroundColor: "#fda4af" }}
-        >
-          Edit
-        </Button>
+        <Space>
+          <Button
+            type="primary"
+            icon={<EditOutlined />}
+            onClick={() => handleEdit(record)}
+            style={{ backgroundColor: "#fda4af" }}
+          >
+            Edit
+          </Button>
+          <Popconfirm
+            title="Delete the product"
+            description="Are you sure to delete this product?"
+            onConfirm={() => handleDeteleFee(record.id)}
+          >
+            <Button danger type="primary">
+              Delete
+            </Button>
+          </Popconfirm>
+        </Space>
       ),
     },
   ];
 
   return (
     <div>
-
-
       {/* Search and Filter Controls */}
       <div style={{ marginBottom: 16 }}>
         <Space size="middle">
@@ -342,11 +354,12 @@ const ShippingFeeManagement = () => {
               showSearch
               optionFilterProp="children"
             >
-              {Array.isArray(cities) && cities.map((city) => (
-                <Option key={city.id} value={city.id}>
-                  {city.name}
-                </Option>
-              ))}
+              {Array.isArray(cities) &&
+                cities.map((city) => (
+                  <Option key={city.id} value={city.id}>
+                    {city.name}
+                  </Option>
+                ))}
             </Select>
           </Form.Item>
 
@@ -362,17 +375,18 @@ const ShippingFeeManagement = () => {
               showSearch
               optionFilterProp="children"
             >
-              {Array.isArray(districts) && districts.map((district) => (
-                <Option key={district.id} value={district.id}>
-                  {district.name}
-                </Option>
-              ))}
+              {Array.isArray(districts) &&
+                districts.map((district) => (
+                  <Option key={district.id} value={district.id}>
+                    {district.name}
+                  </Option>
+                ))}
             </Select>
           </Form.Item>
 
           <Form.Item
             name="fee"
-            label="Shipping Fee (VND)"
+            label="Shipping Fee ($)"
             rules={[
               { required: true, message: "Please enter a fee" },
               {
