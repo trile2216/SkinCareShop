@@ -10,14 +10,12 @@ import {
   Form,
   InputNumber,
   Modal,
-  Typography,
   message,
   Popconfirm,
 } from "antd";
 import { SearchOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 
-const { Title } = Typography;
 const { Option } = Select;
 
 const ShippingFeeManagement = () => {
@@ -34,7 +32,6 @@ const ShippingFeeManagement = () => {
   const [currentFee, setCurrentFee] = useState(null);
   const [districts, setDistricts] = useState([]);
   const [submitting, setSubmitting] = useState(false);
-  const [loadingCities, setLoadingCities] = useState(false);
 
   // Fetch all shipping fees and cities on component mount
   useEffect(() => {
@@ -208,13 +205,14 @@ const ShippingFeeManagement = () => {
       form.resetFields();
     } catch (error) {
       console.error("Error saving shipping fee:", error);
+      toast.error("Failed to save shipping fee");
 
       if (error.response && error.response.data) {
         message.error(
           `Failed to save: ${error.response.data.error || "Unknown error"}`
         );
       } else {
-        message.error("Failed to save shipping fee. Please try again.");
+        toast.error("Failed to save shipping fee. Please try again.");
       }
     } finally {
       setSubmitting(false);
