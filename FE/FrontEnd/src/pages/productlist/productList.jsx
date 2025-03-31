@@ -16,7 +16,7 @@ const ProductList = () => {
 
   const [products, setProducts] = useState([]);
   const [filters, setFilters] = useState({
-    priceRange: [0, 50],
+    priceRange: [0, 150],
     category: "",
     brand: "",
     skinType: "",
@@ -62,7 +62,6 @@ const ProductList = () => {
 
     fetchData();
   }, []);
-
 
   const filteredAndSortedProducts = useMemo(() => {
     let result = products.filter((product) => {
@@ -186,7 +185,7 @@ const ProductList = () => {
         trackStyle={[{ backgroundColor: "#fb7185" }]} // Thanh trượt màu rose-400
         handleStyle={[
           { borderColor: "#fb7185", backgroundColor: "#fb7185" },
-          { borderColor: "#fb7185", backgroundColor: "#fb7185" }
+          { borderColor: "#fb7185", backgroundColor: "#fb7185" },
         ]}
       >
         <option value="default">Default Sorting</option>
@@ -242,19 +241,23 @@ const ProductList = () => {
               <Slider
                 range
                 min={0}
-                max={50}
-                step={5}
+                max={150}
+                step={10}
                 value={filters.priceRange}
                 onChange={(value) => handleFilterChange("priceRange", value)}
                 trackStyle={[{ backgroundColor: "#fb7185" }]} // Thanh trượt màu rose-400
                 handleStyle={[
                   { borderColor: "#fb7185", backgroundColor: "#fb7185" },
-                  { borderColor: "#fb7185", backgroundColor: "#fb7185" }
+                  { borderColor: "#fb7185", backgroundColor: "#fb7185" },
                 ]}
               />
               <div className="flex justify-between text-sm text-gray-600">
-                <span className="text-rose-600">{filters.priceRange[0].toLocaleString("vi-VN")} $</span>
-                <span className="text-rose-600">{filters.priceRange[1].toLocaleString("vi-VN")} $</span>
+                <span className="text-rose-600">
+                  {filters.priceRange[0].toLocaleString("vi-VN")} $
+                </span>
+                <span className="text-rose-600">
+                  {filters.priceRange[1].toLocaleString("vi-VN")} $
+                </span>
               </div>
             </div>
 

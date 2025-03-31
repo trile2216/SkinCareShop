@@ -24,7 +24,7 @@ namespace api.Repository
             {
                 TotalOrders = await _context.Orders.CountAsync(),
                 TotalProducts = await _context.Products.CountAsync(),
-                TotalCustomers = await _context.Customers.CountAsync(),
+                TotalCustomers = await _context.Customers.Include(c => c.Account).CountAsync(c => c.Account.IsActive),
                 TotalCategories = await _context.Categories.CountAsync(),
                 TotalBrands = await _context.Brands.CountAsync(),
                 TotalRevenue = await _context.Orders
@@ -36,6 +36,8 @@ namespace api.Repository
         public async Task<List<TopProductDTO>> GetTopProducts()
         {
             var topProducts = await _context.OrderItems
+                    .Include(oi => oi.Order)
+                    .Where(oi => oi.Order.Status != OrderStatus.Cancelled && oi.Order.Status != OrderStatus.Pending)
                    .GroupBy(oi => oi.ProductId)
                    .Select(g => new
                    {
