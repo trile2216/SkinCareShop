@@ -31,7 +31,7 @@ export const createBlog = async (formData) => {
     try {
         const response = await api.post("blog/create", formData, {
             headers: {
-                "Content-Type": "multipart/form-data",
+                "Content-Type": "application/json",
             },
         });
         return response;
