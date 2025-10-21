@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using api.DTOs.Account;
 using api.Models;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace api.Mappers
 {
@@ -22,15 +21,13 @@ namespace api.Mappers
             };
         }
 
-        public static Account ToAccountFromCreateDTO(this CreateAccountDTO createAccountDTO, string userId)
+        public static Account ToAccountFromCreateDTO(this CreateAccountDTO createAccountDTO)
         {
             return new Account
             {
                 UserName = createAccountDTO.UserName,
                 Role = createAccountDTO.Role,
                 IsActive = true,
-                Password = createAccountDTO.Password,
-                IdentityUserId = userId
             };
         }
     }

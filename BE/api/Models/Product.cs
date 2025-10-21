@@ -22,6 +22,8 @@ public partial class Product
 
     public int CategoryId { get; set; }
 
+    public string? Size { get; set; }
+
     public int BrandId { get; set; }
 
     public decimal? Sale { get; set; }

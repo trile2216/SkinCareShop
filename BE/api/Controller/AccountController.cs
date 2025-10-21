@@ -19,11 +19,11 @@ namespace api.Controller
     {
         private readonly ApplicationDbContext _context;
 
-        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly UserManager<Account> _userManager;
 
         private readonly IAccountRepository _accountRepo;
 
-        public AccountController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, IAccountRepository accountRepo)
+        public AccountController(ApplicationDbContext context, UserManager<Account> userManager, IAccountRepository accountRepo)
         {
             _context = context;
             _userManager = userManager;
@@ -48,7 +48,7 @@ namespace api.Controller
 
         [HttpGet]
         [Route("{id}")]
-        public async Task<IActionResult> GetAccountById(int id)
+        public async Task<IActionResult> GetAccountById(string id)
         {
             var account = await _accountRepo.GetAccountByIdAsync(id);
 
@@ -69,7 +69,7 @@ namespace api.Controller
                 return BadRequest(ModelState);
             }
 
-            var user = new ApplicationUser
+            var user = new Account
             {
                 UserName = createAccountDTO.UserName
             };
@@ -81,7 +81,7 @@ namespace api.Controller
                 return BadRequest(result.Errors);
             }
 
-            var account = createAccountDTO.ToAccountFromCreateDTO(user.Id);
+            var account = createAccountDTO.ToAccountFromCreateDTO();
 
             await _accountRepo.CreateAccountAsync(account);
             return CreatedAtAction(nameof(GetAccountById), new { id = account.Id }, account.ToAccountDTO());

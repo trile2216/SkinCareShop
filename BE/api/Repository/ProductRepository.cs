@@ -7,7 +7,6 @@ using api.Interface;
 using api.Models;
 using api.Mappers;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Identity.Client;
 
 namespace api.Repository
 {

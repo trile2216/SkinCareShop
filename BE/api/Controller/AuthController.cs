@@ -25,9 +25,9 @@ namespace api.Controller
 
         private readonly ITokenService _tokenService;
 
-        private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly SignInManager<Account> _signInManager;
 
-        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly UserManager<Account> _userManager;
 
         private readonly IAccountRepository _accountRepo;
 
@@ -41,8 +41,8 @@ namespace api.Controller
         public AuthController(
             ApplicationDbContext context,
             ITokenService tokenService,
-            SignInManager<ApplicationUser> signInManager,
-            UserManager<ApplicationUser> userManager,
+            SignInManager<Account> signInManager,
+            UserManager<Account> userManager,
             IAccountRepository accountRepo,
             ICartService cartService,
             IEmailService emailService,
@@ -69,12 +69,6 @@ namespace api.Controller
                     return BadRequest(ModelState);
                 }
 
-                var user = new ApplicationUser
-                {
-                    UserName = registerDTO.UserName
-                };
-
-                // Kiểm tra xem tên người dùng đã tồn tại chưa
                 var existingUser = await _context.Accounts.FirstOrDefaultAsync(a => a.UserName == registerDTO.UserName && a.IsActive == true);
                 if (existingUser != null)
                 {
@@ -87,23 +81,19 @@ namespace api.Controller
                     return BadRequest("Email is already registered");
                 }
 
-                var result = await _userManager.CreateAsync(user, registerDTO.Password);
+                var account = new Account
+                    {
+                        UserName = registerDTO.UserName,
+                        Role = UserRole.Customer,
+                        IsActive = true,
+                    };
+                var result = await _userManager.CreateAsync(account, registerDTO.Password);
 
                 if (!result.Succeeded)
                 {
                     return BadRequest(result.Errors);
                 }
 
-                var account = new Account
-                {
-                    UserName = registerDTO.UserName,
-                    Password = registerDTO.Password,
-                    Role = UserRole.Customer,
-                    IsActive = true,
-                    IdentityUserId = user.Id
-                };
-
-                await _accountRepo.CreateAccountAsync(account);
                 var customer = new Customer
                 {
                     FirstName = registerDTO.FirstName,
@@ -137,8 +127,7 @@ namespace api.Controller
                 }
 
                 var user = await _userManager.Users
-                    .Include(u => u.Account)
-                        .ThenInclude(a => a.Customer)
+                    .Include(a => a.Customer)
                     .FirstOrDefaultAsync(x => x.UserName == loginDTO.UserName);
 
                 if (user == null)
@@ -149,15 +138,15 @@ namespace api.Controller
                 if (!result.Succeeded)
                     return Unauthorized("Invalid username or password");
 
-                if (!user.Account.IsActive)
+                if (!user.IsActive)
                     return Unauthorized("Account is disabled");
 
 
 
                 var userDTO = new UserDTO
                 {
-                    CustomerId = user.Account.Customer?.Id,
-                    Role = user.Account.Role.ToString(),
+                    CustomerId = user.Customer?.Id,
+                    Role = user.Role.ToString(),
                     Token = _tokenService.CreateToken(user)
                 };
 
@@ -236,16 +225,15 @@ namespace api.Controller
                 // Tìm người dùng bằng email
                 var customer = await _context.Customers
                     .Include(c => c.Account)
-                    .ThenInclude(a => a.IdentityUser)
                     .FirstOrDefaultAsync(c => c.Email == forgotPasswordDTO.Email);
 
-                if (customer == null || customer.Account == null || customer.Account.IdentityUser == null)
+                if (customer == null || customer.Account == null)
                 {
                     // Không báo lỗi chi tiết để bảo vệ thông tin
                     return Ok("Nếu email tồn tại, bạn sẽ nhận được hướng dẫn đặt lại mật khẩu");
                 }
 
-                var user = customer.Account.IdentityUser;
+                var user = customer.Account;
 
                 // Tạo token đặt lại mật khẩu
                 var token = await _userManager.GeneratePasswordResetTokenAsync(user);
@@ -288,7 +276,6 @@ namespace api.Controller
 
                 var customer = await _context.Customers
                     .Include(c => c.Account)
-                    .ThenInclude(a => a.IdentityUser)
                     .FirstOrDefaultAsync(c => c.Email == resetPasswordDTO.Email);
 
                 if (customer == null || customer.Account == null)
@@ -296,7 +283,7 @@ namespace api.Controller
                     return BadRequest("Email không hợp lệ");
                 }
 
-                var user = customer.Account.IdentityUser;
+                var user = customer.Account;
 
                 // Đặt lại mật khẩu
                 var result = await _userManager.ResetPasswordAsync(user, resetPasswordDTO.Token, resetPasswordDTO.NewPassword);
@@ -306,7 +293,7 @@ namespace api.Controller
                     return BadRequest(result.Errors);
                 }
 
-                customer.Account.Password = resetPasswordDTO.NewPassword;
+                customer.Account.PasswordHash = _userManager.PasswordHasher.HashPassword(customer.Account, resetPasswordDTO.NewPassword);
 
                 await _context.SaveChangesAsync();
 

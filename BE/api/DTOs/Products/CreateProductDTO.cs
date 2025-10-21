@@ -21,7 +21,7 @@ namespace api.DTOs.Products
         public string? Image { get; set; }
 
         [Required]
-        [Range(1, 3)]
+        [Range(0, 2)]
         public Gender Gender { get; set; }
 
         [Required]
@@ -47,7 +47,7 @@ namespace api.DTOs.Products
         public decimal Price { get; set; }
 
         [Required]
-        public List<ProductSkinTypeRequestDTO> ProductSkinTypeDTOs { get; set; } = new List<ProductSkinTypeRequestDTO>();
+        public List<ProductSkinTypeRequestDTO> ProductSkinTypes { get; set; } = new List<ProductSkinTypeRequestDTO>();
 
     }
 }

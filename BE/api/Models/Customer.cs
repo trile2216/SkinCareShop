@@ -17,7 +17,7 @@ public partial class Customer
 
     public string? Phone { get; set; }
 
-    public int AccountId { get; set; }
+    public string AccountId { get; set; } = null!;
 
     public virtual Account Account { get; set; } = null!;
 

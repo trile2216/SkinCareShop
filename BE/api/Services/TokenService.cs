@@ -19,13 +19,13 @@ namespace api.Services
             _key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["JWT:SigningKey"]));
         }
 
-        public string CreateToken(ApplicationUser user)
+        public string CreateToken(Account user)
         {
             var claims = new List<Claim>
             {
-                new Claim("customerId", user.Account.Customer?.Id.ToString() ?? ""),
-                new Claim(ClaimTypes.NameIdentifier, user.Account.UserName),
-                new Claim(ClaimTypes.Role, user.Account.Role.ToString())
+                new Claim("customerId", user.Customer?.Id.ToString() ?? ""),
+                new Claim(ClaimTypes.NameIdentifier, user.UserName),
+                new Claim(ClaimTypes.Role, user.Role.ToString())
             };
 
             var creds = new SigningCredentials(_key, SecurityAlgorithms.HmacSha512Signature);

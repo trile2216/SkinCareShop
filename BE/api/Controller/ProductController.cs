@@ -69,11 +69,9 @@ namespace api.Controller
                 return BadRequest(ModelState);
             }
 
-            var product = productDTO.ToProductFromCreateDTO();
+            var product = await _productRepo.CreateProductAsync(productDTO.ToProductFromCreateDTO());
 
-            await _productRepo.CreateProductAsync(product);
-
-            foreach (var productSkinTypeDTO in productDTO.ProductSkinTypeDTOs)
+            foreach (var productSkinTypeDTO in productDTO.ProductSkinTypes)
             {
                 var productSkinType = productSkinTypeDTO.ToProductSkinTypeFromRequestDTO(product.Id);
                 await _productSkinTypeRepo.AddProductSkinTypeAsync(productSkinType);
@@ -99,7 +97,7 @@ namespace api.Controller
                 return NotFound("Product not found");
             }
 
-            var productSkinTypes = productDTO.ProductSkinTypeDTOs.Select(p => p.ToProductSkinTypeFromDTO(p.ProductId)).ToList();
+            var productSkinTypes = productDTO.ProductSkinTypes.Select(p => p.ToProductSkinTypeFromRequestDTO(id)).ToList();
 
             await _productSkinTypeRepo.UpdateProductSkinTypesAsync(product.Id, productSkinTypes);
 

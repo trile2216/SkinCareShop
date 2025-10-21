@@ -26,7 +26,7 @@ namespace api.Repository
                 .ToListAsync();
         }
 
-        public async Task<Account?> GetAccountByIdAsync(int id)
+        public async Task<Account?> GetAccountByIdAsync(string id)
         {
 
             return await _context.Accounts.FirstOrDefaultAsync(a => a.Id == id);
@@ -39,7 +39,7 @@ namespace api.Repository
             return account;
         }
 
-        public async Task<Account?> UpdateAccountAsync(int id, Account account)
+        public async Task<Account?> UpdateAccountAsync(string id, Account account)
         {
             var existingAccount = await GetAccountByIdAsync(id);
             if (existingAccount == null)
@@ -47,14 +47,14 @@ namespace api.Repository
                 return null;
             }
 
-            existingAccount.Password = account.Password;
+            existingAccount.PasswordHash = account.PasswordHash;
 
             await _context.SaveChangesAsync();
             return existingAccount;
 
         }
 
-        public async Task<Account?> DeleteAccountAsync(int id)
+        public async Task<Account?> DeleteAccountAsync(string id)
         {
             var account = await GetAccountByIdAsync(id);
 

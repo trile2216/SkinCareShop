@@ -2,8 +2,8 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using api.Data;
 
 #nullable disable
@@ -17,34 +17,33 @@ namespace api.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.8")
-                .HasAnnotation("Relational:MaxIdentifierLength", 128);
+                .HasAnnotation("ProductVersion", "8.0.10")
+                .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
-            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+            NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
                     b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<string>("Name")
                         .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
+                        .HasColumnType("character varying(256)");
 
                     b.Property<string>("NormalizedName")
                         .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
+                        .HasColumnType("character varying(256)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("NormalizedName")
                         .IsUnique()
-                        .HasDatabaseName("RoleNameIndex")
-                        .HasFilter("[NormalizedName] IS NOT NULL");
+                        .HasDatabaseName("RoleNameIndex");
 
                     b.ToTable("AspNetRoles", (string)null);
                 });
@@ -53,19 +52,19 @@ namespace api.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("ClaimType")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<string>("ClaimValue")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<string>("RoleId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 
@@ -78,19 +77,19 @@ namespace api.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("ClaimType")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<string>("ClaimValue")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<string>("UserId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 
@@ -102,17 +101,17 @@ namespace api.Migrations
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
                     b.Property<string>("LoginProvider")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.Property<string>("ProviderKey")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.Property<string>("ProviderDisplayName")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<string>("UserId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.HasKey("LoginProvider", "ProviderKey");
 
@@ -124,10 +123,10 @@ namespace api.Migrations
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
                 {
                     b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.Property<string>("RoleId")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.HasKey("UserId", "RoleId");
 
@@ -139,16 +138,16 @@ namespace api.Migrations
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
                     b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.Property<string>("LoginProvider")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.Property<string>("Name")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.Property<string>("Value")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.HasKey("UserId", "LoginProvider", "Name");
 
@@ -157,136 +156,65 @@ namespace api.Migrations
 
             modelBuilder.Entity("api.Models.Account", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("id");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("IdentityUserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<bool>("IsActive")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(true)
-                        .HasColumnName("isActive");
-
-                    b.Property<string>("Password")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(255)")
-                        .HasColumnName("password");
-
-                    b.Property<int>("Role")
-                        .HasColumnType("int")
-                        .HasColumnName("role");
-
-                    b.Property<string>("UserName")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)")
-                        .HasColumnName("userName");
-
-                    b.HasKey("Id")
-                        .HasName("PK__Account__3213E83F806BD309");
-
-                    b.HasIndex("IdentityUserId")
-                        .IsUnique();
-
-                    b.HasIndex(new[] { "Id" }, "UQ__Account__3213E83E33B4EFAC")
-                        .IsUnique();
-
-                    b.ToTable("Account", (string)null);
-                });
-
-            modelBuilder.Entity("api.Models.Answer", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("id");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Content")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("content");
-
-                    b.Property<int>("QuestionId")
-                        .HasColumnType("int")
-                        .HasColumnName("questionId");
-
-                    b.Property<decimal>("Score")
-                        .HasColumnType("decimal(4, 2)")
-                        .HasColumnName("score");
-
-                    b.HasKey("Id")
-                        .HasName("PK__Answer__3213E83F6E6AC687");
-
-                    b.HasIndex("QuestionId");
-
-                    b.HasIndex(new[] { "Id" }, "UQ__Answer__3213E83E564C8748")
-                        .IsUnique();
-
-                    b.ToTable("Answer", (string)null);
-                });
-
-            modelBuilder.Entity("api.Models.ApplicationUser", b =>
-                {
                     b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.Property<int>("AccessFailedCount")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<string>("Email")
                         .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
+                        .HasColumnType("character varying(256)");
 
                     b.Property<bool>("EmailConfirmed")
-                        .HasColumnType("bit");
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(true)
+                        .HasColumnName("isActive");
 
                     b.Property<bool>("LockoutEnabled")
-                        .HasColumnType("bit");
+                        .HasColumnType("boolean");
 
                     b.Property<DateTimeOffset?>("LockoutEnd")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("NormalizedEmail")
                         .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
+                        .HasColumnType("character varying(256)");
 
                     b.Property<string>("NormalizedUserName")
                         .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
+                        .HasColumnType("character varying(256)");
 
                     b.Property<string>("PasswordHash")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<string>("PhoneNumber")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<bool>("PhoneNumberConfirmed")
-                        .HasColumnType("bit");
+                        .HasColumnType("boolean");
+
+                    b.Property<int>("Role")
+                        .HasColumnType("integer")
+                        .HasColumnName("role");
 
                     b.Property<string>("SecurityStamp")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<bool>("TwoFactorEnabled")
-                        .HasColumnType("bit");
+                        .HasColumnType("boolean");
 
                     b.Property<string>("UserName")
                         .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
+                        .HasColumnType("character varying(256)");
 
                     b.HasKey("Id");
 
@@ -295,78 +223,67 @@ namespace api.Migrations
 
                     b.HasIndex("NormalizedUserName")
                         .IsUnique()
-                        .HasDatabaseName("UserNameIndex")
-                        .HasFilter("[NormalizedUserName] IS NOT NULL");
+                        .HasDatabaseName("UserNameIndex");
 
-                    b.ToTable("AspNetUsers", (string)null);
+                    b.ToTable("Account", (string)null);
                 });
 
-            modelBuilder.Entity("api.Models.Blog", b =>
+            modelBuilder.Entity("api.Models.Answer", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Category")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Content")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text")
+                        .HasColumnName("content");
 
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+                    b.Property<int>("QuestionId")
+                        .HasColumnType("integer")
+                        .HasColumnName("questionId");
 
-                    b.Property<string>("ImageUrl")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Skintype")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Summary")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
+                    b.Property<decimal>("Score")
+                        .HasColumnType("numeric(4, 2)")
+                        .HasColumnName("score");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Blogs");
+                    b.HasIndex("Id")
+                        .IsUnique();
+
+                    b.HasIndex("QuestionId");
+
+                    b.ToTable("Answer", (string)null);
                 });
 
             modelBuilder.Entity("api.Models.Brand", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
+                        .HasColumnType("integer")
                         .HasColumnName("id");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)")
+                        .HasColumnType("character varying(100)")
                         .HasColumnName("name");
 
                     b.Property<bool>("Status")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
+                        .HasColumnType("boolean")
                         .HasDefaultValue(true)
                         .HasColumnName("status");
 
-                    b.HasKey("Id")
-                        .HasName("PK__Brand__3213E83F3D442866");
+                    b.HasKey("Id");
 
-                    b.HasIndex(new[] { "Id" }, "UQ__Brand__3213E83ED24F6355")
+                    b.HasIndex("Id")
                         .IsUnique();
 
                     b.ToTable("Brand", (string)null);
@@ -376,32 +293,31 @@ namespace api.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
+                        .HasColumnType("integer")
                         .HasColumnName("id");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Description")
                         .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)")
+                        .HasColumnType("character varying(500)")
                         .HasColumnName("description");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)")
+                        .HasColumnType("character varying(100)")
                         .HasColumnName("name");
 
                     b.Property<bool>("Status")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
+                        .HasColumnType("boolean")
                         .HasDefaultValue(true)
                         .HasColumnName("status");
 
-                    b.HasKey("Id")
-                        .HasName("PK__Category__3213E83F729611B3");
+                    b.HasKey("Id");
 
-                    b.HasIndex(new[] { "Id" }, "UQ__Category__3213E83EAE1518D6")
+                    b.HasIndex("Id")
                         .IsUnique();
 
                     b.ToTable("Category", (string)null);
@@ -411,14 +327,14 @@ namespace api.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("character varying(100)");
 
                     b.HasKey("Id");
 
@@ -432,44 +348,42 @@ namespace api.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
+                        .HasColumnType("integer")
                         .HasColumnName("id");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Content")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)")
+                        .HasColumnType("text")
                         .HasColumnName("content");
 
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
-                        .HasPrecision(0)
-                        .HasColumnType("datetime2(0)")
+                        .HasColumnType("timestamp with time zone")
                         .HasColumnName("createdAt")
-                        .HasDefaultValueSql("(getdate())");
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
                     b.Property<int>("CustomerId")
-                        .HasColumnType("int")
+                        .HasColumnType("integer")
                         .HasColumnName("customerId");
 
                     b.Property<int>("ProductId")
-                        .HasColumnType("int")
+                        .HasColumnType("integer")
                         .HasColumnName("productId");
 
                     b.Property<int>("Rating")
-                        .HasColumnType("int")
+                        .HasColumnType("integer")
                         .HasColumnName("rating");
 
-                    b.HasKey("Id")
-                        .HasName("PK__Comment__3213E83F99856583");
+                    b.HasKey("Id");
 
                     b.HasIndex("CustomerId");
 
-                    b.HasIndex("ProductId");
-
-                    b.HasIndex(new[] { "Id" }, "UQ__Comment__3213E83EB508DD5A")
+                    b.HasIndex("Id")
                         .IsUnique();
+
+                    b.HasIndex("ProductId");
 
                     b.ToTable("Comment", (string)null);
                 });
@@ -478,52 +392,50 @@ namespace api.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
+                        .HasColumnType("integer")
                         .HasColumnName("id");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("AccountId")
-                        .HasColumnType("int")
+                    b.Property<string>("AccountId")
+                        .IsRequired()
+                        .HasColumnType("text")
                         .HasColumnName("accountId");
 
                     b.Property<string>("Address")
                         .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)")
+                        .HasColumnType("character varying(500)")
                         .HasColumnName("address");
 
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(255)")
+                        .HasColumnType("character varying(255)")
                         .HasColumnName("email");
 
                     b.Property<string>("FirstName")
                         .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)")
+                        .HasColumnType("character varying(50)")
                         .HasColumnName("firstName");
 
                     b.Property<string>("LastName")
                         .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)")
+                        .HasColumnType("character varying(50)")
                         .HasColumnName("lastName");
 
                     b.Property<string>("Phone")
-                        .HasMaxLength(15)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(15)")
+                        .HasMaxLength(10)
+                        .HasColumnType("character varying(10)")
                         .HasColumnName("phone");
 
-                    b.HasKey("Id")
-                        .HasName("PK__Customer__3213E83FAF24D837");
+                    b.HasKey("Id");
 
                     b.HasIndex("AccountId")
                         .IsUnique();
 
-                    b.HasIndex(new[] { "Id" }, "UQ__Customer__3213E83E3A954E6B")
+                    b.HasIndex("Id")
                         .IsUnique();
 
                     b.ToTable("Customer", (string)null);
@@ -533,38 +445,37 @@ namespace api.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
+                        .HasColumnType("integer")
                         .HasColumnName("id");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<int>("CustomerId")
-                        .HasColumnType("int")
+                        .HasColumnType("integer")
                         .HasColumnName("customerId");
 
                     b.Property<bool>("IsLastest")
-                        .HasColumnType("bit")
+                        .HasColumnType("boolean")
                         .HasColumnName("isLastest");
 
                     b.Property<int>("MainQuizId")
-                        .HasColumnType("int")
+                        .HasColumnType("integer")
                         .HasColumnName("mainQuizId");
 
                     b.Property<int>("SkinTypeId")
-                        .HasColumnType("int")
+                        .HasColumnType("integer")
                         .HasColumnName("skinTypeId");
 
-                    b.HasKey("Id")
-                        .HasName("PK__Customer__3213E83FD9E9DFC3");
+                    b.HasKey("Id");
 
                     b.HasIndex("CustomerId");
+
+                    b.HasIndex("Id")
+                        .IsUnique();
 
                     b.HasIndex("MainQuizId");
 
                     b.HasIndex("SkinTypeId");
-
-                    b.HasIndex(new[] { "Id" }, "UQ__Customer__3213E83E8A24C5FC")
-                        .IsUnique();
 
                     b.ToTable("CustomerTestResult", (string)null);
                 });
@@ -573,17 +484,17 @@ namespace api.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<int>("CityId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("character varying(100)");
 
                     b.HasKey("Id");
 
@@ -599,28 +510,26 @@ namespace api.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
+                        .HasColumnType("integer")
                         .HasColumnName("id");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
-                        .HasPrecision(0)
-                        .HasColumnType("datetime2(0)")
+                        .HasColumnType("timestamp with time zone")
                         .HasColumnName("createdAt")
-                        .HasDefaultValueSql("(getdate())");
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
                     b.Property<bool>("IsActive")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
+                        .HasColumnType("boolean")
                         .HasDefaultValue(true)
                         .HasColumnName("isActive");
 
-                    b.HasKey("Id")
-                        .HasName("PK__MainQuiz__3213E83FFBB84394");
+                    b.HasKey("Id");
 
-                    b.HasIndex(new[] { "Id" }, "UQ__MainQuiz__3213E83E0DC34298")
+                    b.HasIndex("Id")
                         .IsUnique();
 
                     b.ToTable("MainQuiz", (string)null);
@@ -630,52 +539,50 @@ namespace api.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
+                        .HasColumnType("integer")
                         .HasColumnName("id");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<int>("CustomerId")
-                        .HasColumnType("int")
+                        .HasColumnType("integer")
                         .HasColumnName("customerId");
 
                     b.Property<string>("DeliveryAddress")
-                        .HasColumnType("nvarchar(max)")
+                        .HasColumnType("text")
                         .HasColumnName("deliveryAddress");
 
                     b.Property<DateTime>("OrderDate")
                         .ValueGeneratedOnAdd()
-                        .HasPrecision(0)
-                        .HasColumnType("datetime2(0)")
+                        .HasColumnType("timestamp with time zone")
                         .HasColumnName("orderDate")
-                        .HasDefaultValueSql("(getdate())");
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
                     b.Property<string>("PaymentMethod")
-                        .HasColumnType("nvarchar(max)")
+                        .HasColumnType("text")
                         .HasColumnName("paymentMethod");
 
                     b.Property<decimal>("ShippingFee")
-                        .HasColumnType("decimal(10, 2)")
+                        .HasColumnType("numeric(10, 2)")
                         .HasColumnName("shippingFee");
 
                     b.Property<int>("Status")
-                        .HasColumnType("int")
+                        .HasColumnType("integer")
                         .HasColumnName("status");
 
                     b.Property<decimal>("TotalPrice")
-                        .HasColumnType("decimal(10, 2)")
+                        .HasColumnType("numeric(10, 2)")
                         .HasColumnName("totalPrice");
 
                     b.Property<string>("TransactionId")
-                        .HasColumnType("nvarchar(max)")
+                        .HasColumnType("text")
                         .HasColumnName("transactionId");
 
-                    b.HasKey("Id")
-                        .HasName("PK__Order__3213E83F883296A0");
+                    b.HasKey("Id");
 
                     b.HasIndex("CustomerId");
 
-                    b.HasIndex(new[] { "Id" }, "UQ__Order__3213E83EF9659273")
+                    b.HasIndex("Id")
                         .IsUnique();
 
                     b.ToTable("Order", (string)null);
@@ -685,38 +592,37 @@ namespace api.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
+                        .HasColumnType("integer")
                         .HasColumnName("id");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<int>("OrderId")
-                        .HasColumnType("int")
+                        .HasColumnType("integer")
                         .HasColumnName("orderId");
 
                     b.Property<int>("ProductId")
-                        .HasColumnType("int")
+                        .HasColumnType("integer")
                         .HasColumnName("productId");
 
                     b.Property<int>("Quantity")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
+                        .HasColumnType("integer")
                         .HasDefaultValue(1)
                         .HasColumnName("quantity");
 
                     b.Property<decimal>("UnitPrice")
-                        .HasColumnType("decimal(10, 2)")
+                        .HasColumnType("numeric(10, 2)")
                         .HasColumnName("unitPrice");
 
-                    b.HasKey("Id")
-                        .HasName("PK__OrderIte__3213E83F26D7FD96");
+                    b.HasKey("Id");
+
+                    b.HasIndex("Id")
+                        .IsUnique();
 
                     b.HasIndex("OrderId");
 
                     b.HasIndex("ProductId");
-
-                    b.HasIndex(new[] { "Id" }, "UQ__OrderIte__3213E83E40886CC7")
-                        .IsUnique();
 
                     b.ToTable("OrderItem", (string)null);
                 });
@@ -725,71 +631,73 @@ namespace api.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
+                        .HasColumnType("integer")
                         .HasColumnName("id");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<int>("BrandId")
-                        .HasColumnType("int")
+                        .HasColumnType("integer")
                         .HasColumnName("brandId");
 
                     b.Property<int>("CategoryId")
-                        .HasColumnType("int")
+                        .HasColumnType("integer")
                         .HasColumnName("categoryId");
 
                     b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)")
+                        .HasColumnType("text")
                         .HasColumnName("description");
 
                     b.Property<int>("Gender")
-                        .HasColumnType("int")
+                        .HasColumnType("integer")
                         .HasColumnName("gender");
 
                     b.Property<string>("Image")
                         .HasMaxLength(500)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(500)")
+                        .HasColumnType("character varying(500)")
                         .HasColumnName("image");
 
                     b.Property<string>("Ingredient")
-                        .HasColumnType("nvarchar(max)")
+                        .HasColumnType("text")
                         .HasColumnName("ingredient");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)")
+                        .HasColumnType("character varying(255)")
                         .HasColumnName("name");
 
                     b.Property<decimal>("Price")
-                        .HasColumnType("decimal(10, 2)")
+                        .HasColumnType("numeric(10, 2)")
                         .HasColumnName("price");
 
                     b.Property<decimal?>("Sale")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("decimal(10, 2)")
+                        .HasColumnType("numeric(10, 2)")
                         .HasDefaultValue(0m)
                         .HasColumnName("sale");
 
+                    b.Property<string>("Size")
+                        .HasColumnType("text")
+                        .HasColumnName("size");
+
                     b.Property<bool>("Status")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
+                        .HasColumnType("boolean")
                         .HasDefaultValue(true)
                         .HasColumnName("status");
 
                     b.Property<int>("Stock")
-                        .HasColumnType("int")
+                        .HasColumnType("integer")
                         .HasColumnName("stock");
 
-                    b.HasKey("Id")
-                        .HasName("PK__Product__3213E83F0D08AB86");
+                    b.HasKey("Id");
 
                     b.HasIndex("BrandId");
 
                     b.HasIndex("CategoryId");
 
-                    b.HasIndex(new[] { "Id" }, "UQ__Product__3213E83E2759CED2")
+                    b.HasIndex("Id")
                         .IsUnique();
 
                     b.ToTable("Product", (string)null);
@@ -799,32 +707,31 @@ namespace api.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
+                        .HasColumnType("integer")
                         .HasColumnName("id");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<int>("ProductId")
-                        .HasColumnType("int")
+                        .HasColumnType("integer")
                         .HasColumnName("productId");
 
                     b.Property<int>("RecommentedLevel")
-                        .HasColumnType("int")
+                        .HasColumnType("integer")
                         .HasColumnName("recommentedLevel");
 
                     b.Property<int>("SkinTypeId")
-                        .HasColumnType("int")
+                        .HasColumnType("integer")
                         .HasColumnName("skinTypeId");
 
-                    b.HasKey("Id")
-                        .HasName("PK__ProductS__3213E83F99824F49");
+                    b.HasKey("Id");
+
+                    b.HasIndex("Id")
+                        .IsUnique();
 
                     b.HasIndex("ProductId");
 
                     b.HasIndex("SkinTypeId");
-
-                    b.HasIndex(new[] { "Id" }, "UQ__ProductS__3213E83E612CDE1B")
-                        .IsUnique();
 
                     b.ToTable("ProductSkinType", (string)null);
                 });
@@ -833,27 +740,26 @@ namespace api.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
+                        .HasColumnType("integer")
                         .HasColumnName("id");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Content")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)")
+                        .HasColumnType("text")
                         .HasColumnName("content");
 
                     b.Property<int>("SkinQuizId")
-                        .HasColumnType("int")
+                        .HasColumnType("integer")
                         .HasColumnName("skinQuizId");
 
-                    b.HasKey("Id")
-                        .HasName("PK__Question__3213E83F7EADEB24");
+                    b.HasKey("Id");
+
+                    b.HasIndex("Id")
+                        .IsUnique();
 
                     b.HasIndex("SkinQuizId");
-
-                    b.HasIndex(new[] { "Id" }, "UQ__Question__3213E83EF7879E5B")
-                        .IsUnique();
 
                     b.ToTable("Question", (string)null);
                 });
@@ -862,26 +768,26 @@ namespace api.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<int>("CityId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<int>("DistrictId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<decimal>("Fee")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("numeric(18,2)");
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
+                        .HasColumnType("boolean");
 
                     b.Property<DateTime>("LastUpdated")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETDATE()");
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
                     b.HasKey("Id");
 
@@ -897,38 +803,37 @@ namespace api.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
+                        .HasColumnType("integer")
                         .HasColumnName("id");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)")
+                        .HasColumnType("text")
                         .HasColumnName("description");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)")
+                        .HasColumnType("character varying(255)")
                         .HasColumnName("name");
 
                     b.Property<int>("SkinTypeId")
-                        .HasColumnType("int")
+                        .HasColumnType("integer")
                         .HasColumnName("skinTypeId");
 
                     b.Property<string>("Time")
                         .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)")
+                        .HasColumnType("character varying(50)")
                         .HasColumnName("time");
 
-                    b.HasKey("Id")
-                        .HasName("PK__SkinCare__3213E83FFBC37F3B");
+                    b.HasKey("Id");
+
+                    b.HasIndex("Id")
+                        .IsUnique();
 
                     b.HasIndex("SkinTypeId");
-
-                    b.HasIndex(new[] { "Id" }, "UQ__SkinCare__3213E83E28434439")
-                        .IsUnique();
 
                     b.ToTable("SkinCareRoutine", (string)null);
                 });
@@ -937,42 +842,41 @@ namespace api.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
+                        .HasColumnType("integer")
                         .HasColumnName("id");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<int>("CategoryId")
-                        .HasColumnType("int")
+                        .HasColumnType("integer")
                         .HasColumnName("categoryId");
 
                     b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)")
+                        .HasColumnType("text")
                         .HasColumnName("description");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)")
+                        .HasColumnType("character varying(100)")
                         .HasColumnName("name");
 
                     b.Property<int>("RoutineId")
-                        .HasColumnType("int")
+                        .HasColumnType("integer")
                         .HasColumnName("routineId");
 
                     b.Property<int>("StepOrder")
-                        .HasColumnType("int")
+                        .HasColumnType("integer")
                         .HasColumnName("stepOrder");
 
-                    b.HasKey("Id")
-                        .HasName("PK__SkinCare__3213E83FFA2FD6A0");
+                    b.HasKey("Id");
 
                     b.HasIndex("CategoryId");
 
-                    b.HasIndex("RoutineId");
-
-                    b.HasIndex(new[] { "Id" }, "UQ__SkinCare__3213E83E71DA5401")
+                    b.HasIndex("Id")
                         .IsUnique();
+
+                    b.HasIndex("RoutineId");
 
                     b.ToTable("SkinCareStep", (string)null);
                 });
@@ -981,26 +885,25 @@ namespace api.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
+                        .HasColumnType("integer")
                         .HasColumnName("id");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<int>("MainQuizId")
-                        .HasColumnType("int")
+                        .HasColumnType("integer")
                         .HasColumnName("mainQuizId");
 
                     b.Property<int>("SkinElement")
-                        .HasColumnType("int")
+                        .HasColumnType("integer")
                         .HasColumnName("skinElement");
 
-                    b.HasKey("Id")
-                        .HasName("PK__SkinQuiz__3213E83F0917F69E");
+                    b.HasKey("Id");
+
+                    b.HasIndex("Id")
+                        .IsUnique();
 
                     b.HasIndex("MainQuizId");
-
-                    b.HasIndex(new[] { "Id" }, "UQ__SkinQuiz__3213E83E42D15025")
-                        .IsUnique();
 
                     b.ToTable("SkinQuiz", (string)null);
                 });
@@ -1009,31 +912,29 @@ namespace api.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
+                        .HasColumnType("integer")
                         .HasColumnName("id");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Characteristics")
-                        .HasColumnType("nvarchar(max)")
+                        .HasColumnType("text")
                         .HasColumnName("characteristics");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)")
+                        .HasColumnType("character varying(50)")
                         .HasColumnName("name");
 
                     b.Property<string>("Symbol")
                         .HasMaxLength(10)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(10)")
+                        .HasColumnType("character varying(10)")
                         .HasColumnName("symbol");
 
-                    b.HasKey("Id")
-                        .HasName("PK__SkinType__3213E83F6E89766C");
+                    b.HasKey("Id");
 
-                    b.HasIndex(new[] { "Id" }, "UQ__SkinType__3213E83EC754E20E")
+                    b.HasIndex("Id")
                         .IsUnique();
 
                     b.ToTable("SkinType", (string)null);
@@ -1050,7 +951,7 @@ namespace api.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("api.Models.ApplicationUser", null)
+                    b.HasOne("api.Models.Account", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1059,7 +960,7 @@ namespace api.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("api.Models.ApplicationUser", null)
+                    b.HasOne("api.Models.Account", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1074,7 +975,7 @@ namespace api.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("api.Models.ApplicationUser", null)
+                    b.HasOne("api.Models.Account", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1083,22 +984,11 @@ namespace api.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.HasOne("api.Models.ApplicationUser", null)
+                    b.HasOne("api.Models.Account", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("api.Models.Account", b =>
-                {
-                    b.HasOne("api.Models.ApplicationUser", "IdentityUser")
-                        .WithOne("Account")
-                        .HasForeignKey("api.Models.Account", "IdentityUserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("IdentityUser");
                 });
 
             modelBuilder.Entity("api.Models.Answer", b =>
@@ -1106,8 +996,7 @@ namespace api.Migrations
                     b.HasOne("api.Models.Question", "Question")
                         .WithMany("Answers")
                         .HasForeignKey("QuestionId")
-                        .IsRequired()
-                        .HasConstraintName("FK__Answer__question__1BC821DD");
+                        .IsRequired();
 
                     b.Navigation("Question");
                 });
@@ -1117,14 +1006,12 @@ namespace api.Migrations
                     b.HasOne("api.Models.Customer", "Customer")
                         .WithMany("Comments")
                         .HasForeignKey("CustomerId")
-                        .IsRequired()
-                        .HasConstraintName("FK__Comment__custome__22751F6C");
+                        .IsRequired();
 
                     b.HasOne("api.Models.Product", "Product")
                         .WithMany("Comments")
                         .HasForeignKey("ProductId")
-                        .IsRequired()
-                        .HasConstraintName("FK__Comment__product__2180FB33");
+                        .IsRequired();
 
                     b.Navigation("Customer");
 
@@ -1136,8 +1023,7 @@ namespace api.Migrations
                     b.HasOne("api.Models.Account", "Account")
                         .WithOne("Customer")
                         .HasForeignKey("api.Models.Customer", "AccountId")
-                        .IsRequired()
-                        .HasConstraintName("FK__Customer__accoun__123EB7A3");
+                        .IsRequired();
 
                     b.Navigation("Account");
                 });
@@ -1147,20 +1033,17 @@ namespace api.Migrations
                     b.HasOne("api.Models.Customer", "Customer")
                         .WithMany("CustomerTestResults")
                         .HasForeignKey("CustomerId")
-                        .IsRequired()
-                        .HasConstraintName("FK__CustomerT__custo__17F790F9");
+                        .IsRequired();
 
                     b.HasOne("api.Models.MainQuiz", "MainQuiz")
                         .WithMany("CustomerTestResults")
                         .HasForeignKey("MainQuizId")
-                        .IsRequired()
-                        .HasConstraintName("FK__CustomerT__mainQ__1CBC4616");
+                        .IsRequired();
 
                     b.HasOne("api.Models.SkinType", "SkinType")
                         .WithMany("CustomerTestResults")
                         .HasForeignKey("SkinTypeId")
-                        .IsRequired()
-                        .HasConstraintName("FK__CustomerT__skinT__1DB06A4F");
+                        .IsRequired();
 
                     b.Navigation("Customer");
 
@@ -1185,8 +1068,7 @@ namespace api.Migrations
                     b.HasOne("api.Models.Customer", "Customer")
                         .WithMany("Orders")
                         .HasForeignKey("CustomerId")
-                        .IsRequired()
-                        .HasConstraintName("FK__Order__customerI__1332DBDC");
+                        .IsRequired();
 
                     b.Navigation("Customer");
                 });
@@ -1196,14 +1078,12 @@ namespace api.Migrations
                     b.HasOne("api.Models.Order", "Order")
                         .WithMany("OrderItems")
                         .HasForeignKey("OrderId")
-                        .IsRequired()
-                        .HasConstraintName("FK__OrderItem__order__14270015");
+                        .IsRequired();
 
                     b.HasOne("api.Models.Product", "Product")
                         .WithMany("OrderItems")
                         .HasForeignKey("ProductId")
-                        .IsRequired()
-                        .HasConstraintName("FK__OrderItem__produ__151B244E");
+                        .IsRequired();
 
                     b.Navigation("Order");
 
@@ -1215,14 +1095,12 @@ namespace api.Migrations
                     b.HasOne("api.Models.Brand", "Brand")
                         .WithMany("Products")
                         .HasForeignKey("BrandId")
-                        .IsRequired()
-                        .HasConstraintName("FK__Product__brandId__00200768");
+                        .IsRequired();
 
                     b.HasOne("api.Models.Category", "Category")
                         .WithMany("Products")
                         .HasForeignKey("CategoryId")
-                        .IsRequired()
-                        .HasConstraintName("FK__Product__categor__160F4887");
+                        .IsRequired();
 
                     b.Navigation("Brand");
 
@@ -1234,14 +1112,12 @@ namespace api.Migrations
                     b.HasOne("api.Models.Product", "Product")
                         .WithMany("ProductSkinTypes")
                         .HasForeignKey("ProductId")
-                        .IsRequired()
-                        .HasConstraintName("FK__ProductSk__produ__17036CC0");
+                        .IsRequired();
 
                     b.HasOne("api.Models.SkinType", "SkinType")
                         .WithMany("ProductSkinTypes")
                         .HasForeignKey("SkinTypeId")
-                        .IsRequired()
-                        .HasConstraintName("FK__ProductSk__skinT__18EBB532");
+                        .IsRequired();
 
                     b.Navigation("Product");
 
@@ -1253,8 +1129,7 @@ namespace api.Migrations
                     b.HasOne("api.Models.SkinQuiz", "SkinQuiz")
                         .WithMany("Questions")
                         .HasForeignKey("SkinQuizId")
-                        .IsRequired()
-                        .HasConstraintName("FK__Question__skinQu__1AD3FDA4");
+                        .IsRequired();
 
                     b.Navigation("SkinQuiz");
                 });
@@ -1283,8 +1158,7 @@ namespace api.Migrations
                     b.HasOne("api.Models.SkinType", "SkinType")
                         .WithMany("SkinCareRoutines")
                         .HasForeignKey("SkinTypeId")
-                        .IsRequired()
-                        .HasConstraintName("FK__SkinCareR__skinT__1EA48E88");
+                        .IsRequired();
 
                     b.Navigation("SkinType");
                 });
@@ -1294,14 +1168,12 @@ namespace api.Migrations
                     b.HasOne("api.Models.Category", "Category")
                         .WithMany("SkinCareSteps")
                         .HasForeignKey("CategoryId")
-                        .IsRequired()
-                        .HasConstraintName("FK__SkinCareS__categ__1F98B2C1");
+                        .IsRequired();
 
                     b.HasOne("api.Models.SkinCareRoutine", "Routine")
                         .WithMany("SkinCareSteps")
                         .HasForeignKey("RoutineId")
-                        .IsRequired()
-                        .HasConstraintName("FK__SkinCareS__routi__208CD6FA");
+                        .IsRequired();
 
                     b.Navigation("Category");
 
@@ -1313,8 +1185,7 @@ namespace api.Migrations
                     b.HasOne("api.Models.MainQuiz", "MainQuiz")
                         .WithMany("SkinQuizzes")
                         .HasForeignKey("MainQuizId")
-                        .IsRequired()
-                        .HasConstraintName("FK__SkinQuiz__mainQu__19DFD96B");
+                        .IsRequired();
 
                     b.Navigation("MainQuiz");
                 });
@@ -1322,12 +1193,6 @@ namespace api.Migrations
             modelBuilder.Entity("api.Models.Account", b =>
                 {
                     b.Navigation("Customer");
-                });
-
-            modelBuilder.Entity("api.Models.ApplicationUser", b =>
-                {
-                    b.Navigation("Account")
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("api.Models.Brand", b =>

@@ -11,13 +11,13 @@ namespace api.Interface
     {
         Task<List<Account>> GetAllAccountAsync();
 
-        Task<Account?> GetAccountByIdAsync(int id);
+        Task<Account?> GetAccountByIdAsync(string id);
 
         Task<Account> CreateAccountAsync(Account account);
 
-        Task<Account?> UpdateAccountAsync(int id, Account account);
+        Task<Account?> UpdateAccountAsync(string id, Account account);
 
-        Task<Account?> DeleteAccountAsync(int id);
+        Task<Account?> DeleteAccountAsync(string id);
 
     }
 }

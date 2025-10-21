@@ -5,21 +5,14 @@ using Microsoft.AspNetCore.Identity;
 
 namespace api.Models;
 
-public partial class Account
-{
-    public int Id { get; set; }
-
-    public string UserName { get; set; } = null!;
-
-    public string Password { get; set; } = null!;
+public partial class Account : IdentityUser
+{   
+    // Xóa Password vì Identity đã có PasswordHash
+    // public string? Password { get; set; }
 
     public UserRole Role { get; set; }
 
     public bool IsActive { get; set; }
-
-    public string IdentityUserId { get; set; } = null!;
-
-    public virtual ApplicationUser IdentityUser { get; set; } = null!;
 
     public virtual Customer? Customer { get; set; }
 }

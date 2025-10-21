@@ -10,7 +10,7 @@ namespace api.Mappers
     public static class BrandMappers
     {
         public static BrandDTO ToBrandDTO(this Brand brand)
-        {
+        {   
             return new BrandDTO
             {
                 Id = brand.Id,
