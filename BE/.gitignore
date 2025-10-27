@@ -416,4 +416,5 @@ FodyWeavers.xsd
 **/appsettings.Production.json
 **/appsettings.*.json
 !**/appsettings.json
+.env
 # End of https://www.toptal.com/developers/gitignore/api/csharp,visualstudiocode

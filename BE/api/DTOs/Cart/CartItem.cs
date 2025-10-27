@@ -20,6 +20,8 @@ namespace api.DTOs.Cart
 
         public decimal? ProductSale { get; set; }
 
+        public int ProductSize { get; set; }
+
         public int Quantity { get; set; }
     }
 }

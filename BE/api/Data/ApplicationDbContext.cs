@@ -332,7 +332,6 @@ public partial class ApplicationDbContext : IdentityDbContext<Account>
                 .HasColumnType("numeric(10, 2)")
                 .HasColumnName("price");
             entity.Property(e => e.Size)
-                .HasColumnType("text")
                 .HasColumnName("size");
             entity.Property(e => e.Sale)
                 .HasDefaultValue(0m)

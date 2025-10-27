@@ -678,7 +678,7 @@ namespace api.Migrations
                         .HasColumnName("sale");
 
                     b.Property<string>("Size")
-                        .HasColumnType("text")
+                        .HasColumnType("integer")
                         .HasColumnName("size");
 
                     b.Property<bool>("Status")
