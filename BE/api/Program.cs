@@ -82,6 +82,12 @@ builder.Services.AddIdentity<Account, IdentityRole>(options =>
 
 var JWT__SigningKey = builder.Configuration["JWT:SigningKey"] ?? builder.Configuration["JWT__SigningKey"];
 
+// Fail-fast nếu signing key chưa cấu hình
+if (string.IsNullOrWhiteSpace(JWT__SigningKey))
+{
+    throw new InvalidOperationException("JWT Signing key is not configured. Set environment variable JWT__SigningKey (or configure JWT:SigningKey).");
+}
+
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme =
