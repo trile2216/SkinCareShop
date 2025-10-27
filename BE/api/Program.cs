@@ -80,6 +80,8 @@ builder.Services.AddIdentity<Account, IdentityRole>(options =>
 .AddEntityFrameworkStores<ApplicationDbContext>()
 .AddDefaultTokenProviders();
 
+var JWT__SigningKey = builder.Configuration["JWT:SigningKey"] ?? builder.Configuration["JWT__SigningKey"];
+
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme =
@@ -98,7 +100,7 @@ builder.Services.AddAuthentication(options =>
         ValidAudience = builder.Configuration["JWT:Audience"],
         ValidateIssuerSigningKey = true,
         IssuerSigningKey = new
-        SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(builder.Configuration["JWT:SigningKey"]))
+        SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(JWT__SigningKey))
     };
 
 });
