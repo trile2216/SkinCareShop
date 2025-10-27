@@ -155,7 +155,7 @@ builder.Services.AddScoped<IShippingFeeRepository, ShippingFeeRepository>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+if (app.Environment.IsDevelopment() || builder.Configuration.GetValue<bool>("EnableSwaggerInProduction"))
 {
     app.UseSwagger();
     app.UseSwaggerUI();
