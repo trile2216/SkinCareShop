@@ -26,9 +26,7 @@ namespace api.DTOs.Products
         public string? Description { get; set; }
 
         public int CategoryId { get; set; }
-
-        public int Size { get; set; }
-
+        
         public int BrandId { get; set; }
 
         public decimal? Sale { get; set; }

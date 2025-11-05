@@ -266,7 +266,6 @@ namespace api.Migrations
                     stock = table.Column<int>(type: "integer", nullable: false),
                     description = table.Column<string>(type: "text", nullable: true),
                     categoryId = table.Column<int>(type: "integer", nullable: false),
-                    size = table.Column<int>(type: "integer", nullable: true),
                     brandId = table.Column<int>(type: "integer", nullable: false),
                     sale = table.Column<decimal>(type: "numeric(10,2)", nullable: true, defaultValue: 0m),
                     price = table.Column<decimal>(type: "numeric(10,2)", nullable: false),

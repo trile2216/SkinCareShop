@@ -677,10 +677,6 @@ namespace api.Migrations
                         .HasDefaultValue(0m)
                         .HasColumnName("sale");
 
-                    b.Property<string>("Size")
-                        .HasColumnType("integer")
-                        .HasColumnName("size");
-
                     b.Property<bool>("Status")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("boolean")

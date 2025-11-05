@@ -27,7 +27,6 @@ namespace api.Mappers
                 BrandId = product.BrandId,
                 CategoryId = product.CategoryId,
                 Sale = product.Sale,
-                Size = product.Size,
                 Price = product.Price,
                 ProductSkinTypes = product.ProductSkinTypes.Select(x => x.ToProductSkinTypeDTO()).ToList(),
                 Comments = product.Comments.Select(x => x.ToCommentDTO()).ToList(),
@@ -65,7 +64,6 @@ namespace api.Mappers
                 Description = updateProductDTO.Description,
                 CategoryId = updateProductDTO.CategoryId,
                 BrandId = updateProductDTO.BrandId,
-                Size = updateProductDTO.Size,
                 Sale = updateProductDTO.Sale,
                 Price = updateProductDTO.Price,
                 Status = updateProductDTO.Status,
@@ -81,7 +79,6 @@ namespace api.Mappers
                 ProductName = product.Name,
                 ProductPrice = product.Price,
                 ProductSale = product.Sale,
-                ProductSize = product.Size,
             };
         }
 

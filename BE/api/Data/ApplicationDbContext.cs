@@ -331,8 +331,6 @@ public partial class ApplicationDbContext : IdentityDbContext<Account>
             entity.Property(e => e.Price)
                 .HasColumnType("numeric(10, 2)")
                 .HasColumnName("price");
-            entity.Property(e => e.Size)
-                .HasColumnName("size");
             entity.Property(e => e.Sale)
                 .HasDefaultValue(0m)
                 .HasColumnType("numeric(10, 2)")

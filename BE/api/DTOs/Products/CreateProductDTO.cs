@@ -40,9 +40,6 @@ namespace api.DTOs.Products
         public int BrandId { get; set; }
 
         [Required]
-        public int[] Size { get; set; }
-
-        [Required]
         public decimal? Sale { get; set; }
 
         [Required]
