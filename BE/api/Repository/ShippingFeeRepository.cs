@@ -37,6 +37,8 @@ namespace api.Repository
         public async Task<ShippingFee?> GetActiveShippingFeeByCityAndDistrictAsync(int cityId, int districtId)
         {
             return await _context.ShippingFees
+                    .Include(sf => sf.City)
+                    .Include(sf => sf.District)
                  .Where(sf => sf.CityId == cityId && sf.DistrictId == districtId && sf.IsActive)
                  .FirstOrDefaultAsync();
 
