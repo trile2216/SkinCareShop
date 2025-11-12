@@ -103,7 +103,7 @@ namespace api.Controller
                         order = await _orderRepo.CreateOrderAsync(new Order
                         {
                             CustomerId = checkOutDTO.CustomerId,
-                            OrderDate = DateTime.Now,
+                            OrderDate = DateTime.UtcNow,
                             Status = OrderStatus.Pending,
                             PaymentMethod = PaymentMethod.VNPay.ToString(),
                             TransactionId = "",
@@ -136,7 +136,7 @@ namespace api.Controller
                         {
                             OrderType = "200000",
                             Amount = (double)checkOutDTO.TotalPrice,
-                            OrderDescription = $"Thanh toan don hang #{DateTime.Now.Ticks}#{order.Id}",
+                            OrderDescription = $"Thanhtoandonhang#{DateTime.Now.Ticks}#{order.Id}",
                             Name = checkOutDTO.CustomerId.ToString()
                         };
 
@@ -147,7 +147,7 @@ namespace api.Controller
                         order = await _orderRepo.CreateOrderAsync(new Order
                         {
                             CustomerId = checkOutDTO.CustomerId,
-                            OrderDate = DateTime.Now,
+                            OrderDate = DateTime.UtcNow,
                             Status = OrderStatus.Pending,
                             PaymentMethod = PaymentMethod.COD.ToString(),
                             TransactionId = "COD",
