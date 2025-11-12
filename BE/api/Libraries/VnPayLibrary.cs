@@ -12,8 +12,9 @@ using api.Models;
 namespace api.Libraries;
 public class VnPayLibrary
 {
-    private readonly SortedList<string, string> _requestData = new SortedList<string, string>(new VnPayCompare());
-    private readonly SortedList<string, string> _responseData = new SortedList<string, string>(new VnPayCompare());
+    // use stable ordinal comparer to avoid platform/culture comparison issues
+    private readonly SortedList<string, string> _requestData = new SortedList<string, string>(StringComparer.Ordinal);
+    private readonly SortedList<string, string> _responseData = new SortedList<string, string>(StringComparer.Ordinal);
 
     public PaymentResponseModel GetFullResponseData(IQueryCollection collection, string hashSecret)
     {
@@ -169,8 +170,6 @@ public class VnPayLibrary
     }
 
 }
-
-
 
 public class VnPayCompare : IComparer<string>
 {
