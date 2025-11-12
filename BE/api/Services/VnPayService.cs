@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using api.DTOs.CheckOut;
 using api.Interface;
@@ -20,7 +21,9 @@ namespace api.Services
 
         public string CreatePaymentUrl(PaymentInformationModel model, HttpContext context)
         {
-            var timeZoneById = TimeZoneInfo.FindSystemTimeZoneById(_configuration["TimeZoneId"]);
+            var timeZoneById = TimeZoneInfo.FindSystemTimeZoneById(RuntimeInformation.IsOSPlatform(OSPlatform.Windows)
+                ? "SE Asia Standard Time"
+                : "Asia/Ho_Chi_Minh");
             var timeNow = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, timeZoneById);
             var tick = DateTime.Now.Ticks.ToString();
             var pay = new VnPayLibrary();
