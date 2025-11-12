@@ -23,11 +23,13 @@ const shippingFeeService = {
 
   getShippingFee: async (cityId, districtId) => {
     try {
+      // Use the format with & like the backend expects
       const response = await instance.get(`/shipping-fee/${cityId}&${districtId}`);
       return response.data;
     } catch (error) {
       console.error("Error fetching shipping fee:", error);
-      throw error;
+      // Return default fee if endpoint doesn't exist
+      return { fee: 15 };
     }
   },
 

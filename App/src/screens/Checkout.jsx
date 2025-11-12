@@ -44,32 +44,30 @@ export default function Checkout() {
     navigation.navigate("CheckoutDetails");
   };
 
-  const renderCartItem = ({ item }) => (
-    <View style={styles.cartItemContainer}>
-      <Image source={{ uri: item.image }} style={styles.itemImage} />
-      <View style={styles.itemDetails}>
-        <Text style={styles.itemName} numberOfLines={2}>
-          {item.name}
-        </Text>
-        <Text style={styles.itemBrand}>{item.brandName || "N/A"}</Text>
-        <View style={styles.priceRow}>
-          {(() => {
-            const safePrice = Number(item.price) || 0;
-            const safeQty = Number(item.quantity) || 0;
-            return (
-              <>
-                <Text style={styles.itemPrice}>${safePrice.toFixed(2)}</Text>
-                <Text style={styles.itemQuantity}>Qty: {safeQty}</Text>
-              </>
-            );
-          })()}
+  const renderCartItem = ({ item }) => {
+    const safePrice = Number(item.price) || 0;
+    const safeQty = Number(item.quantity) || 1;
+    const itemTotal = safePrice * safeQty;
+
+    return (
+      <View style={styles.cartItemContainer}>
+        <Image source={{ uri: item.image }} style={styles.itemImage} />
+        <View style={styles.itemDetails}>
+          <Text style={styles.itemName} numberOfLines={2}>
+            {item.name}
+          </Text>
+          <Text style={styles.itemBrand}>{item.brandName || "N/A"}</Text>
+          <View style={styles.priceRow}>
+            <Text style={styles.itemPrice}>${safePrice.toFixed(2)}</Text>
+            <Text style={styles.itemQuantity}>x{safeQty}</Text>
+          </View>
+          <Text style={styles.itemTotal}>
+            ${itemTotal.toFixed(2)}
+          </Text>
         </View>
-        <Text style={styles.itemTotal}>
-          Total: ${( (Number(item.price) || 0) * (Number(item.quantity) || 0) ).toFixed(2)}
-        </Text>
       </View>
-    </View>
-  );
+    );
+  };
 
   const renderHeader = () => (
     <View style={styles.headerSection}>
@@ -116,9 +114,13 @@ export default function Checkout() {
         <View style={styles.divider} />
 
         <View style={styles.totalRow}>
-          <Text style={styles.totalLabel}>Total</Text>
+          <Text style={styles.totalLabel}>Subtotal</Text>
           <Text style={styles.totalValue}>${(Number(totalPrice) || 0).toFixed(2)}</Text>
         </View>
+
+        <Text style={styles.noteText}>
+          Shipping fee will be calculated in the next step based on your location
+        </Text>
 
         <TouchableOpacity
           style={styles.proceedButton}
@@ -374,5 +376,12 @@ const styles = StyleSheet.create({
     color: "#667eea",
     fontSize: 14,
     fontWeight: "600",
+  },
+  noteText: {
+    fontSize: 12,
+    color: "#999",
+    fontStyle: "italic",
+    marginVertical: 12,
+    textAlign: "center",
   },
 });

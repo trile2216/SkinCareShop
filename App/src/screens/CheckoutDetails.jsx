@@ -21,13 +21,9 @@ import { SafeAreaView } from "react-native-safe-area-context";
 export default function CheckoutDetails() {
   const navigation = useNavigation();
   const customerId = useSelector((state) => state.user.customerId);
-  const { cartItems, totalPrice, clearCart } = useCart();
+  const { cartItems, totalPrice, clearCart, totalItems } = useCart();
 
-  // Debug log
-  useEffect(() => {
-    console.log("CheckoutDetails - cartItems:", cartItems);
-    console.log("CheckoutDetails - totalPrice:", totalPrice);
-  }, [cartItems, totalPrice]);
+
 
   const [formData, setFormData] = useState({
     firstName: "",
@@ -73,12 +69,16 @@ export default function CheckoutDetails() {
           const data = await shippingFeeService.getDistrictsByCity(
             formData.city
           );
-          setDistricts(data);
+          // Handle empty array or null response
+          setDistricts(data && Array.isArray(data) ? data : []);
           setFormData((prev) => ({ ...prev, state: "" }));
           setShippingFee(0);
         } catch (error) {
           console.error("Error fetching districts:", error);
-          Alert.alert("Error", "Failed to load districts");
+          // Set empty districts instead of showing alert
+          setDistricts([]);
+          setFormData((prev) => ({ ...prev, state: "" }));
+          setShippingFee(0);
         } finally {
           setLoading(false);
         }
@@ -99,11 +99,12 @@ export default function CheckoutDetails() {
             formData.city,
             formData.state
           );
-          setShippingFee(data.fee || 0);
+          // Use default fee of 15 if not available
+          setShippingFee(Number(data.fee) || 15);
         } catch (error) {
           console.error("Error fetching shipping fee:", error);
-          Alert.alert("Error", "Failed to load shipping fee");
-          setShippingFee(0);
+          // Fallback to default shipping fee
+          setShippingFee(15);
         } finally {
           setLoading(false);
         }
@@ -161,12 +162,7 @@ export default function CheckoutDetails() {
   };
 
   const handleSubmitOrder = async () => {
-    console.log("=== handleSubmitOrder called ===");
-    console.log("Current cartItems:", cartItems);
-    console.log("Current cartItems length:", cartItems?.length);
-    
     if (!validateForm()) {
-      console.log("Form validation failed");
       return;
     }
 
@@ -181,96 +177,82 @@ export default function CheckoutDetails() {
             try {
               setSubmitting(true);
 
-              // Verify cart is not empty before submitting
+              // Verify cart is not empty
               if (!cartItems || cartItems.length === 0) {
-                console.log("Cart validation failed: cartItems empty");
                 Alert.alert("Error", "Cart is empty. Cannot submit order.");
                 setSubmitting(false);
                 return;
               }
 
-              // STEP 1: Check server cart and sync if needed
-              console.log("STEP 1: Checking server cart status...");
+              // STEP 1: Sync cart items to session (required for backend validation)
+              console.log("STEP 1: Syncing cart items to backend session...");
               try {
-                const cartResponse = await instance.get("/cart");
-                console.log("Server cart current:", cartResponse.data);
-                
-                // If server cart is empty, sync all items
-                if (!cartResponse.data || cartResponse.data.length === 0) {
-                  console.log("STEP 1.1: Server cart empty, syncing items...");
-                  for (const item of cartItems) {
-                    try {
-                      console.log(`Syncing item: productId=${item.id}, quantity=${item.quantity}`);
-                      const syncResponse = await instance.post("/cart/add", {
-                        productId: Number(item.id) || 0,
-                        quantity: Number(item.quantity) || 1,
-                      });
-                      console.log("Item synced:", syncResponse.data);
-                    } catch (syncError) {
-                      console.warn("Sync error:", syncError.response?.status, syncError.response?.data);
-                    }
-                  }
-                } else {
-                  console.log("STEP 1.2: Server cart already has items, skipping sync");
+                for (const item of cartItems) {
+                  const syncRes = await instance.post("/cart/add", {
+                    productId: parseInt(String(item.id), 10),
+                    quantity: parseInt(String(item.quantity), 10),
+                  });
+                  console.log(`Cart sync - ProductId: ${item.id}, Status: ${syncRes.status}, Response:`, syncRes.data);
                 }
-              } catch (cartCheckError) {
-                console.warn("Could not check server cart:", cartCheckError.message);
+                console.log("Cart sync completed");
+              } catch (syncError) {
+                console.warn("Cart sync error:", syncError.response?.status, syncError.message);
+                // Continue anyway - backend might still work
               }
 
-              // STEP 2: Submit order with cart items
-              console.log("STEP 2: Submitting order to checkout...");
+              // STEP 2: Prepare order data
+              console.log("STEP 2: Preparing order data...");
+              
+              // Convert payment method string to enum value
+              const paymentMethodMap = {
+                COD: 0,
+                VNPay: 1,
+              };
+              
+              const customerIdNum = parseInt(String(customerId), 10);
+              if (isNaN(customerIdNum) || customerIdNum <= 0) {
+                Alert.alert("Error", "Invalid customer ID");
+                setSubmitting(false);
+                return;
+              }
 
               const orderData = {
-                customerId: customerId || 0,
+                customerId: customerIdNum,
                 cartItems: cartItems.map((item) => {
-                  // Ensure all price-related fields are numbers
-                  const itemPrice = Number(item.price) || Number(item.cost) || 0;
-                  const itemSale = Number(item.sale) || Number(item.percentOff) || 0;
-                  const itemQuantity = Number(item.quantity) || 0;
-                  const itemId = Number(item.id) || 0;
-
                   return {
-                    productId: itemId,
+                    productId: parseInt(String(item.id), 10),
                     productImage: item.image || item.uri || "",
-                    productName: item.name || item.handbagName || "",
-                    productPrice: itemPrice,
-                    productSale: itemSale,
-                    quantity: itemQuantity,
+                    productName: item.name || "",
+                    productPrice: parseFloat(String(item.price)),
+                    productSale: parseFloat(String(item.sale)) || 0,
+                    quantity: parseInt(String(item.quantity), 10),
                   };
                 }),
-                totalPrice: Number(totalPrice) || 0,
-                shippingFee: Number(shippingFee) || 0,
-                paymentMethod: formData.paymentMethod, // Keep as string: "COD" or "VNPay"
+                totalPrice: parseFloat(String(totalPrice)),
+                shippingFee: parseFloat(String(shippingFee)),
+                paymentMethod: paymentMethodMap[formData.paymentMethod],
                 street: formData.street,
                 city: String(formData.city),
                 state: String(formData.state),
-                firstName: formData.firstName,
-                lastName: formData.lastName,
-                phone: formData.phone,
-                email: formData.email || "",
               };
 
-              console.log("=== ORDER DEBUG INFO ===");
-              console.log("cartItems count:", cartItems.length);
-              console.log("totalPrice:", totalPrice);
-              console.log("shippingFee:", shippingFee);
-              console.log("customerId:", customerId);
-              console.log("paymentMethod:", formData.paymentMethod);
-              console.log("Submitting order data:", JSON.stringify(orderData, null, 2));
-              console.log("=== END DEBUG INFO ===");
+              console.log("=== ORDER REQUEST DEBUG ===");
+              console.log("CustomerId:", customerId);
+              console.log("Request Body:", JSON.stringify(orderData, null, 2));
+              console.log("=== END DEBUG ===");
 
+              // STEP 3: Submit order
+              console.log("STEP 3: Submitting order...");
               const response = await instance.post(
                 "/checkout/process-payment",
                 orderData
               );
 
-              console.log("STEP 3: Order response:", response.data);
-
               if (formData.paymentMethod === "VNPay") {
                 if (response.data.paymentUrl) {
                   Alert.alert(
-                    "VNPay",
-                    "Redirecting to payment gateway...",
+                    "Payment",
+                    "Redirecting to VNPay gateway...",
                     [
                       {
                         text: "OK",
@@ -297,11 +279,22 @@ export default function CheckoutDetails() {
               }
             } catch (error) {
               console.error("=== ORDER ERROR ===");
-              console.error("Full error object:", error);
-              console.error("Response data:", error.response?.data);
+              console.error("Error object:", error);
               console.error("Response status:", error.response?.status);
-              console.error("Message:", error.message);
+              console.error("Response data:", error.response?.data);
+              console.error("Request URL:", error.config?.url);
+              console.error("Request method:", error.config?.method);
+              console.error("Error full:", JSON.stringify(error, null, 2));
               console.error("=== END ERROR ===");
+              
+              // Try to fetch orders to see if order was partially created
+              try {
+                const ordersRes = await instance.get(`/order/customer/${customerId}`);
+                console.log("Recent orders for customer:", ordersRes.data);
+              } catch (fetchErr) {
+                console.warn("Could not fetch customer orders");
+              }
+              
               Alert.alert(
                 "Error",
                 error.response?.data?.message || error.message || "Failed to place order"

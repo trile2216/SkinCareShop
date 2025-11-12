@@ -12,6 +12,12 @@ const useAuth = () => {
       const response = await instance.post("/auth/login", formData);
       const { token, role, customerId, username } = response.data.data;
 
+      console.log("=== LOGIN RESPONSE ===");
+      console.log("Token:", token);
+      console.log("Role:", role);
+      console.log("CustomerId:", customerId, "Type:", typeof customerId);
+      console.log("=== END LOGIN ===");
+
       dispatch(
         loginSuccess({
           token,
