@@ -188,20 +188,15 @@ export default function CheckoutDetails() {
               console.log("STEP 1: Syncing cart items to backend session...");
               try {
                 for (const item of cartItems) {
-                  const syncRes = await instance.post("/cart/add", {
+                  await instance.post("/cart/add", {
                     productId: parseInt(String(item.id), 10),
                     quantity: parseInt(String(item.quantity), 10),
                   });
-                  console.log(`Cart sync - ProductId: ${item.id}, Status: ${syncRes.status}, Response:`, syncRes.data);
                 }
-                console.log("Cart sync completed");
               } catch (syncError) {
-                console.warn("Cart sync error:", syncError.response?.status, syncError.message);
+                console.warn("Cart sync error:", syncError.message);
                 // Continue anyway - backend might still work
               }
-
-              // STEP 2: Prepare order data
-              console.log("STEP 2: Preparing order data...");
               
               // Convert payment method string to enum value
               const paymentMethodMap = {
@@ -235,14 +230,6 @@ export default function CheckoutDetails() {
                 city: String(formData.city),
                 state: String(formData.state),
               };
-
-              console.log("=== ORDER REQUEST DEBUG ===");
-              console.log("CustomerId:", customerId);
-              console.log("Request Body:", JSON.stringify(orderData, null, 2));
-              console.log("=== END DEBUG ===");
-
-              // STEP 3: Submit order
-              console.log("STEP 3: Submitting order...");
               const response = await instance.post(
                 "/checkout/process-payment",
                 orderData
@@ -257,7 +244,7 @@ export default function CheckoutDetails() {
                       {
                         text: "OK",
                         onPress: () => {
-                          clearCart();
+                          // DON'T clear cart here - let OrderSuccess do it
                           navigation.navigate("OrderSuccess", {
                             orderData: response.data,
                             paymentMethod: formData.paymentMethod,
@@ -270,7 +257,7 @@ export default function CheckoutDetails() {
                 }
               } else {
                 // COD payment
-                clearCart();
+                // DON'T clear cart here - let OrderSuccess do it
                 navigation.navigate("OrderSuccess", {
                   orderData: response.data,
                   paymentMethod: formData.paymentMethod,
@@ -278,23 +265,6 @@ export default function CheckoutDetails() {
                 });
               }
             } catch (error) {
-              console.error("=== ORDER ERROR ===");
-              console.error("Error object:", error);
-              console.error("Response status:", error.response?.status);
-              console.error("Response data:", error.response?.data);
-              console.error("Request URL:", error.config?.url);
-              console.error("Request method:", error.config?.method);
-              console.error("Error full:", JSON.stringify(error, null, 2));
-              console.error("=== END ERROR ===");
-              
-              // Try to fetch orders to see if order was partially created
-              try {
-                const ordersRes = await instance.get(`/order/customer/${customerId}`);
-                console.log("Recent orders for customer:", ordersRes.data);
-              } catch (fetchErr) {
-                console.warn("Could not fetch customer orders");
-              }
-              
               Alert.alert(
                 "Error",
                 error.response?.data?.message || error.message || "Failed to place order"

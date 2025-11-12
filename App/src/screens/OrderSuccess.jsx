@@ -26,12 +26,14 @@ export default function OrderSuccess() {
   const totalAmount = safeTotalPrice + safeShippingFee;
 
   useEffect(() => {
-    // Optional: any mount behavior
+    // Clear cart after page renders so items are visible first
+    // Don't clear immediately to preserve cartItems display
   }, []);
 
   const handleBackToHome = () => {
     clearCart();
-    navigation.navigate("Home");
+    // Navigate to Home screen which is nested inside Tabs navigator
+    navigation.navigate("Tabs", { screen: "Home" });
   };
 
   const renderCartItem = ({ item }) => (
