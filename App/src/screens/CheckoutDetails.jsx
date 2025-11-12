@@ -10,6 +10,7 @@ import {
   ActivityIndicator,
   FlatList,
   Modal,
+  Linking, // thêm
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { useSelector } from "react-redux";
@@ -239,21 +240,31 @@ export default function CheckoutDetails() {
                 if (response.data.paymentUrl) {
                   Alert.alert(
                     "Payment",
-                    "Redirecting to VNPay gateway...",
+                    "Mở VNPay để thanh toán?",
                     [
                       {
-                        text: "OK",
-                        onPress: () => {
-                          // DON'T clear cart here - let OrderSuccess do it
-                          navigation.navigate("OrderSuccess", {
-                            orderData: response.data,
-                            paymentMethod: formData.paymentMethod,
-                            shippingFee: Number(shippingFee) || 0,
-                          });
+                        text: "Open VNPay",
+                        onPress: async () => {
+                          try {
+                            const url = response.data.paymentUrl;
+                            const supported = await Linking.canOpenURL(url);
+                            if (supported) {
+                              await Linking.openURL(url);
+                              // Không navigate tới OrderSuccess ngay — chờ callback/redirect từ VNPay
+                            } else {
+                              Alert.alert("Error", "Cannot open payment URL");
+                            }
+                          } catch (err) {
+                            Alert.alert("Error", err.message || "Failed to open payment URL");
+                          }
                         },
                       },
-                    ]
+                      { text: "Cancel", style: "cancel" },
+                    ],
+                    { cancelable: true }
                   );
+                } else {
+                  Alert.alert("Error", "Payment URL not available");
                 }
               } else {
                 // COD payment
