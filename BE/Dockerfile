@@ -45,11 +45,10 @@ RUN --mount=type=cache,id=nuget,target=/root/.nuget/packages \
 FROM mcr.microsoft.com/dotnet/aspnet:8.0-alpine AS final
 WORKDIR /app
 
-# Cài tzdata để .NET có thể tìm zoneinfo, copy timezone và gỡ tzdata để giảm kích thước image
+# Cài tzdata và thiết lập timezone (KHÔNG gỡ tzdata)
 RUN apk add --no-cache tzdata \
     && cp /usr/share/zoneinfo/Asia/Ho_Chi_Minh /etc/localtime \
-    && echo "Asia/Ho_Chi_Minh" > /etc/timezone \
-    && apk del tzdata
+    && echo "Asia/Ho_Chi_Minh" > /etc/timezone
 
 ENV TZ=Asia/Ho_Chi_Minh
 
