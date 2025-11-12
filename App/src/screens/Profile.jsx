@@ -263,9 +263,10 @@ const Profile = () => {
 };
 
 const styles = StyleSheet.create({
-  container: {
+ container: {
     flex: 1,
     backgroundColor: "#f8f9fa",
+    paddingTop: 40,
   },
   centerContainer: {
     flex: 1,

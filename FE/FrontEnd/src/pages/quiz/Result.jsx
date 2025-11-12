@@ -16,7 +16,6 @@ import "swiper/css/navigation";
 import "swiper/css/pagination";
 
 const Result = () => {
-  const { resultId } = useParams();
   const [loading, setLoading] = useState(true);
   const [result, setResult] = useState(null);
   const [routines, setRoutines] = useState([]);

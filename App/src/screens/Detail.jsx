@@ -1,5 +1,5 @@
 import React from "react";
-import { useRoute } from "@react-navigation/native";
+import { useRoute, useNavigation } from "@react-navigation/native";
 import { 
   Text, 
   Image, 
@@ -17,6 +17,7 @@ const { width } = Dimensions.get("window");
 
 const Detail = () => {
   const route = useRoute();
+  const navigation = useNavigation();
   const params = route.params;
   const product = params?.product;
 
@@ -49,6 +50,14 @@ const Detail = () => {
       <ScrollView showsVerticalScrollIndicator={false}>
         {/* Hero Image */}
         <View style={styles.imageContainer}>
+          {/* Back button (added) */}
+          <TouchableOpacity
+            style={styles.backButton}
+            onPress={() => navigation.goBack()}
+          >
+            <Text style={styles.backButtonText}>‹ Back</Text>
+          </TouchableOpacity>
+
           <Image
             source={{ uri: product.image }}
             style={styles.heroImage}
@@ -421,6 +430,21 @@ const styles = StyleSheet.create({
   },
   favoriteButtonTextActive: {
     color: "#e91e63",
+  },
+  backButton: {
+    position: "absolute",
+    top: 16,
+    left: 12,
+    zIndex: 10,
+    backgroundColor: "rgba(0,0,0,0.5)",
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 8,
+  },
+  backButtonText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "600",
   },
 });
 
