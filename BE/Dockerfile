@@ -45,12 +45,18 @@ RUN --mount=type=cache,id=nuget,target=/root/.nuget/packages \
 FROM mcr.microsoft.com/dotnet/aspnet:8.0-alpine AS final
 WORKDIR /app
 
+# Cài tzdata để .NET có thể tìm zoneinfo, copy timezone và gỡ tzdata để giảm kích thước image
+RUN apk add --no-cache tzdata \
+    && cp /usr/share/zoneinfo/Asia/Ho_Chi_Minh /etc/localtime \
+    && echo "Asia/Ho_Chi_Minh" > /etc/timezone \
+    && apk del tzdata
+
+ENV TZ=Asia/Ho_Chi_Minh
+
 # Copy everything needed to run the app from the "build" stage.
 COPY --from=build /app .
 
-# Switch to a non-privileged user (defined in the base image) that the app will run under.
-# See https://docs.docker.com/go/dockerfile-user-best-practices/
-# and https://github.com/dotnet/dotnet-docker/discussions/4764
+# Switch to a non-privileged user
 USER $APP_UID
 
 ENTRYPOINT ["dotnet", "api.dll"]
