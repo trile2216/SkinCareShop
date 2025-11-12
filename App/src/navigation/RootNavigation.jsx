@@ -5,6 +5,9 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Detail from "../screens/Detail";
 import Favorites from "../screens/Favorites";
 import Profile from "../screens/Profile";
+import Checkout from "../screens/Checkout";
+import CheckoutDetails from "../screens/CheckoutDetails";
+import OrderSuccess from "../screens/OrderSuccess";
 import { Ionicons } from "@expo/vector-icons";
 import Cart from "../screens/Cart";
 import Login from "../screens/Login";
@@ -192,6 +195,9 @@ const RootNavigation = () => {
               }}
             />
             <Stack.Screen name="Detail" component={Detail} />
+            <Stack.Screen name="Checkout" component={Checkout} />
+            <Stack.Screen name="CheckoutDetails" component={CheckoutDetails} />
+            <Stack.Screen name="OrderSuccess" component={OrderSuccess} />
           </Stack.Group>
         )}
       </Stack.Navigator>

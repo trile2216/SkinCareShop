@@ -89,20 +89,8 @@ export default function Cart() {
   const handleCheckout = () => {
     if (totalItems === 0) return;
 
-    Alert.alert(
-      "Checkout",
-      `Proceed to checkout with ${totalItems} item(s) for $${totalPrice.toFixed(2)}?`,
-      [
-        { text: "Cancel", style: "cancel" },
-        {
-          text: "Proceed",
-          onPress: () => {
-            Alert.alert("Success", "Order placed successfully!");
-            clearCart();
-          },
-        },
-      ]
-    );
+    // Navigate to the Checkout flow (Checkout -> CheckoutDetails -> OrderSuccess)
+    navigation.navigate("Checkout");
   };
 
   // Handle clear cart
