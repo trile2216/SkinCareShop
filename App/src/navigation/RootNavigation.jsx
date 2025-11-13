@@ -22,6 +22,7 @@ import { instance } from "../lib/axios";
 import { createStackNavigator as createInnerStack } from "@react-navigation/stack";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
+import MyOrder from "../screens/MyOrder";
 
 const Stack = createStackNavigator();
 const Tabs = createBottomTabNavigator();
@@ -198,6 +199,7 @@ const RootNavigation = () => {
             <Stack.Screen name="Checkout" component={Checkout} />
             <Stack.Screen name="CheckoutDetails" component={CheckoutDetails} />
             <Stack.Screen name="OrderSuccess" component={OrderSuccess} />
+            <Stack.Screen name="MyOrder" component={MyOrder} />
           </Stack.Group>
         )}
       </Stack.Navigator>

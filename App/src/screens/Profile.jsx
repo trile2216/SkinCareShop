@@ -12,10 +12,12 @@ import {
 import useAuth from "../context/useAuth";
 import { instance } from "../lib/axios";
 import { useSelector } from "react-redux";
+import { useNavigation } from '@react-navigation/native';
 
 const Profile = () => {
   const { logoutUser } = useAuth();
   const customerId = useSelector((state) => state.user.customerId);
+  const navigation = useNavigation();
   const [loading, setLoading] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [user, setUser] = useState(null);
@@ -251,6 +253,13 @@ const Profile = () => {
           )}
           
           <TouchableOpacity
+            style={styles.ordersButton}
+            onPress={() => navigation.navigate('MyOrder')}
+          >
+            <Text style={styles.ordersButtonText}>📦 My Orders</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
             style={styles.logoutButton}
             onPress={handleLogout}
           >
@@ -267,6 +276,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#f8f9fa",
     paddingTop: 40,
+    padding: 12
   },
   centerContainer: {
     flex: 1,
@@ -394,6 +404,18 @@ const styles = StyleSheet.create({
   },
   cancelButtonText: {
     color: "#666",
+    fontSize: 16,
+    fontWeight: "600",
+  },
+  ordersButton: {
+    backgroundColor: "#10b981",
+    padding: 14,
+    borderRadius: 8,
+    alignItems: "center",
+    marginTop: 12,
+  },
+  ordersButtonText: {
+    color: "#fff",
     fontSize: 16,
     fontWeight: "600",
   },
